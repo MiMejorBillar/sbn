@@ -1,0 +1,420 @@
+import 'package:flutter/material.dart';
+import 'dart:async';
+
+class ScoreboardP1 extends StatefulWidget {
+
+  const ScoreboardP1 ({
+    super.key,
+    this.p1Name = 'Luis',
+    this.handicap = 8,
+    this.extensions = 2,
+    this.isP2 = false,
+    });
+
+  final String p1Name;
+  final int handicap;
+  final int extensions;
+  final bool isP2;
+
+  @override
+  State<ScoreboardP1> createState() => ScoreboardP1State();
+}
+
+
+
+class ScoreboardP1State extends State<ScoreboardP1> {
+  int _score = 40;
+  double _average = 2.0;
+  int _highRun = 10;
+
+Color _contColor(bool isP2){
+  if (isP2 == false){
+    return Colors.white;
+  } else {
+    return Colors.amber;
+  }
+}
+  @override
+  Widget build(BuildContext context){
+    return Container(
+      decoration: BoxDecoration(
+        color: _contColor(widget.isP2),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(134, 0, 0, 0).withValues(alpha: 0.90),
+            spreadRadius: 2,
+            blurRadius: 5,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 36, 36, 36),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    height: 50,
+                    child: Text(
+                      widget.p1Name,
+                      style: TextStyle(
+                        fontSize: 18, 
+                        fontWeight: FontWeight.bold, 
+                        color: _contColor(widget.isP2)
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: 50,
+                  decoration: BoxDecoration(),
+                  child: Text(
+                    '${widget.handicap}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold, 
+                      color: _contColor(widget.isP2)
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Stack(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              '$_score',
+                              style: const TextStyle(
+                                fontSize: 80,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Positioned.fill(
+                      child:Align(
+                        alignment: Alignment.bottomRight,
+                        child: 
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
+                          children: List.generate(
+                            widget.extensions,
+                            (index) => Container(
+                              margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                              width: 32,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black,
+                                    spreadRadius: 0.4,
+                                    blurRadius: 1,
+                                  )
+                                ]
+                              )
+                            ),
+                          )
+                        )
+                      )
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        const Text('AVG', style:TextStyle(fontSize: 14)),
+                        Text(
+                          _average.toStringAsFixed(3),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text('HR', style: TextStyle(fontSize: 14)),
+                        Text(
+                          '$_highRun',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class InningCounter extends StatefulWidget {
+  const InningCounter ({
+    super.key
+  });
+
+  @override
+  State<InningCounter> createState() => InningCounterState();
+}
+
+class InningCounterState extends State<InningCounter> {
+  final int inning = 20;
+
+  @override
+  Widget build(BuildContext context){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          alignment: Alignment.center,
+          height: 80,
+          width: 80,
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(134, 0, 0, 0).withValues(alpha: 0.90),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            '$inning',
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: Colors.white
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class TimerBar extends StatefulWidget {
+  const TimerBar ({
+    super.key,
+    this.duration = 40,
+  });
+
+  final int duration;
+  
+  @override
+  State<TimerBar> createState() => TimerBarState();
+}
+
+class TimerBarState extends State<TimerBar> {
+  late int remainingSeconds;
+  Timer? myTimer;
+  bool isPaused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    remainingSeconds = widget.duration;
+    startTimer();
+  }
+
+  void startTimer(){
+    myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingSeconds > 0 && !isPaused){
+        setState(() {
+          remainingSeconds--;
+        });
+      } else if (remainingSeconds <= 0) {
+        timer.cancel();
+      }
+    });
+  }
+
+
+  void pauseTimer(){
+    if (myTimer?.isActive ?? false) {
+      print('Pausing timer');
+      isPaused = true;
+      myTimer?.cancel();
+    } else {
+      print('Timer is not active or already paused');
+    }
+  }
+
+  void resumeTimer(){
+    if(isPaused && remainingSeconds > 0) {
+      print('Resuming timer');
+      isPaused = false;
+      myTimer?.cancel();
+      myTimer = Timer.periodic(const Duration(seconds:1), (timer) {
+        if (remainingSeconds > 0 && !isPaused) {
+          setState(() {
+            remainingSeconds--;
+          });
+        } else {
+          timer.cancel();
+        }
+      });
+    } else {
+      print('Cannot resume: not paused or timer finished');
+    }
+  }
+
+  @override
+  void dispose() {
+    myTimer?.cancel();
+    super.dispose();
+  }
+
+  Color _getSegmentColor (int index, int duration, int remainingSeconds, bool isActive) {
+    Color baseColor;
+
+    if (duration == 40) {
+      int second = duration - index;
+      if (second >= 25 && second <= 40) {
+        baseColor = Colors.green;
+      } else if (second >= 11 && second <= 24){
+        baseColor = Colors.amber;
+      } else if (second >=1 && second <= 10) {
+        baseColor = Colors.red;
+      } else {
+        baseColor = Colors.grey;
+      }
+    } else if (duration == 30) {
+      int second = duration - index;
+      if (second >= 21 && second <= 30){
+        baseColor = Colors.green;
+      } else if (second >= 11 && second <=20) {
+        baseColor = Colors.amber;
+      } else if (second >= 1 && second <=10) {
+        baseColor = Colors.red;
+      } else {
+        baseColor = Colors.grey;
+      }
+    } else {
+      if (isActive) {
+        baseColor = remainingSeconds > 20
+            ? Colors.green
+            : remainingSeconds >= 10
+                ? Colors.amber
+                : Colors.red;
+      } else {
+        return Colors.grey.withValues(alpha: 0.90);
+      }
+    }
+
+    return isActive ? baseColor: Colors.grey.withValues(alpha: 0.90);
+  }
+
+  Color _getTextColor(int duration, int remainingSeconds, bool isPaused){
+
+    if (isPaused || remainingSeconds <= 0) {
+      return Colors.grey.withValues(alpha: 0.90);
+      }
+    Color textColor;
+
+    if (duration == 40) {
+      if (remainingSeconds >= 25 && remainingSeconds <= 40){
+        textColor = Colors.green;
+      } else if (remainingSeconds >= 11 && remainingSeconds <= 24){
+        textColor = Colors.amber;
+      } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
+        textColor = Colors.red;
+      } else {
+        textColor = Colors.grey;
+      }
+    } else if (duration == 30) {
+      if (remainingSeconds >= 21 && remainingSeconds <= 30){
+        textColor = Colors.green;
+      } else if (remainingSeconds >= 11 && remainingSeconds <= 20){
+        textColor = Colors.amber;
+      } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
+        textColor = Colors.red;
+      } else {
+        textColor = Colors.grey;
+      }      
+    } else {
+      if (remainingSeconds > 20) {
+        textColor = Colors.green;
+      } else if (remainingSeconds >= 10) {
+        textColor = Colors.amber;
+      } else {
+        textColor = Colors.red;
+      }
+    }
+
+    return textColor;
+  }
+
+  @override
+Widget build(BuildContext context) {
+  print('Building with remainingSeconds: $remainingSeconds');
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      const double paddingHorizontal = 8.0;
+      
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: List.generate(widget.duration, (index) {
+                    final isActive = index >= (widget.duration - remainingSeconds);
+                    final color = _getSegmentColor(index, widget.duration, remainingSeconds, isActive);
+                    return Expanded(
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          border : Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1),
+                          color: color
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+              SizedBox(
+                width: 25.0,
+                child: Text(
+                  '$remainingSeconds',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: _getTextColor(widget.duration,remainingSeconds, isPaused),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+}
