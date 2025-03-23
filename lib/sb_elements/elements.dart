@@ -352,6 +352,15 @@ class TimerBarState extends State<TimerBar> {
     }
   }
 
+  void resetTimer(){
+    myTimer?.cancel();
+    setState(() {
+      remainingSeconds = widget.duration;
+      isPaused = false;
+    });
+    startTimer();
+  }
+
   @override
   void dispose() {
     myTimer?.cancel();

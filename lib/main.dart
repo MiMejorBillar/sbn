@@ -40,14 +40,41 @@ class MyApp extends StatelessWidget {
                     onPressed: () {
                       timerBarKey.currentState?.pauseTimer();
                     },
-                    child: Icon(Icons.pause),
+                    child: Icon(Icons.pause, color: Colors.white,),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 36, 36, 36),
+                      side: const BorderSide(
+                        color: Color.fromARGB(255, 85, 85, 85),
+                        width: 2,
+                      )
+                    ),                    
                   ),
                   ElevatedButton(
                     onPressed: (){
                       timerBarKey.currentState?.resumeTimer(); 
                     },
-                    child: Icon(Icons.loop),
-                  )                  
+                    child: Icon(Icons.play_arrow,color: Colors.white,),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 36, 36, 36),
+                      side: const BorderSide(
+                        color: Color.fromARGB(255, 85, 85, 85),
+                        width: 2,
+                      )
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: (){
+                      timerBarKey.currentState?.resetTimer(); 
+                    },
+                    child: Icon(Icons.loop,color: Colors.white,),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 36, 36, 36),
+                      side: const BorderSide(
+                        color: Color.fromARGB(255, 85, 85, 85),
+                        width: 2,
+                      )
+                    ),
+                  )                                          
                 ]
               ),
             ],
