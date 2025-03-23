@@ -184,13 +184,13 @@ Color _contColor(bool isP2){
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('AVG',
+                            Text('Avg.',
                                 style: TextStyle(
-                                    fontSize: 14, color: _contColor(widget.isP2))),
+                                    fontSize: 16, color: _contColor(widget.isP2))),
                             Text(
                               _average.toStringAsFixed(3),
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: _contColor(widget.isP2)),
                             ),
@@ -200,13 +200,13 @@ Color _contColor(bool isP2){
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('HR',
+                            Text('H.R.',
                                 style: TextStyle(
-                                    fontSize: 14, color: _contColor(widget.isP2))),
+                                    fontSize: 16, color: _contColor(widget.isP2))),
                             Text(
                               '$_highRun',
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: _contColor(widget.isP2)),
                             ),
@@ -233,7 +233,7 @@ Color _contColor(bool isP2){
                           ),
                         ),
                       ),
-                      Image.asset('assets/icons/wbi.png')
+                      Image.asset(widget.isP2 ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png')
                     ],
                   ),
                 )
