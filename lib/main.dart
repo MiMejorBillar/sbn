@@ -23,27 +23,13 @@ class MyApp extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   SizedBox(width: 8),
-                  Expanded(child: ScoreboardP1(p1Name: 'Marco Zanetti',handicap: 40, extensions: 3)),
+                  Expanded(child: ScoreboardP1(p1Name: 'Marco Zanetti',handicap: 40, extensions:5)),
                   Container(padding: EdgeInsets.all(8),child: InningCounter()),
-                  Expanded(child: ScoreboardP1(p1Name: 'Dick Jaspers', handicap: 40, extensions: 3, isP2: true)),
+                  Expanded(child: ScoreboardP1(p1Name: 'Dick Jaspers', handicap: 40, extensions: 5, isP2: true)),
                   SizedBox(width: 8),
                 ],
               )),
               Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      timerBarKey.currentState?.pauseTimer();
-                    }, 
-                    child: Icon(Icons.pause)
-                  ),
-                  ElevatedButton(
-                    onPressed: (){
-                      timerBarKey.currentState?.resumeTimer();
-                    }, 
-                    child: Text('Resume Timer')
-                  )
-                ],
               ),
               Row(
                 children:[

@@ -51,15 +51,28 @@ Color _contColor(bool isP2){
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          // ICON NAME AND HANDICAP
           Container(
             height: 50,
             decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: const Color.fromARGB(255, 85, 85, 85),
+                  width: 8
+                )
+              ),
               color: const Color.fromARGB(255, 36, 36, 36),
               borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Container(
+                  child: Image.asset(
+                    'assets/icons/trophy.png',
+                    width: 50,
+                  )
+                ),
                 Expanded(
                   child: Container(
                     alignment: Alignment.centerLeft,
@@ -67,7 +80,7 @@ Color _contColor(bool isP2){
                     child: Text(
                       widget.p1Name,
                       style: TextStyle(
-                        fontSize: 18, 
+                        fontSize: 26, 
                         fontWeight: FontWeight.bold, 
                         color: _contColor(widget.isP2)
                       ),
@@ -90,6 +103,7 @@ Color _contColor(bool isP2){
               ],
             ),
           ),
+          // SCORE AND EXTENSION
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -142,33 +156,91 @@ Color _contColor(bool isP2){
                     )
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                      children: [
-                        const Text('AVG', style:TextStyle(fontSize: 14)),
-                        Text(
-                          _average.toStringAsFixed(3),
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        const Text('HR', style: TextStyle(fontSize: 14)),
-                        Text(
-                          '$_highRun',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
-        ],
+          // STATS AND COUNTER
+          Container(
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 36, 36, 36),
+              border: Border(
+                top: BorderSide(
+                  color: const Color.fromARGB(255, 85, 85, 85),
+                  width: 8
+                )
+              )
+            ),
+            height: 70,
+            // AVERAGE AND HIGH RUN
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child:Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //AVERAGE
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('AVG',
+                                style: TextStyle(
+                                    fontSize: 14, color: _contColor(widget.isP2))),
+                            Text(
+                              _average.toStringAsFixed(3),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: _contColor(widget.isP2)),
+                            ),
+                          ],
+                        ),
+                        // HIGH RUN
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('HR',
+                                style: TextStyle(
+                                    fontSize: 14, color: _contColor(widget.isP2))),
+                            Text(
+                              '$_highRun',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: _contColor(widget.isP2)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ),
+                Container(
+                  color: Colors.blueGrey,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(  
+                        alignment: Alignment.center,
+                        width: 100,
+                        child: Text(
+                          '+1',
+                          style: TextStyle(
+                            color: _contColor(widget.isP2),
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                      Image.asset('assets/icons/wbi.png')
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],  
       ),
     );
   }
