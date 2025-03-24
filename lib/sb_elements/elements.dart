@@ -3,14 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import '../riverpod/providers.dart';
 
-class Scorecard extends StatefulWidget {
-
-  final String playerName;
-  final int handicap;
-  final int extensions;
-  final bool isP2;
-  final GlobalKey<TimerBarState>? timerBarKey;
-
+class Scorecard extends ConsumerStatefulWidget {
   const Scorecard ({
     super.key,
     this.playerName = 'Luis',
@@ -19,19 +12,24 @@ class Scorecard extends StatefulWidget {
     this.isP2 = false,
     required this.timerBarKey,
     });
+  
+  final String playerName;
+  final int handicap;
+  final int extensions;
+  final bool isP2;
+  final GlobalKey<TimerBarState>? timerBarKey;
+
 
   @override
-  State<Scorecard> createState() => ScorecardState();
+  ConsumerState<Scorecard> createState() => ScorecardState();
 }
 
 
 
-class ScorecardState extends State<Scorecard> {
-  int _score = 0;
+class ScorecardState extends ConsumerState<Scorecard> {
   double _average = 0;
   int _highRun = 0;
   int pendingPoints = 0;
-
 
 Color _contColor(bool isP2){
   if (isP2 == false){
@@ -42,8 +40,12 @@ Color _contColor(bool isP2){
 }
 
 void _endTurn() {
-  setState(() {
-    _score += pendingPoints;
+  if (widget.isP2){
+    ref.read(p2PointsHistoryProvider.notifier).update((history) => [...history, pendingPoints]);
+  } else{
+    ref.read(p1PointsHistoryProvider.notifier).update((history) => [...history, pendingPoints]);
+  }
+  setState(() {;
     pendingPoints = 0;
   });
   widget.timerBarKey?.currentState?.resetTimer();
@@ -51,6 +53,10 @@ void _endTurn() {
 
   @override
   Widget build(BuildContext context){
+    
+    final ProviderListenable<int> scoreProvider = widget.isP2 ? p2TotalScoreProvider : p1TotalScoreProvider;
+    final totalScore = ref.watch(scoreProvider);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -142,7 +148,7 @@ void _endTurn() {
                               Expanded(
                                 child: Center(
                                   child: Text(
-                                    '$_score',
+                                    '$totalScore',
                                     style: const TextStyle(
                                       fontSize: 80,
                                       fontWeight: FontWeight.bold,
