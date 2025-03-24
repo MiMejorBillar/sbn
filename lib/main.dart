@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(width: 8),
-                    Expanded(child: ScoreboardP1(p1Name: 'Marco Zanetti',handicap: 40, extensions:5)),
+                    Expanded(child: Scorecard(playerName: 'Marco Zanetti',handicap: 40, extensions:5)),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -32,39 +32,9 @@ class MyApp extends StatelessWidget {
                           padding: EdgeInsets.all(8),
                           child: InningCounter()
                           ),
-                        Container(
-                          padding: EdgeInsets.all(4),
-                          child: Row(
-                            children: [
-                              ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          const Color.fromARGB(255, 36, 36, 36),
-                                      side: const BorderSide(
-                                        color: Color.fromARGB(255, 85, 85, 85),
-                                        width: 2,
-                                      )),
-                                  child: Icon(Icons.plus_one,
-                                      color: Colors.white)),
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        const Color.fromARGB(255, 36, 36, 36),
-                                    side: const BorderSide(
-                                      color: Color.fromARGB(255, 85, 85, 85),
-                                      width: 2,
-                                    )),
-                                child: Icon(Icons.exposure_minus_1,
-                                    color: Colors.white),
-                              )
-                            ],
-                          ),
-                        ),
                       ],
                     ),
-                    Expanded(child: ScoreboardP1(p1Name: 'Dick Jaspers', handicap: 40, extensions: 5, isP2: true)),
+                    Expanded(child: Scorecard(playerName: 'Dick Jaspers', handicap: 40, extensions: 5, isP2: true)),
                     SizedBox(width: 8),
                   ],
                 )
@@ -83,7 +53,7 @@ class MyApp extends StatelessWidget {
                       side: const BorderSide(
                         color: Color.fromARGB(255, 85, 85, 85),
                         width: 2,
-                      )
+                      ),
                     ),
                     child: Icon(Icons.pause, color: Colors.white,),                    
                   ),

@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-class ScoreboardP1 extends StatefulWidget {
+class Scorecard extends StatefulWidget {
 
-  const ScoreboardP1 ({
+  const Scorecard ({
     super.key,
-    this.p1Name = 'Luis',
+    this.playerName = 'Luis',
     this.handicap = 8,
     this.extensions = 2,
     this.isP2 = false,
     });
 
-  final String p1Name;
+  final String playerName;
   final int handicap;
   final int extensions;
   final bool isP2;
 
   @override
-  State<ScoreboardP1> createState() => ScoreboardP1State();
+  State<Scorecard> createState() => ScorecardState();
 }
 
 
 
-class ScoreboardP1State extends State<ScoreboardP1> {
-  int _score = 40;
-  double _average = 2.0;
-  int _highRun = 10;
+class ScorecardState extends State<Scorecard> {
+  int _score = 0;
+  double _average = 0;
+  int _highRun = 0;
+  int pendingPoints = 0;
+
 
 Color _contColor(bool isP2){
   if (isP2 == false){
@@ -78,7 +80,7 @@ Color _contColor(bool isP2){
                     alignment: Alignment.centerLeft,
                     height: 50,
                     child: Text(
-                      widget.p1Name,
+                      widget.playerName,
                       style: TextStyle(
                         fontSize: 26, 
                         fontWeight: FontWeight.bold, 
@@ -233,19 +235,35 @@ Color _contColor(bool isP2){
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(  
-                        alignment: Alignment.center,
-                        width: 100,
-                        child: Text(
-                          '+1',
-                          style: TextStyle(
-                            color: _contColor(widget.isP2),
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            pendingPoints++;                            
+                          });
+                        },
+                        child: Container(  
+                          color: Colors.transparent,
+                          alignment: Alignment.center,
+                          width: 100,
+                          child: Text(
+                            '$pendingPoints',
+                            style: TextStyle(
+                              color: _contColor(widget.isP2),
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold
+                            ),                                                                              
                           ),
                         ),
                       ),
-                      Image.asset(widget.isP2 ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png')
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if(pendingPoints > 0) {
+                              pendingPoints--;
+                            }
+                          });
+                        },
+                        child: Image.asset(widget.isP2 ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png'))
                     ],
                   ),
                 )
