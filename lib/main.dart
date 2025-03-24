@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'sb_elements/elements.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ScreenGame());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ScreenGame extends StatelessWidget {
+  const ScreenGame({super.key});
 
   @override
   Widget build(BuildContext context) {

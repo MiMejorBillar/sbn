@@ -9,7 +9,7 @@ class Scorecard extends StatefulWidget {
     this.handicap = 8,
     this.extensions = 2,
     this.isP2 = false,
-    this.timerBarKey,
+    required this.timerBarKey,
     });
 
   final String playerName;
