@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(width: 8),
-                    Expanded(child: Scorecard(playerName: 'Marco Zanetti',handicap: 40, extensions:5)),
+                    Expanded(child: Scorecard(playerName: 'Marco Zanetti',handicap: 40, extensions:5, timerBarKey: timerBarKey,)),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
                           ),
                       ],
                     ),
-                    Expanded(child: Scorecard(playerName: 'Dick Jaspers', handicap: 40, extensions: 5, isP2: true)),
+                    Expanded(child: Scorecard(playerName: 'Dick Jaspers', handicap: 40, extensions: 5, isP2: true, timerBarKey: timerBarKey,)),
                     SizedBox(width: 8),
                   ],
                 )

@@ -9,12 +9,14 @@ class Scorecard extends StatefulWidget {
     this.handicap = 8,
     this.extensions = 2,
     this.isP2 = false,
+    this.timerBarKey,
     });
 
   final String playerName;
   final int handicap;
   final int extensions;
   final bool isP2;
+  final GlobalKey<TimerBarState>? timerBarKey;
 
   @override
   State<Scorecard> createState() => ScorecardState();
@@ -36,11 +38,19 @@ Color _contColor(bool isP2){
     return Colors.amber;
   }
 }
+
+void _endTurn() {
+  setState(() {
+    _score += pendingPoints;
+    pendingPoints = 0;
+  });
+  widget.timerBarKey?.currentState?.resetTimer();
+}
+
   @override
   Widget build(BuildContext context){
     return Container(
       decoration: BoxDecoration(
-        color: _contColor(widget.isP2),
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
@@ -107,58 +117,66 @@ Color _contColor(bool isP2){
           ),
           // SCORE AND EXTENSION
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Stack(
+            child: GestureDetector(
+              onTap: () {
+                _endTurn();
+              },
+              child: Container(
+                color: _contColor(widget.isP2),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Row(
+                    Stack(
                       children: [
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              '$_score',
-                              style: const TextStyle(
-                                fontSize: 80,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  '$_score',
+                                  style: const TextStyle(
+                                    fontSize: 80,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                    Positioned.fill(
-                      child:Align(
-                        alignment: Alignment.bottomRight,
-                        child: 
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
-                          children: List.generate(
-                            widget.extensions,
-                            (index) => Container(
-                              margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                              width: 32,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.circular(5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    spreadRadius: 0.4,
-                                    blurRadius: 1,
+                        Positioned.fill(
+                          child:Align(
+                            alignment: Alignment.bottomRight,
+                            child: 
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
+                              children: List.generate(
+                                widget.extensions,
+                                (index) => Container(
+                                  margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                  width: 32,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(5),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black,
+                                        spreadRadius: 0.4,
+                                        blurRadius: 1,
+                                      )
+                                    ]
                                   )
-                                ]
+                                ),
                               )
-                            ),
+                            )
                           )
                         )
-                      )
-                    )
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
           // STATS AND COUNTER
