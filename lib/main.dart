@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'sb_elements/elements.dart';
+import 'riverpod/providers.dart';
 
 void main() {
-  runApp(const ScreenGame());
+  runApp(const ProviderScope(child: ScreenGame()));
 }
 
-class ScreenGame extends StatelessWidget {
+class ScreenGame extends ConsumerWidget {
   const ScreenGame({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
 
     final timerBarKey = GlobalKey<TimerBarState>();
+
+    //Listen to changes in bothTurnsEndedProvider
+    ref.listen<bool>(bothTurnsEndedProvider, (previous, current){
+      if (current) {
+        // Increment inning count and reset turn statuses
+        ref.read(inningCountProvider.notifier).state++;
+        ref.read(p1TurnEndedProvider.notifier).state = false;
+        ref.read(p2TurnEndedProvider.notifier).state = false;
+      }
+    });
     
     return MaterialApp(
       home: Scaffold(

@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
+import '../riverpod/providers.dart';
 
 class Scorecard extends StatefulWidget {
+
+  final String playerName;
+  final int handicap;
+  final int extensions;
+  final bool isP2;
+  final GlobalKey<TimerBarState>? timerBarKey;
 
   const Scorecard ({
     super.key,
@@ -11,12 +19,6 @@ class Scorecard extends StatefulWidget {
     this.isP2 = false,
     required this.timerBarKey,
     });
-
-  final String playerName;
-  final int handicap;
-  final int extensions;
-  final bool isP2;
-  final GlobalKey<TimerBarState>? timerBarKey;
 
   @override
   State<Scorecard> createState() => ScorecardState();
@@ -117,66 +119,75 @@ void _endTurn() {
           ),
           // SCORE AND EXTENSION
           Expanded(
-            child: GestureDetector(
-              onTap: () {
-                _endTurn();
-              },
-              child: Container(
-                color: _contColor(widget.isP2),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Stack(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  '$_score',
-                                  style: const TextStyle(
-                                    fontSize: 80,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+            child: Consumer(
+              builder: (context, ref, child){
+              return GestureDetector(
+                onTap: () {
+                  _endTurn();
+                  if (widget.isP2) {
+                    ref.read(p2TurnEndedProvider.notifier).state = true;
+                  } else {
+                    ref.read(p1TurnEndedProvider.notifier).state = true;
+                  }
+                },
+                child: Container(
+                  color: _contColor(widget.isP2),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Stack(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Center(
+                                  child: Text(
+                                    '$_score',
+                                    style: const TextStyle(
+                                      fontSize: 80,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Positioned.fill(
-                          child:Align(
-                            alignment: Alignment.bottomRight,
-                            child: 
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
-                              children: List.generate(
-                                widget.extensions,
-                                (index) => Container(
-                                  margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                                  width: 32,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(5),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black,
-                                        spreadRadius: 0.4,
-                                        blurRadius: 1,
-                                      )
-                                    ]
-                                  )
-                                ),
+                            ],
+                          ),
+                          Positioned.fill(
+                            child:Align(
+                              alignment: Alignment.bottomRight,
+                              child: 
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
+                                children: List.generate(
+                                  widget.extensions,
+                                  (index) => Container(
+                                    margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                    width: 32,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(5),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black,
+                                          spreadRadius: 0.4,
+                                          blurRadius: 1,
+                                        )
+                                      ]
+                                    )
+                                  ),
+                                )
                               )
                             )
                           )
-                        )
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              );
+              } 
             ),
           ),
           // STATS AND COUNTER
@@ -294,20 +305,12 @@ void _endTurn() {
   }
 }
 
-class InningCounter extends StatefulWidget {
-  const InningCounter ({
-    super.key
-  });
+class InningCounter extends ConsumerWidget {
+  const InningCounter ({super.key});
 
   @override
-  State<InningCounter> createState() => InningCounterState();
-}
-
-class InningCounterState extends State<InningCounter> {
-  final int inning = 20;
-
-  @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context, WidgetRef ref){
+    final inning = ref.watch(inningCountProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
