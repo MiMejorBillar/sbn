@@ -27,8 +27,6 @@ class Scorecard extends ConsumerStatefulWidget {
 
 
 class ScorecardState extends ConsumerState<Scorecard> {
-  double _average = 0;
-  int _highRun = 0;
   int pendingPoints = 0;
 
 Color _contColor(bool isP2){
@@ -56,7 +54,8 @@ void _endTurn() {
     
     final ProviderListenable<int> scoreProvider = widget.isP2 ? p2TotalScoreProvider : p1TotalScoreProvider;
     final totalScore = ref.watch(scoreProvider);
-
+    final average = ref.watch(widget.isP2 ? p2AverageProvider : p1AverageProvider);
+    final highRun = ref.watch(widget.isP2 ? p2HighRunProvider : p1HighRunProvider);
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -225,7 +224,7 @@ void _endTurn() {
                                 style: TextStyle(
                                     fontSize: 16, color: _contColor(widget.isP2))),
                             Text(
-                              _average.toStringAsFixed(3),
+                              average.toStringAsFixed(3),
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -253,7 +252,7 @@ void _endTurn() {
                                 style: TextStyle(
                                     fontSize: 16, color: _contColor(widget.isP2))),
                             Text(
-                              '$_highRun',
+                              '$highRun',
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
