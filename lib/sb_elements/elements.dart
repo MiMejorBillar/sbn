@@ -69,7 +69,7 @@ Color _contColor(bool isP2){
               children: [
                 Container(
                   child: Image.asset(
-                    'assets/icons/trophy.png',
+                    widget.isP2 ? 'assets/icons/creeper.png' :  'assets/icons/trophy.png' ,
                     width: 50,
                   )
                 ),
@@ -94,7 +94,7 @@ Color _contColor(bool isP2){
                   child: Text(
                     '${widget.handicap}',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 26,
                       fontWeight: FontWeight.bold, 
                       color: _contColor(widget.isP2)
                     ),
@@ -195,6 +195,18 @@ Color _contColor(bool isP2){
                                   color: _contColor(widget.isP2)),
                             ),
                           ],
+                        ),
+                        Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              right: BorderSide(
+                                color: const Color.fromARGB(255, 85, 85, 85
+                                ),
+                                width: 2,
+                              )
+                            ),
+                          ),
                         ),
                         // HIGH RUN
                         Column(
