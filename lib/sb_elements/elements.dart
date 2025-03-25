@@ -25,7 +25,7 @@ class Scorecard extends ConsumerStatefulWidget {
 
 
 class ScorecardState extends ConsumerState<Scorecard> {
-  int pendingPoints = 0;
+
 
 Color _contColor(bool isP2){
   if (isP2 == false){
@@ -37,11 +37,8 @@ Color _contColor(bool isP2){
 
 void _endTurn() {
   final gameStateNotifier = ref.read(gameStateProvider.notifier);
-  final turnEnded = gameStateNotifier.endTurn(widget.isP2 ? 2 : 1, pendingPoints);
+  final turnEnded = gameStateNotifier.endTurn(widget.isP2 ? 2 : 1);
   if (turnEnded){
-  setState(() {
-    pendingPoints = 0;
-  });
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -77,6 +74,8 @@ void _endTurn() {
   @override
   Widget build(BuildContext context){
     
+    final gameState = ref.watch(gameStateProvider);
+    final pendingPoints = widget.isP2 ? gameState.p2PendingPoints : gameState.p1PendingPoints;
     final history = ref.watch(gameStateProvider.select((state) => widget.isP2 ? state.p2History : state.p1History));
     final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
     final highRun = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2HighRun : state.p1HighRun));
@@ -297,9 +296,8 @@ void _endTurn() {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          setState(() {
-                            pendingPoints++;                            
-                          });
+                          final newPendingPoints = pendingPoints + 1;
+                          ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints );
                         },
                         child: Container(  
                           color: Colors.transparent,
@@ -319,7 +317,8 @@ void _endTurn() {
                         onTap: () {
                           setState(() {
                             if(pendingPoints > 0) {
-                              pendingPoints--;
+                              final newPendingPoints = pendingPoints - 1;
+                              ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints);
                             }
                           });
                         },

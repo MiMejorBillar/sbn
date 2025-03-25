@@ -10,6 +10,8 @@ class GameState {
   final int p2TotalScore;
   final int p1HighRun;
   final int p2HighRun;
+  final int p1PendingPoints;
+  final int p2PendingPoints;
 
   GameState({
     this.currentPlayer = 1,
@@ -20,6 +22,8 @@ class GameState {
     this.p2TotalScore = 0,
     this.p1HighRun = 0,
     this.p2HighRun = 0,
+    this.p1PendingPoints = 0,
+    this.p2PendingPoints = 0,
   });
 
   GameState copyWith({
@@ -31,6 +35,8 @@ class GameState {
     int? p2TotalScore,
     int? p1HighRun,
     int? p2HighRun,
+    int? p1PendingPoints,
+    int? p2PendingPoints,
   }) {
     return GameState(
       currentPlayer: currentPlayer ?? this.currentPlayer,
@@ -41,20 +47,35 @@ class GameState {
       p2TotalScore: p2TotalScore ?? this.p2TotalScore,
       p1HighRun: p1HighRun ?? this.p1HighRun,
       p2HighRun: p2HighRun ?? this.p2HighRun,
+      p1PendingPoints: p1PendingPoints ?? this.p1PendingPoints,
+      p2PendingPoints: p2PendingPoints ?? this.p2PendingPoints,
     );
   }
 }
 
 class GameStateNotifier extends StateNotifier<GameState> {
   final Ref ref;
+  List<GameState> stateHistory = [];
 
   GameStateNotifier(this.ref) : super(GameState());
 
+  void updatePendingPoints(int player, int points){
+    if (player == 1) {
+      state = state.copyWith(p1PendingPoints: points);
+    } else {
+      state = state.copyWith(p2PendingPoints: points);
+    }
+  }
 
-  bool endTurn(int player, int points) {
+
+  bool endTurn(int player) {
     if (state.currentPlayer != player) {
       return false;
     }
+
+    stateHistory.add(state.copyWith());
+
+    final points = player == 1 ? state.p1PendingPoints : state.p2PendingPoints;
 
     List<int> newHistory;
     int newTotalScore;
@@ -78,6 +99,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p2TotalScore: player == 2 ? newTotalScore : state.p2TotalScore,
       p1HighRun: player == 1 ? newHighRun : state.p1HighRun,
       p2HighRun: player == 2 ? newHighRun : state.p2HighRun,
+      p1PendingPoints: player == 1 ? 0 : state.p1PendingPoints,
+      p2PendingPoints: player == 2 ? 0 : state.p2PendingPoints,
     );
     resetTimerController.add(true);
 
@@ -85,5 +108,11 @@ class GameStateNotifier extends StateNotifier<GameState> {
       state = state.copyWith(inningCount: state.inningCount + 1);
     }
     return true;
+  }
+
+  void undo() {
+    if (stateHistory.isNotEmpty) {
+      state = stateHistory.removeLast();
+    }
   }
 }

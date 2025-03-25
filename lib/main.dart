@@ -36,6 +36,19 @@ class ScreenGame extends ConsumerWidget {
                           padding: EdgeInsets.all(8),
                           child: InningCounter()
                           ),
+                        ElevatedButton(
+                          onPressed: (){
+                            ref.read(gameStateProvider.notifier).undo();
+                          } , 
+                          style: buttonStyle,
+                          child: Text(
+                            'Fix',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            )
+                          ),
                       ],
                     ),
                     Expanded(child: Scorecard(playerName: 'Dick Jaspers', handicap: 40, extensions: 5, isP2: true)),
