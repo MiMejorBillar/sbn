@@ -4,7 +4,13 @@ import 'sb_elements/elements.dart';
 import 'riverpod/providers.dart';
 
 void main() {
-  runApp(const ProviderScope(child: ScreenGame()));
+  runApp(
+    const ProviderScope(
+      child: MaterialApp(
+        home:ScreenGame(),
+      )
+    )
+  );
 }
 
 class ScreenGame extends ConsumerWidget {
@@ -12,6 +18,11 @@ class ScreenGame extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<String?>(gameStateProvider.select((state) => state.matchResult), (previous, next) {
+      if (next != null && previous == null) {
+        _showMatchEndDialog(context, ref, next);
+      }
+    });    
 
     final buttonStyle = ElevatedButton.styleFrom(
       backgroundColor: const Color.fromARGB(255, 36, 36, 36),
@@ -87,6 +98,35 @@ class ScreenGame extends ConsumerWidget {
             ],
           )
         )
+      )
+    );
+  }
+  void _showMatchEndDialog(BuildContext context, WidgetRef ref, String result){
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Match Ended'),
+        content: Text(
+          result == 'draw'
+              ? 'It\'s a draw!'
+              : result == 'P1'
+                  ? 'Marco Zanetti wins!'
+                  : 'Dick Jaspers wins!',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              ref.read(gameStateProvider.notifier).resetGame(
+                p1Handicap: 40,
+                p2Handicap: 40,
+                equalizingInnings: true,
+              );
+            },
+            child: const Text('New Game'),
+          )
+        ],
       )
     );
   }

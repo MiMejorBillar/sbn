@@ -22,10 +22,7 @@ class Scorecard extends ConsumerStatefulWidget {
   ConsumerState<Scorecard> createState() => ScorecardState();
 }
 
-
-
 class ScorecardState extends ConsumerState<Scorecard> {
-
 
 Color _contColor(bool isP2){
   if (isP2 == false){
@@ -73,276 +70,280 @@ void _endTurn() {
 
   @override
   Widget build(BuildContext context){
-    
-    final gameState = ref.watch(gameStateProvider);
-    final pendingPoints = widget.isP2 ? gameState.p2PendingPoints : gameState.p1PendingPoints;
-    final history = ref.watch(gameStateProvider.select((state) => widget.isP2 ? state.p2History : state.p1History));
-    final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
-    final highRun = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2HighRun : state.p1HighRun));
-    final average = history.isNotEmpty ? totalScore / history.length : 0.0;
-    final currentPlayer = ref.watch(gameStateProvider.select((state) => state.currentPlayer));
-    final activePlayerColor = currentPlayer == 1 ? const Color.fromARGB(255, 249, 246, 238) : Colors.amber;
-    final isActive = (widget.isP2 ? 2 : 1) == currentPlayer;
-    final activePlayerName = currentPlayer == 1? 'Marco Zanetti' : 'Dick Jaspers';
-    
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(134, 0, 0, 0).withValues(alpha: 0.90),
-            spreadRadius: 2,
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          // ICON NAME AND HANDICAP
-          Container(
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: const Color.fromARGB(255, 85, 85, 85),
-                  width: 8
-                )
-              ),
-              color: const Color.fromARGB(255, 36, 36, 36),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8)),
+          
+    return Consumer(
+      builder: (context, ref, child) {
+              //Existing Variables
+        final gameState = ref.watch(gameStateProvider);
+        final pendingPoints = widget.isP2 ? gameState.p2PendingPoints : gameState.p1PendingPoints;
+        final history = ref.watch(gameStateProvider.select((state) => widget.isP2 ? state.p2History : state.p1History));
+        final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
+        final highRun = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2HighRun : state.p1HighRun));
+        final average = history.isNotEmpty ? totalScore / history.length : 0.0;
+        final currentPlayer = ref.watch(gameStateProvider.select((state) => state.currentPlayer));
+        final activePlayerColor = currentPlayer == 1 ? const Color.fromARGB(255, 249, 246, 238) : Colors.amber;
+        final isActive = (widget.isP2 ? 2 : 1) == currentPlayer;
+        final activePlayerName = currentPlayer == 1? 'Marco Zanetti' : 'Dick Jaspers';
+            
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(134, 0, 0, 0).withValues(alpha: 0.90),
+              spreadRadius: 2,
+              blurRadius: 5,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  child: Image.asset(
-                    widget.isP2 ? 'assets/icons/creeper.png' :  'assets/icons/trophy.png' ,
-                    width: 50,
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // ICON NAME AND HANDICAP
+            Container(
+              height: 50,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: const Color.fromARGB(255, 85, 85, 85),
+                    width: 8
                   )
                 ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    height: 50,
+                color: const Color.fromARGB(255, 36, 36, 36),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: Image.asset(
+                      widget.isP2 ? 'assets/icons/creeper.png' :  'assets/icons/trophy.png' ,
+                      width: 50,
+                    )
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      height: 50,
+                      child: Text(
+                        widget.playerName,
+                        style: TextStyle(
+                          fontSize: 26, 
+                          fontWeight: FontWeight.bold, 
+                          color: _contColor(widget.isP2)
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 50,
+                    decoration: BoxDecoration(),
                     child: Text(
-                      widget.playerName,
+                      '${widget.handicap}',
                       style: TextStyle(
-                        fontSize: 26, 
+                        fontSize: 26,
                         fontWeight: FontWeight.bold, 
                         color: _contColor(widget.isP2)
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  width: 50,
-                  decoration: BoxDecoration(),
-                  child: Text(
-                    '${widget.handicap}',
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold, 
-                      color: _contColor(widget.isP2)
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          // SCORE AND EXTENSION
-          Expanded(
-            child: Consumer(
-              builder: (context, ref, child){
-              return GestureDetector(
-                onTap: isActive ? _endTurn : null,
-                child: Container(
-                  color: _contColor(widget.isP2),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Stack(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: Text(
-                                    '$totalScore',
-                                    style: const TextStyle(
-                                      fontSize: 80,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+            // SCORE AND EXTENSION
+            Expanded(
+              child: Consumer(
+                builder: (context, ref, child){
+                return GestureDetector(
+                  onTap: isActive ? _endTurn : null,
+                  child: Container(
+                    color: _contColor(widget.isP2),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Stack(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      '$totalScore',
+                                      style: const TextStyle(
+                                        fontSize: 80,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Positioned.fill(
-                            child:Align(
-                              alignment: Alignment.bottomRight,
-                              child: 
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
-                                children: List.generate(
-                                  widget.extensions,
-                                  (index) => Container(
-                                    margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                                    width: 32,
-                                    height: 12,
-                                    decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(5),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black,
-                                          spreadRadius: 0.4,
-                                          blurRadius: 1,
-                                        )
-                                      ]
-                                    )
-                                  ),
+                              ],
+                            ),
+                            Positioned.fill(
+                              child:Align(
+                                alignment: Alignment.bottomRight,
+                                child: 
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
+                                  children: List.generate(
+                                    widget.extensions,
+                                    (index) => Container(
+                                      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                      width: 32,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.circular(5),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black,
+                                            spreadRadius: 0.4,
+                                            blurRadius: 1,
+                                          )
+                                        ]
+                                      )
+                                    ),
+                                  )
                                 )
                               )
                             )
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-              } 
-            ),
-          ),
-          // STATS AND COUNTER
-          Container(
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 36, 36, 36),
-              border: Border(
-                top: BorderSide(
-                  color: const Color.fromARGB(255, 85, 85, 85),
-                  width: 8
-                )
-              )
-            ),
-            height: 70,
-            // AVERAGE AND HIGH RUN
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child:Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        //AVERAGE
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Avg.',
-                                style: TextStyle(
-                                    fontSize: 16, color: _contColor(widget.isP2))),
-                            Text(
-                              average.toStringAsFixed(3),
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: _contColor(widget.isP2)),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              right: BorderSide(
-                                color: const Color.fromARGB(255, 85, 85, 85
-                                ),
-                                width: 2,
-                              )
-                            ),
-                          ),
-                        ),
-                        // HIGH RUN
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('H.R.',
-                                style: TextStyle(
-                                    fontSize: 16, color: _contColor(widget.isP2))),
-                            Text(
-                              '$highRun',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: _contColor(widget.isP2)),
-                            ),
                           ],
                         ),
                       ],
                     ),
+                  ),
+                );
+                } 
+              ),
+            ),
+            // STATS AND COUNTER
+            Container(
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 36, 36, 36),
+                border: Border(
+                  top: BorderSide(
+                    color: const Color.fromARGB(255, 85, 85, 85),
+                    width: 8
                   )
-                ),
-                Container(
-                  color: Colors.blueGrey,
-                  width: 160,
-                  child: isActive 
-                  ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          final newPendingPoints = pendingPoints + 1;
-                          ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints );
-                        },
-                        child: Container(  
-                          color: Colors.transparent,
-                          alignment: Alignment.center,
-                          width: 100,
-                          child: Text(
-                            '$pendingPoints',
-                            style: TextStyle(
-                              color: _contColor(widget.isP2),
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold
-                            ),                                                                              
+                )
+              ),
+              height: 70,
+              // AVERAGE AND HIGH RUN
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child:Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          //AVERAGE
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Avg.',
+                                  style: TextStyle(
+                                      fontSize: 16, color: _contColor(widget.isP2))),
+                              Text(
+                                average.toStringAsFixed(3),
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: _contColor(widget.isP2)),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                right: BorderSide(
+                                  color: const Color.fromARGB(255, 85, 85, 85
+                                  ),
+                                  width: 2,
+                                )
+                              ),
+                            ),
+                          ),
+                          // HIGH RUN
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('H.R.',
+                                  style: TextStyle(
+                                      fontSize: 16, color: _contColor(widget.isP2))),
+                              Text(
+                                '$highRun',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: _contColor(widget.isP2)),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  ),
+                  Container(
+                    color: Colors.blueGrey,
+                    width: 160,
+                    child: isActive 
+                    ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            final newPendingPoints = pendingPoints + 1;
+                            ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints );
+                          },
+                          child: Container(  
+                            color: Colors.transparent,
+                            alignment: Alignment.center,
+                            width: 100,
+                            child: Text(
+                              '$pendingPoints',
+                              style: TextStyle(
+                                color: _contColor(widget.isP2),
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold
+                              ),                                                                              
+                            ),
                           ),
                         ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if(pendingPoints > 0) {
+                                final newPendingPoints = pendingPoints - 1;
+                                ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints);
+                              }
+                            });
+                          },
+                          child: Image.asset(widget.isP2 ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png', width: 60,)
+                        )
+                      ],
+                    )
+                  : Center(
+                    child: Text(
+                      '$activePlayerName \n is playing...',
+                      style: TextStyle(
+                        fontSize: 18, 
+                        fontWeight: FontWeight.bold,
+                        color: activePlayerColor,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if(pendingPoints > 0) {
-                              final newPendingPoints = pendingPoints - 1;
-                              ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints);
-                            }
-                          });
-                        },
-                        child: Image.asset(widget.isP2 ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png', width: 60,)
-                      )
-                    ],
-                  )
-                : Center(
-                  child: Text(
-                    '$activePlayerName \n is playing...',
-                    style: TextStyle(
-                      fontSize: 18, 
-                      fontWeight: FontWeight.bold,
-                      color: activePlayerColor,
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
-          ),
-        ],  
-      ),
+          ],  
+        ),
+      );
+    },
     );
   }
 }
@@ -404,6 +405,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
     remainingSeconds = widget.duration;
     startTimer();
   }
+
 
   void startTimer(){
     myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {

@@ -6,7 +6,7 @@ import 'package:nsb/game_state.dart';
 // GAME STATE PROVIDER
 
 final gameStateProvider = StateNotifierProvider<GameStateNotifier, GameState>(
-  (ref) => GameStateNotifier(ref),
+  (ref) => GameStateNotifier(ref, p1Handicap: 40, p2Handicap: 40, equalizingInnings:true),
 );
 
 //Providers to signal resetTimer()
@@ -20,3 +20,4 @@ final resetTimerProvider = StreamProvider.autoDispose<bool>((ref) {
 });
 
 final timerActionProvider = StateProvider<String?> ((ref) => null);
+

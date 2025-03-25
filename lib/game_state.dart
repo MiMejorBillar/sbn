@@ -12,6 +12,10 @@ class GameState {
   final int p2HighRun;
   final int p1PendingPoints;
   final int p2PendingPoints;
+  final int p1Handicap;
+  final int p2Handicap;
+  final bool equalizingInnings;
+  final String? matchResult;
 
   GameState({
     this.currentPlayer = 1,
@@ -24,6 +28,10 @@ class GameState {
     this.p2HighRun = 0,
     this.p1PendingPoints = 0,
     this.p2PendingPoints = 0,
+    this.p1Handicap = 40,
+    this.p2Handicap = 40,
+    this.equalizingInnings = true,
+    this.matchResult,
   });
 
   GameState copyWith({
@@ -37,6 +45,10 @@ class GameState {
     int? p2HighRun,
     int? p1PendingPoints,
     int? p2PendingPoints,
+    int? p1Handicap,
+    int? p2Handicap,
+    bool? equalizingInnings,
+    String? matchResult,
   }) {
     return GameState(
       currentPlayer: currentPlayer ?? this.currentPlayer,
@@ -49,6 +61,10 @@ class GameState {
       p2HighRun: p2HighRun ?? this.p2HighRun,
       p1PendingPoints: p1PendingPoints ?? this.p1PendingPoints,
       p2PendingPoints: p2PendingPoints ?? this.p2PendingPoints,
+      p1Handicap: p1Handicap ?? this.p1Handicap,
+      p2Handicap: p2Handicap ?? this.p2Handicap,
+      equalizingInnings: equalizingInnings ?? this.equalizingInnings,
+      matchResult: matchResult ?? this.matchResult,
     );
   }
 }
@@ -56,8 +72,10 @@ class GameState {
 class GameStateNotifier extends StateNotifier<GameState> {
   final Ref ref;
   List<GameState> stateHistory = [];
+  int? potentialWinner;
 
-  GameStateNotifier(this.ref) : super(GameState());
+  GameStateNotifier(this.ref, {int p1Handicap = 40, int p2Handicap = 40, bool equalizingInnings = true}) 
+  : super(GameState(p1Handicap: p1Handicap, p2Handicap: p2Handicap, equalizingInnings:equalizingInnings ));
 
   void updatePendingPoints(int player, int points){
     if (player == 1) {
@@ -107,6 +125,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
     if (state.p1History.length == state.p2History.length) {
       state = state.copyWith(inningCount: state.inningCount + 1);
     }
+    print('Player $player ended turn. P1 Score: ${state.p1TotalScore}, P2 Score: ${state.p2TotalScore}');
+    checkMatchEnd();
     return true;
   }
 
@@ -114,5 +134,59 @@ class GameStateNotifier extends StateNotifier<GameState> {
     if (stateHistory.isNotEmpty) {
       state = stateHistory.removeLast();
     }
+  }
+
+  void checkMatchEnd() {
+    final p1Reached = state.p1TotalScore >= state.p1Handicap;
+    final p2Reached = state.p2TotalScore >= state.p2Handicap;
+    print('Check match end: P1 Score: ${state.p1TotalScore}/${state.p1Handicap}, P2 Score: ${state.p2TotalScore}/${state.p2Handicap}, Potential Winner: $potentialWinner, Current Player: ${state.currentPlayer}');
+
+    //Allowed Equalizing innings
+    if (state.equalizingInnings){
+      //No one has potentially won yet
+      if(potentialWinner == null) {
+        if(p1Reached && !p2Reached) {
+          potentialWinner = 1;
+          print('P1 reached first, potentialWinner set to 1');
+        } else if(p2Reached) {
+          _endMatch('P2');
+          print('P2 reached first, ending with P2 win');
+        }
+      } else if (potentialWinner == 1 && state.currentPlayer == 1) {
+        if (p2Reached){
+          _endMatch('draw');
+          print('P2 also reached, ending with draw');
+        } else {
+          _endMatch('P1');
+          print('P2 did not reach, ending with P1 win');
+        }
+        potentialWinner = null;
+      }
+    } else {
+      //No equalizing innings
+      if (p1Reached) {
+        _endMatch('P1');
+        print('No equalizing, P1 wins');
+      } else if (p2Reached) {
+        _endMatch('P2');
+        print('No equalizing, P2 wins');
+      }
+    }
+  }
+  void _endMatch(String result){
+    print('Match ended with result: $result');
+    state = state.copyWith(matchResult: result);
+    potentialWinner = null;
+  }
+
+  void resetGame({int? p1Handicap, int? p2Handicap, bool? equalizingInnings}) {
+    stateHistory.clear();
+    potentialWinner = null;
+    state = GameState(
+      p1Handicap: p1Handicap ?? state.p1Handicap,
+      p2Handicap: p2Handicap ?? state.p2Handicap,
+      equalizingInnings: equalizingInnings ?? state.equalizingInnings,
+    );
+    resetTimerController.add(true);
   }
 }
