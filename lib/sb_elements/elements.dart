@@ -10,14 +10,12 @@ class Scorecard extends ConsumerStatefulWidget {
     this.handicap = 8,
     this.extensions = 2,
     this.isP2 = false,
-    required this.timerBarKey,
     });
   
   final String playerName;
   final int handicap;
   final int extensions;
   final bool isP2;
-  final GlobalKey<TimerBarState>? timerBarKey;
 
 
   @override
@@ -31,31 +29,58 @@ class ScorecardState extends ConsumerState<Scorecard> {
 
 Color _contColor(bool isP2){
   if (isP2 == false){
-    return Colors.white;
+    return Color.fromARGB(255, 249, 246, 238);
   } else {
     return Colors.amber;
   }
 }
 
 void _endTurn() {
-  if (widget.isP2){
-    ref.read(p2PointsHistoryProvider.notifier).update((history) => [...history, pendingPoints]);
-  } else{
-    ref.read(p1PointsHistoryProvider.notifier).update((history) => [...history, pendingPoints]);
-  }
-  setState(() {;
+  final gameStateNotifier = ref.read(gameStateProvider.notifier);
+  gameStateNotifier.endTurn(widget.isP2 ? 2 : 1, pendingPoints);
+  setState(() {
     pendingPoints = 0;
   });
-  widget.timerBarKey?.currentState?.resetTimer();
+  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Center(
+        child: Text(
+          'Turn ended for ${widget.playerName}', 
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: _contColor(widget.isP2),
+            shadows:[
+              Shadow(
+                color: Colors.black.withValues(alpha: 0.50),
+                offset: Offset(0, 0),
+                blurRadius: 10,
+              )
+            ]
+            )
+        )
+      ),
+      width: 250,
+      duration: Duration(seconds: 1),
+      backgroundColor: Colors.green.withValues(alpha: 0.90),
+      behavior: SnackBarBehavior.floating,
+      padding: EdgeInsets.symmetric(vertical: 10),
+      // shape:Border.all(
+      //   color: Colors.black
+      // ) ,
+    ),
+  );
 }
 
   @override
   Widget build(BuildContext context){
     
-    final ProviderListenable<int> scoreProvider = widget.isP2 ? p2TotalScoreProvider : p1TotalScoreProvider;
-    final totalScore = ref.watch(scoreProvider);
-    final average = ref.watch(widget.isP2 ? p2AverageProvider : p1AverageProvider);
-    final highRun = ref.watch(widget.isP2 ? p2HighRunProvider : p1HighRunProvider);
+    final history = ref.watch(gameStateProvider.select((state) => widget.isP2 ? state.p2History : state.p1History));
+    final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
+    final highRun = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2HighRun : state.p1HighRun));
+    final average = history.isNotEmpty ? totalScore / history.length : 0.0;
+    
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -129,11 +154,6 @@ void _endTurn() {
               return GestureDetector(
                 onTap: () {
                   _endTurn();
-                  if (widget.isP2) {
-                    ref.read(p2TurnEndedProvider.notifier).state = true;
-                  } else {
-                    ref.read(p1TurnEndedProvider.notifier).state = true;
-                  }
                 },
                 child: Container(
                   color: _contColor(widget.isP2),
@@ -315,7 +335,7 @@ class InningCounter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref){
-    final inning = ref.watch(inningCountProvider);
+    final inningCount = ref.watch(gameStateProvider.select((state) => state.inningCount));
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -328,7 +348,7 @@ class InningCounter extends ConsumerWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            '$inning',
+            '$inningCount',
             style: TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.bold,
@@ -342,19 +362,21 @@ class InningCounter extends ConsumerWidget {
   }
 }
 
-class TimerBar extends StatefulWidget {
+class TimerBar extends ConsumerStatefulWidget {
+  final int duration;
   const TimerBar ({
     super.key,
     this.duration = 40,
   });
 
-  final int duration;
+
   
   @override
-  State<TimerBar> createState() => TimerBarState();
+  ConsumerState<TimerBar> createState() => TimerBarState();
 }
 
-class TimerBarState extends State<TimerBar> {
+class TimerBarState extends ConsumerState<TimerBar> {
+  
   late int remainingSeconds;
   Timer? myTimer;
   bool isPaused = false;
@@ -504,54 +526,70 @@ class TimerBarState extends State<TimerBar> {
   }
 
   @override
-Widget build(BuildContext context) {
-  print('Building with remainingSeconds: $remainingSeconds');
-  return LayoutBuilder(
-    builder: (context, constraints) {
-      const double paddingHorizontal = 8.0;
-      
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: List.generate(widget.duration, (index) {
-                    final isActive = index >= (widget.duration - remainingSeconds);
-                    final color = _getSegmentColor(index, widget.duration, remainingSeconds, isActive);
-                    return Expanded(
-                      child: Container(
-                        height: 40,
-                        decoration: BoxDecoration(
-                          border : Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1),
-                          color: color
+  Widget build(BuildContext context) {
+  ref.listen(resetTimerProvider, (previous, next){
+    if(next is AsyncData<bool>){
+      final shouldReset = next.value;
+      if(shouldReset){
+        resetTimer();
+      }
+    }
+  });
+  ref.listen<String?>(timerActionProvider, (previous,action){
+    if(action == 'pause') pauseTimer();
+    if(action == 'resume') resumeTimer();
+    if(action == 'reset') resetTimer();
+    ref.read(timerActionProvider.notifier).state = null;
+  });
+
+
+    print('Building with remainingSeconds: $remainingSeconds');
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const double paddingHorizontal = 8.0;
+        
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: List.generate(widget.duration, (index) {
+                      final isActive = index >= (widget.duration - remainingSeconds);
+                      final color = _getSegmentColor(index, widget.duration, remainingSeconds, isActive);
+                      return Expanded(
+                        child: Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            border : Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1),
+                            color: color
+                          ),
                         ),
-                      ),
-                    );
-                  }),
-                ),
-              ),
-              SizedBox(
-                width: 25.0,
-                child: Text(
-                  '$remainingSeconds',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: _getTextColor(widget.duration,remainingSeconds, isPaused),
+                      );
+                    }),
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              )
-            ],
+                SizedBox(
+                  width: 25.0,
+                  child: Text(
+                    '$remainingSeconds',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: _getTextColor(widget.duration,remainingSeconds, isPaused),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 }

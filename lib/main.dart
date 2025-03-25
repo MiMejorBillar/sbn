@@ -13,18 +13,10 @@ class ScreenGame extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final timerBarKey = GlobalKey<TimerBarState>();
-
-    //Listen to changes in bothTurnsEndedProvider
-    ref.listen<bool>(bothTurnsEndedProvider, (previous, current){
-      if (current) {
-        // Increment inning count and reset turn statuses
-        ref.read(inningCountProvider.notifier).state++;
-        ref.read(p1TurnEndedProvider.notifier).state = false;
-        ref.read(p2TurnEndedProvider.notifier).state = false;
-      }
-    });
-    
+    final buttonStyle = ElevatedButton.styleFrom(
+      backgroundColor: const Color.fromARGB(255, 36, 36, 36),
+      side: const BorderSide(color: Color.fromARGB(255, 85, 85, 85), width: 2),
+    );
     return MaterialApp(
       home: Scaffold(
         backgroundColor: const Color.fromARGB(255, 0, 61, 110),
@@ -36,7 +28,7 @@ class ScreenGame extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(width: 8),
-                    Expanded(child: Scorecard(playerName: 'Marco Zanetti',handicap: 40, extensions:5, timerBarKey: timerBarKey,)),
+                    Expanded(child: Scorecard(playerName: 'Marco Zanetti',handicap: 40, extensions:5)),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -46,7 +38,7 @@ class ScreenGame extends ConsumerWidget {
                           ),
                       ],
                     ),
-                    Expanded(child: Scorecard(playerName: 'Dick Jaspers', handicap: 40, extensions: 5, isP2: true, timerBarKey: timerBarKey,)),
+                    Expanded(child: Scorecard(playerName: 'Dick Jaspers', handicap: 40, extensions: 5, isP2: true)),
                     SizedBox(width: 8),
                   ],
                 )
@@ -54,45 +46,27 @@ class ScreenGame extends ConsumerWidget {
               Row(
                 children:[
                   Expanded(
-                    child: TimerBar(duration: 40, key: timerBarKey,)
+                    child: TimerBar(duration: 40)
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      timerBarKey.currentState?.pauseTimer();
+                      ref.read(timerActionProvider.notifier).state = 'pause';
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 36, 36, 36),
-                      side: const BorderSide(
-                        color: Color.fromARGB(255, 85, 85, 85),
-                        width: 2,
-                      ),
-                    ),
+                    style: buttonStyle,
                     child: Icon(Icons.pause, color: Colors.white,),                    
                   ),
                   ElevatedButton(
                     onPressed: (){
-                      timerBarKey.currentState?.resumeTimer(); 
+                      ref.read(timerActionProvider.notifier).state = 'resume'; 
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 36, 36, 36),
-                      side: const BorderSide(
-                        color: Color.fromARGB(255, 85, 85, 85),
-                        width: 2,
-                      )
-                    ),
+                    style: buttonStyle,
                     child: Icon(Icons.play_arrow,color: Colors.white,),
                   ),
                   ElevatedButton(
                     onPressed: (){
-                      timerBarKey.currentState?.resetTimer(); 
+                      ref.read(timerActionProvider.notifier).state = 'reset'; 
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 36, 36, 36),
-                      side: const BorderSide(
-                        color: Color.fromARGB(255, 85, 85, 85),
-                        width: 2,
-                      )
-                    ),
+                    style: buttonStyle,
                     child: Icon(Icons.loop,color: Colors.white,),
                   )                                          
                 ]
