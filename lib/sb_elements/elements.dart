@@ -37,7 +37,8 @@ Color _contColor(bool isP2){
 
 void _endTurn() {
   final gameStateNotifier = ref.read(gameStateProvider.notifier);
-  gameStateNotifier.endTurn(widget.isP2 ? 2 : 1, pendingPoints);
+  final turnEnded = gameStateNotifier.endTurn(widget.isP2 ? 2 : 1, pendingPoints);
+  if (turnEnded){
   setState(() {
     pendingPoints = 0;
   });
@@ -70,6 +71,7 @@ void _endTurn() {
       // ) ,
     ),
   );
+  }
 }
 
   @override
@@ -156,9 +158,7 @@ void _endTurn() {
             child: Consumer(
               builder: (context, ref, child){
               return GestureDetector(
-                onTap: () {
-                  _endTurn();
-                },
+                onTap: isActive ? _endTurn : null,
                 child: Container(
                   color: _contColor(widget.isP2),
                   child: Column(

@@ -51,9 +51,9 @@ class GameStateNotifier extends StateNotifier<GameState> {
   GameStateNotifier(this.ref) : super(GameState());
 
 
-  void endTurn(int player, int points) {
+  bool endTurn(int player, int points) {
     if (state.currentPlayer != player) {
-      return;
+      return false;
     }
 
     List<int> newHistory;
@@ -84,5 +84,6 @@ class GameStateNotifier extends StateNotifier<GameState> {
     if (state.p1History.length == state.p2History.length) {
       state = state.copyWith(inningCount: state.inningCount + 1);
     }
+    return true;
   }
 }
