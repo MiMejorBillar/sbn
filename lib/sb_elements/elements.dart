@@ -79,6 +79,10 @@ void _endTurn() {
     final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
     final highRun = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2HighRun : state.p1HighRun));
     final average = history.isNotEmpty ? totalScore / history.length : 0.0;
+    final currentPlayer = ref.watch(gameStateProvider.select((state) => state.currentPlayer));
+    final activePlayerColor = currentPlayer == 1 ? const Color.fromARGB(255, 249, 246, 238) : Colors.amber;
+    final isActive = (widget.isP2 ? 2 : 1) == currentPlayer;
+    final activePlayerName = currentPlayer == 1? 'Marco Zanetti' : 'Dick Jaspers';
     
 
     return Container(
@@ -286,7 +290,9 @@ void _endTurn() {
                 ),
                 Container(
                   color: Colors.blueGrey,
-                  child: Row(
+                  width: 160,
+                  child: isActive 
+                  ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
@@ -317,9 +323,21 @@ void _endTurn() {
                             }
                           });
                         },
-                        child: Image.asset(widget.isP2 ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png'))
+                        child: Image.asset(widget.isP2 ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png', width: 60,)
+                      )
                     ],
+                  )
+                : Center(
+                  child: Text(
+                    '$activePlayerName \n is playing...',
+                    style: TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.bold,
+                      color: activePlayerColor,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
+                ),
                 )
               ],
             ),
