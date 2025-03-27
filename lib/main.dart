@@ -13,11 +13,62 @@ void main() {
   );
 }
 
-class ScreenGame extends ConsumerWidget {
+class ScreenGame extends ConsumerStatefulWidget {
   const ScreenGame({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ScreenGame> createState() => _ScreenGameState();
+}
+
+class _ScreenGameState extends ConsumerState<ScreenGame> {
+  bool _isSwapped = false;
+  bool _isBallColorSwapped = false;
+
+  void _swapScorecards() {
+    setState(() {
+      _isSwapped = !_isSwapped;
+    });
+  }
+
+  void _swapBallColors () {
+    setState(() {
+      _isBallColorSwapped = !_isBallColorSwapped;
+    });
+  }
+
+  void _showMatchEndDialog(BuildContext context, WidgetRef ref, String result){
+    final gameState = ref.read(gameStateProvider);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Match Ended'),
+        content: Text(
+          result == 'draw'
+              ? 'It\'s a draw!'
+              : result == 'P1'
+                  ? '${gameState.p1Name} wins!'
+                  : '${gameState.p2Name} wins!',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              ref.read(gameStateProvider.notifier).resetGame(
+                p1Handicap: 40,
+                p2Handicap: 40,
+                equalizingInnings: true,
+              );
+            },
+            child: const Text('New Game'),
+          )
+        ],
+      )
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.listen<String?>(gameStateProvider.select((state) => state.matchResult), (previous, next) {
       if (next != null && previous == null) {
         _showMatchEndDialog(context, ref, next);
@@ -28,6 +79,7 @@ class ScreenGame extends ConsumerWidget {
       backgroundColor: const Color.fromARGB(255, 36, 36, 36),
       side: const BorderSide(color: Color.fromARGB(255, 85, 85, 85), width: 2),
     );
+
     return MaterialApp(
       home: Scaffold(
         backgroundColor: const Color.fromARGB(255, 0, 61, 110),
@@ -38,31 +90,26 @@ class ScreenGame extends ConsumerWidget {
                 child:Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SizedBox(width: 8),
-                    Expanded(child: Scorecard()),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _isSwapped 
+                          ? Scorecard(isP2: true, isBallColorSwapped: _isBallColorSwapped) 
+                          : Scorecard(isP2: false, isBallColorSwapped: _isBallColorSwapped)
+                      ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           padding: EdgeInsets.all(8),
                           child: InningCounter()
-                          ),
-                        ElevatedButton(
-                          onPressed: (){
-                            ref.read(gameStateProvider.notifier).undo();
-                          } , 
-                          style: buttonStyle,
-                          child: Text(
-                            'Fix',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            )
-                          ),
+                        ),
                       ],
                     ),
-                    Expanded(child: Scorecard(isP2: true)),
+                    Expanded(
+                      child: _isSwapped 
+                      ? Scorecard(isP2: false, isBallColorSwapped: _isBallColorSwapped,) 
+                      : Scorecard(isP2: true, isBallColorSwapped: _isBallColorSwapped)
+                      ),
                     SizedBox(width: 8),
                   ],
                 )
@@ -88,51 +135,54 @@ class ScreenGame extends ConsumerWidget {
                   ),
                   ElevatedButton(
                     onPressed: (){
-                      ref.read(gameStateProvider.notifier).useExtension(); 
+                      ref.read(gameStateProvider.notifier).useExtension();
                     },
                     style: buttonStyle,
                     child: Text(
                       'Ext.',
                       style: TextStyle(
-                        color: Colors.white
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   )                                          
                 ]
               ),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.read(gameStateProvider.notifier).undo();
+                    },
+                    style: buttonStyle, 
+                    child: Text(
+                      'Fix',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold
+                      )
+                    )
+                  ),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      _swapScorecards();
+                    },
+                    style: buttonStyle,
+                    child: Icon(Icons.swap_horiz, color: Colors.white,),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _swapBallColors();
+                    },
+                    style: buttonStyle,
+                    child: Icon(Icons.swap_horizontal_circle, color: Colors.white,),
+                  ),
+                ],
+              )
             ],
           )
         )
-      )
-    );
-  }
-  void _showMatchEndDialog(BuildContext context, WidgetRef ref, String result){
-    final gameState = ref.read(gameStateProvider);
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Match Ended'),
-        content: Text(
-          result == 'draw'
-              ? 'It\'s a draw!'
-              : result == 'P1'
-                  ? '${gameState.p1Name} wins!'
-                  : '${gameState.p2Name}Dick Jaspers wins!',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              ref.read(gameStateProvider.notifier).resetGame(
-                p1Handicap: 40,
-                p2Handicap: 40,
-                equalizingInnings: true,
-              );
-            },
-            child: const Text('New Game'),
-          )
-        ],
       )
     );
   }

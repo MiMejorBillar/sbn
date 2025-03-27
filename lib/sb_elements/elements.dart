@@ -7,9 +7,11 @@ class Scorecard extends ConsumerStatefulWidget {
   const Scorecard ({
     super.key,
     this.isP2 = false,
+    this.isBallColorSwapped = false,
     });
   
   final bool isP2;
+  final bool isBallColorSwapped;
 
 
   @override
@@ -19,12 +21,10 @@ class Scorecard extends ConsumerStatefulWidget {
 class ScorecardState extends ConsumerState<Scorecard> {
 
 
-Color _contColor(bool isP2){
-  if (isP2 == false){
-    return Color.fromARGB(255, 249, 246, 238);
-  } else {
-    return Colors.amber;
-  }
+Color _contColor(bool isP2, bool isBallColorSwapped){
+
+  bool useYellowScheme = (isP2 && !isBallColorSwapped) || (!isP2 && isBallColorSwapped);
+  return useYellowScheme ? Colors.amber : const Color.fromARGB(255, 249, 246, 238);
 }
 
 void _endTurn() {
@@ -41,7 +41,7 @@ void _endTurn() {
           'Turn ended for $playerName', 
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: _contColor(widget.isP2),
+            color: _contColor(widget.isP2, widget.isBallColorSwapped),
             shadows:[
               Shadow(
                 color: Colors.black.withValues(alpha: 0.50),
@@ -82,9 +82,14 @@ void _endTurn() {
         final highRun = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2HighRun : state.p1HighRun));
         final average = history.isNotEmpty ? totalScore / history.length : 0.0;
         final currentPlayer = ref.watch(gameStateProvider.select((state) => state.currentPlayer));
-        final activePlayerColor = currentPlayer == 1 ? const Color.fromARGB(255, 249, 246, 238) : Colors.amber;
+        final activePlayerColor = _contColor(currentPlayer == 2, widget.isBallColorSwapped) ;
         final isActive = (widget.isP2 ? 2 : 1) == currentPlayer;
         final activePlayerName = currentPlayer == 1? gameState.p1Name : gameState.p2Name;
+
+        //Ball color changes
+        final bool showYellowBall = (widget.isP2 && !widget.isBallColorSwapped) || (!widget.isP2 && widget.isBallColorSwapped);
+        final String ballIcon = showYellowBall ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png';
+        final String headerIcon = widget.isP2 ? 'assets/icons/creeper.png' : 'assets/icons/trophy.png';
             
       return Container(
         decoration: BoxDecoration(
@@ -118,7 +123,7 @@ void _endTurn() {
                 children: [
                   Container(
                     child: Image.asset(
-                      widget.isP2 ? 'assets/icons/creeper.png' :  'assets/icons/trophy.png' ,
+                      headerIcon ,
                       width: 50,
                     )
                   ),
@@ -126,14 +131,37 @@ void _endTurn() {
                     child: Container(
                       alignment: Alignment.centerLeft,
                       height: 50,
-                      child: Text(
-                        '$playerName',
-                        style: TextStyle(
-                          fontSize: 26, 
-                          fontWeight: FontWeight.bold, 
-                          color: _contColor(widget.isP2)
+                      child: widget.isBallColorSwapped
+                        ? RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: playerName,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: _contColor(widget.isP2, widget.isBallColorSwapped),
+                                ),
+                              ),
+                              TextSpan(
+                                text: widget.isP2 ? ' (P2)' : ' (P1)',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                  color: _contColor(widget.isP2, widget.isBallColorSwapped),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        : Text(
+                          '$playerName',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: _contColor(widget.isP2, widget.isBallColorSwapped)
+                          ),
                         ),
-                      ),
                     ),
                   ),
                   Container(
@@ -145,7 +173,7 @@ void _endTurn() {
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold, 
-                        color: _contColor(widget.isP2)
+                        color: _contColor(widget.isP2,widget.isBallColorSwapped)
                       ),
                     ),
                   ),
@@ -159,7 +187,7 @@ void _endTurn() {
                 return GestureDetector(
                   onTap: isActive ? _endTurn : null,
                   child: Container(
-                    color: _contColor(widget.isP2),
+                    color: _contColor(widget.isP2,widget.isBallColorSwapped),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -245,13 +273,13 @@ void _endTurn() {
                             children: [
                               Text('Avg.',
                                   style: TextStyle(
-                                      fontSize: 16, color: _contColor(widget.isP2))),
+                                      fontSize: 16, color: _contColor(widget.isP2, widget.isBallColorSwapped))),
                               Text(
                                 average.toStringAsFixed(3),
                                 style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: _contColor(widget.isP2)),
+                                    color: _contColor(widget.isP2, widget.isBallColorSwapped)),
                               ),
                             ],
                           ),
@@ -273,13 +301,13 @@ void _endTurn() {
                             children: [
                               Text('H.R.',
                                   style: TextStyle(
-                                      fontSize: 16, color: _contColor(widget.isP2))),
+                                      fontSize: 16, color: _contColor(widget.isP2, widget.isBallColorSwapped))),
                               Text(
                                 '$highRun',
                                 style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: _contColor(widget.isP2)),
+                                    color: _contColor(widget.isP2, widget.isBallColorSwapped)),
                               ),
                             ],
                           ),
@@ -306,7 +334,7 @@ void _endTurn() {
                             child: Text(
                               '$pendingPoints',
                               style: TextStyle(
-                                color: _contColor(widget.isP2),
+                                color: _contColor(widget.isP2, widget.isBallColorSwapped),
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold
                               ),                                                                              
@@ -322,7 +350,7 @@ void _endTurn() {
                               }
                             });
                           },
-                          child: Image.asset(widget.isP2 ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png', width: 60,)
+                          child: Image.asset(ballIcon, width: 60,)
                         )
                       ],
                     )
@@ -558,7 +586,6 @@ class TimerBarState extends ConsumerState<TimerBar> {
   ref.listen<String?>(timerActionProvider, (previous,action){
     if(action == 'pause') pauseTimer();
     if(action == 'extend') resumeTimer();
-    if(action == 'reset') resetTimer();
     ref.read(timerActionProvider.notifier).state = null;
   });
 
