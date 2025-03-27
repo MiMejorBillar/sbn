@@ -94,294 +94,309 @@ void _endTurn() {
         final bool showYellowBall = (widget.isP2 && !widget.isBallColorSwapped) || (!widget.isP2 && widget.isBallColorSwapped);
         final String ballIcon = showYellowBall ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png';
         final String headerIcon = widget.isP2 ? 'assets/icons/creeper.png' : 'assets/icons/trophy.png';  
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(134, 0, 0, 0).withValues(alpha: 0.90),
-              spreadRadius: 2,
-              blurRadius: 5,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            // ICON NAME AND HANDICAP
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: const Color.fromARGB(255, 85, 85, 85),
-                    width: 8
-                  )
-                ),
-                color: const Color.fromARGB(255, 36, 36, 36),
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8)),
+      return Stack(
+        children: [
+          Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(134, 0, 0, 0).withValues(alpha: 0.90),
+                spreadRadius: 2,
+                blurRadius: 5,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Image.asset(
-                      headerIcon ,
-                      width: 50,
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              // ICON NAME AND HANDICAP
+              Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: const Color.fromARGB(255, 85, 85, 85),
+                      width: 8
                     )
                   ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      height: 50,
-                      child: widget.isBallColorSwapped
-                        ? RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: playerName,
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: _contColor(widget.isP2, widget.isBallColorSwapped),
-                                ),
-                              ),
-                              TextSpan(
-                                text: widget.isP2 ? ' (P2)' : ' (P1)',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.normal,
-                                  color: _contColor(widget.isP2, widget.isBallColorSwapped),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                        : Text(
-                          '$playerName',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: _contColor(widget.isP2, widget.isBallColorSwapped)
-                          ),
-                        ),
+                  color: const Color.fromARGB(255, 36, 36, 36),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: Image.asset(
+                        headerIcon ,
+                        width: 50,
+                      )
                     ),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    width: 50,
-                    decoration: BoxDecoration(),
-                    child: Text(
-                      '$handicap',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold, 
-                        color: _contColor(widget.isP2,widget.isBallColorSwapped)
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // SCORE AND EXTENSION
-            Expanded(
-              child: Consumer(
-                builder: (context, ref, child){
-                return GestureDetector(
-                  onTap: isActive ? _endTurn : null,
-                  child: Container(
-                    color: _contColor(widget.isP2,widget.isBallColorSwapped),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Stack(
-                          children: [
-                            Row(
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        height: 50,
+                        child: widget.isBallColorSwapped
+                          ? RichText(
+                            text: TextSpan(
                               children: [
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      '$totalScore',
-                                      style: const TextStyle(
-                                        fontSize: 80,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
+                                TextSpan(
+                                  text: playerName,
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: _contColor(widget.isP2, widget.isBallColorSwapped),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: widget.isP2 ? ' (P2)' : ' (P1)',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                    color: _contColor(widget.isP2, widget.isBallColorSwapped),
                                   ),
                                 ),
                               ],
                             ),
-                            Positioned.fill(
-                              child:Align(
-                                alignment: Alignment.bottomRight,
-                                child: 
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
-                                  children: List.generate(
-                                    extensions,
-                                    (index) => Container(
-                                      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                                      width: 32,
-                                      height: 12,
-                                      decoration: BoxDecoration(
-                                        color: index < usedExtensions ? Colors.grey : Colors.green,
-                                        borderRadius: BorderRadius.circular(5),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black,
-                                            spreadRadius: 0.4,
-                                            blurRadius: 1,
-                                          )
-                                        ]
-                                      )
+                          )
+                          : Text(
+                            '$playerName',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: _contColor(widget.isP2, widget.isBallColorSwapped)
+                            ),
+                          ),
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: 50,
+                      decoration: BoxDecoration(),
+                      child: Text(
+                        '$handicap',
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold, 
+                          color: _contColor(widget.isP2,widget.isBallColorSwapped)
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // SCORE AND EXTENSION
+              Expanded(
+                child: Consumer(
+                  builder: (context, ref, child){
+                  return GestureDetector(
+                    onTap: isActive ? _endTurn : null,
+                    child: Container(
+                      color: _contColor(widget.isP2,widget.isBallColorSwapped),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Stack(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        '$totalScore',
+                                        style: const TextStyle(
+                                          fontSize: 80,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
                                     ),
+                                  ),
+                                ],
+                              ),
+                              Positioned.fill(
+                                child:Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: 
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
+                                    children: List.generate(
+                                      extensions,
+                                      (index) => Container(
+                                        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                        width: 32,
+                                        height: 12,
+                                        decoration: BoxDecoration(
+                                          color: index < usedExtensions ? Colors.grey : Colors.green,
+                                          borderRadius: BorderRadius.circular(5),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black,
+                                              spreadRadius: 0.4,
+                                              blurRadius: 1,
+                                            )
+                                          ]
+                                        )
+                                      ),
+                                    )
                                   )
                                 )
                               )
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-                } 
-              ),
-            ),
-            // STATS AND COUNTER
-            Container(
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 36, 36, 36),
-                border: Border(
-                  top: BorderSide(
-                    color: const Color.fromARGB(255, 85, 85, 85),
-                    width: 8
-                  )
-                )
-              ),
-              height: 70,
-              // AVERAGE AND HIGH RUN
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child:Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          //AVERAGE
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Avg.',
-                                  style: TextStyle(
-                                      fontSize: 16, color: _contColor(widget.isP2, widget.isBallColorSwapped))),
-                              Text(
-                                average.toStringAsFixed(3),
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: _contColor(widget.isP2, widget.isBallColorSwapped)),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                right: BorderSide(
-                                  color: const Color.fromARGB(255, 85, 85, 85
-                                  ),
-                                  width: 2,
-                                )
-                              ),
-                            ),
-                          ),
-                          // HIGH RUN
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('H.R.',
-                                  style: TextStyle(
-                                      fontSize: 16, color: _contColor(widget.isP2, widget.isBallColorSwapped))),
-                              Text(
-                                '$highRun',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: _contColor(widget.isP2, widget.isBallColorSwapped)),
-                              ),
                             ],
                           ),
                         ],
                       ),
+                    ),
+                  );
+                  } 
+                ),
+              ),
+              // STATS AND COUNTER
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 36, 36, 36),
+                  border: Border(
+                    top: BorderSide(
+                      color: const Color.fromARGB(255, 85, 85, 85),
+                      width: 8
                     )
                   ),
-                  Container(
-                    color: Colors.blueGrey,
-                    width: 160,
-                    child: isActive 
-                    ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            if (totalScore + pendingPoints + 1 > handicap){
-                              ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Cannot add more points. You\'ve reached your handicap of $handicap'),
-                                          duration: Duration(seconds: 2),));
-                            } else {
-                              final newPendingPoints = pendingPoints + 1;
-                              ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints );
-                            }
-                          },
-                          child: Container(  
-                            color: Colors.transparent,
-                            alignment: Alignment.center,
-                            width: 100,
-                            child: Text(
-                              '$pendingPoints',
-                              style: TextStyle(
-                                color: _contColor(widget.isP2, widget.isBallColorSwapped),
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold
-                              ),                                                                              
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8))
+                ),
+                height: 70,
+                // AVERAGE AND HIGH RUN
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child:Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            //AVERAGE
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('Avg.',
+                                    style: TextStyle(
+                                        fontSize: 16, color: _contColor(widget.isP2, widget.isBallColorSwapped))),
+                                Text(
+                                  average.toStringAsFixed(3),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: _contColor(widget.isP2, widget.isBallColorSwapped)),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  right: BorderSide(
+                                    color: const Color.fromARGB(255, 85, 85, 85
+                                    ),
+                                    width: 2,
+                                  )
+                                ),
+                              ),
+                            ),
+                            // HIGH RUN
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('H.R.',
+                                    style: TextStyle(
+                                        fontSize: 16, color: _contColor(widget.isP2, widget.isBallColorSwapped))),
+                                Text(
+                                  '$highRun',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: _contColor(widget.isP2, widget.isBallColorSwapped)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ),
+                    Container(
+                      width: 160,
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(8))
+                      ),
+                      child: isActive 
+                      ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (totalScore + pendingPoints + 1 > handicap){
+                                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Cannot add more points. You\'ve reached your handicap of $handicap'),
+                                            duration: Duration(seconds: 2),));
+                              } else {
+                                final newPendingPoints = pendingPoints + 1;
+                                ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints );
+                              }
+                            },
+                            child: Container(  
+                              color: Colors.transparent,
+                              alignment: Alignment.center,
+                              width: 100,
+                              child: Text(
+                                '$pendingPoints',
+                                style: TextStyle(
+                                  color: _contColor(widget.isP2, widget.isBallColorSwapped),
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold
+                                ),                                                                              
+                              ),
                             ),
                           ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if(pendingPoints > 0) {
+                                  final newPendingPoints = pendingPoints - 1;
+                                  ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints);
+                                }
+                              });
+                            },
+                            child: Image.asset(ballIcon, width: 60,)
+                          )
+                        ],
+                      )
+                    : Center(
+                      child: Text(
+                        '$activePlayerName \n is playing...',
+                        style: TextStyle(
+                          fontSize: 18, 
+                          fontWeight: FontWeight.bold,
+                          color: activePlayerColor,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if(pendingPoints > 0) {
-                                final newPendingPoints = pendingPoints - 1;
-                                ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints);
-                              }
-                            });
-                          },
-                          child: Image.asset(ballIcon, width: 60,)
-                        )
-                      ],
-                    )
-                  : Center(
-                    child: Text(
-                      '$activePlayerName \n is playing...',
-                      style: TextStyle(
-                        fontSize: 18, 
-                        fontWeight: FontWeight.bold,
-                        color: activePlayerColor,
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],  
+            ],  
+          ),
         ),
+        if(!isActive)
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withAlpha(70),
+            borderRadius: BorderRadius.circular(8)
+          ),
+        )
+        ]
       );
     },
     );
