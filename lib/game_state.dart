@@ -135,6 +135,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
     } else {
       state = state.copyWith(p2PendingPoints: points);
     }
+    resetTimerController.add(true);
   }
 
   void useExtension() {
