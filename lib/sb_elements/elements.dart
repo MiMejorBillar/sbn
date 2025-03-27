@@ -90,12 +90,10 @@ void _endTurn() {
         final activePlayerColor = _contColor(currentPlayer == 2, widget.isBallColorSwapped) ;
         final isActive = (widget.isP2 ? 2 : 1) == currentPlayer;
         final activePlayerName = currentPlayer == 1? gameState.p1Name : gameState.p2Name;
-
         //Ball color changes
         final bool showYellowBall = (widget.isP2 && !widget.isBallColorSwapped) || (!widget.isP2 && widget.isBallColorSwapped);
         final String ballIcon = showYellowBall ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png';
-        final String headerIcon = widget.isP2 ? 'assets/icons/creeper.png' : 'assets/icons/trophy.png';
-            
+        final String headerIcon = widget.isP2 ? 'assets/icons/creeper.png' : 'assets/icons/trophy.png';  
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
@@ -329,8 +327,16 @@ void _endTurn() {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            final newPendingPoints = pendingPoints + 1;
-                            ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints );
+                            if (totalScore + pendingPoints + 1 > handicap){
+                              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Cannot add more points. You\'ve reached your handicap of $handicap'),
+                                          duration: Duration(seconds: 2),));
+                            } else {
+                              final newPendingPoints = pendingPoints + 1;
+                              ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints );
+                            }
                           },
                           child: Container(  
                             color: Colors.transparent,

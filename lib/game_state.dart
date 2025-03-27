@@ -213,7 +213,6 @@ class GameStateNotifier extends StateNotifier<GameState> {
     final p1Reached = state.p1TotalScore >= state.p1Handicap;
     final p2Reached = state.p2TotalScore >= state.p2Handicap;
     print('Check match end: P1 Score: ${state.p1TotalScore}/${state.p1Handicap}, P2 Score: ${state.p2TotalScore}/${state.p2Handicap}, Potential Winner: $potentialWinner, Current Player: ${state.currentPlayer}');
-
     //Allowed Equalizing innings
     if (state.equalizingInnings){
       //No one has potentially won yet
