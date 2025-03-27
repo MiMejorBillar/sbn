@@ -39,7 +39,7 @@ class ScreenGame extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(width: 8),
-                    Expanded(child: Scorecard(playerName: 'Marco Zanetti')),
+                    Expanded(child: Scorecard()),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -62,7 +62,7 @@ class ScreenGame extends ConsumerWidget {
                           ),
                       ],
                     ),
-                    Expanded(child: Scorecard(playerName: 'Dick Jaspers', isP2: true)),
+                    Expanded(child: Scorecard(isP2: true)),
                     SizedBox(width: 8),
                   ],
                 )
@@ -107,6 +107,7 @@ class ScreenGame extends ConsumerWidget {
     );
   }
   void _showMatchEndDialog(BuildContext context, WidgetRef ref, String result){
+    final gameState = ref.read(gameStateProvider);
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -116,8 +117,8 @@ class ScreenGame extends ConsumerWidget {
           result == 'draw'
               ? 'It\'s a draw!'
               : result == 'P1'
-                  ? 'Marco Zanetti wins!'
-                  : 'Dick Jaspers wins!',
+                  ? '${gameState.p1Name} wins!'
+                  : '${gameState.p2Name}Dick Jaspers wins!',
         ),
         actions: [
           TextButton(

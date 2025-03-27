@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nsb/riverpod/providers.dart';
 
 class GameState {
+  final String? p1Name;
+  final String? p2Name;
   final int currentPlayer;
   final List<int> p1History;
   final List<int> p2History;
@@ -22,6 +24,8 @@ class GameState {
   final String? matchResult;
 
   GameState({
+    this.p1Name = 'Player 1',
+    this.p2Name = 'Player 2',
     this.currentPlayer = 1,
     this.p1History = const [],
     this.p2History = const [],
@@ -43,6 +47,8 @@ class GameState {
   });
 
   GameState copyWith({
+    String? p1Name,
+    String? p2Name,
     int? currentPlayer,
     List<int>? p1History,
     List<int>? p2History,
@@ -63,6 +69,8 @@ class GameState {
     String? matchResult,
   }) {
     return GameState(
+      p1Name: p1Name ?? this.p1Name,
+      p2Name: p2Name ?? this.p2Name,
       currentPlayer: currentPlayer ?? this.currentPlayer,
       p1History: p1History ?? this.p1History,
       p2History: p2History ?? this.p2History,
@@ -90,8 +98,24 @@ class GameStateNotifier extends StateNotifier<GameState> {
   List<GameState> stateHistory = [];
   int? potentialWinner;
 
-  GameStateNotifier(this.ref, {int p1Handicap = 40, int p2Handicap = 40, int p1Extensions = 2, int p2Extensions = 2, bool equalizingInnings = true}) 
-  : super(GameState(p1Handicap: p1Handicap, p2Handicap: p2Handicap, p1Extensions: p1Extensions,p2Extensions: p2Extensions,equalizingInnings:equalizingInnings ));
+  GameStateNotifier(
+    this.ref, {
+      String p1Name = 'Player 1',
+      String p2Name = 'Player 2',
+      int p1Handicap = 40, 
+      int p2Handicap = 40, 
+      int p1Extensions = 2, 
+      int p2Extensions = 2, 
+      bool equalizingInnings = true
+  }) : super(GameState(
+        p1Name: p1Name,
+        p2Name: p2Name,
+        p1Handicap: p1Handicap, 
+        p2Handicap: p2Handicap, 
+        p1Extensions: p1Extensions,
+        p2Extensions: p2Extensions,
+        equalizingInnings:equalizingInnings 
+      ));
 
   void updatePendingPoints(int player, int points){
     if (player == 1) {
@@ -213,6 +237,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p1Handicap: p1Handicap ?? state.p1Handicap,
       p2Handicap: p2Handicap ?? state.p2Handicap,
       equalizingInnings: equalizingInnings ?? state.equalizingInnings,
+      p1Name: state.p1Name,
+      p2Name: state.p2Name,
     );
     resetTimerController.add(true);
   }

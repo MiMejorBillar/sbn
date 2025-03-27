@@ -6,11 +6,9 @@ import '../riverpod/providers.dart';
 class Scorecard extends ConsumerStatefulWidget {
   const Scorecard ({
     super.key,
-    this.playerName = 'Luis',
     this.isP2 = false,
     });
   
-  final String playerName;
   final bool isP2;
 
 
@@ -19,6 +17,7 @@ class Scorecard extends ConsumerStatefulWidget {
 }
 
 class ScorecardState extends ConsumerState<Scorecard> {
+
 
 Color _contColor(bool isP2){
   if (isP2 == false){
@@ -30,6 +29,8 @@ Color _contColor(bool isP2){
 
 void _endTurn() {
   final gameStateNotifier = ref.read(gameStateProvider.notifier);
+  final gameState = ref.read(gameStateProvider);
+  final playerName = widget.isP2 ? gameState.p2Name : gameState.p1Name;
   final turnEnded = gameStateNotifier.endTurn(widget.isP2 ? 2 : 1);
   if (turnEnded){
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -37,7 +38,7 @@ void _endTurn() {
     SnackBar(
       content: Center(
         child: Text(
-          'Turn ended for ${widget.playerName}', 
+          'Turn ended for $playerName', 
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: _contColor(widget.isP2),
@@ -71,6 +72,7 @@ void _endTurn() {
       builder: (context, ref, child) {
               //Existing Variables
         final gameState = ref.watch(gameStateProvider);
+        final playerName = widget.isP2 ? gameState.p2Name : gameState.p1Name;
         final handicap = widget.isP2 ? gameState.p2Handicap : gameState.p1Handicap;
         final extensions = widget.isP2 ? gameState.p2Extensions : gameState.p1Extensions;
         final usedExtensions = widget.isP2 ? gameState.p2UsedExtensions : gameState.p1UsedExtensions;
@@ -82,7 +84,7 @@ void _endTurn() {
         final currentPlayer = ref.watch(gameStateProvider.select((state) => state.currentPlayer));
         final activePlayerColor = currentPlayer == 1 ? const Color.fromARGB(255, 249, 246, 238) : Colors.amber;
         final isActive = (widget.isP2 ? 2 : 1) == currentPlayer;
-        final activePlayerName = currentPlayer == 1? 'Marco Zanetti' : 'Dick Jaspers';
+        final activePlayerName = currentPlayer == 1? gameState.p1Name : gameState.p2Name;
             
       return Container(
         decoration: BoxDecoration(
@@ -125,7 +127,7 @@ void _endTurn() {
                       alignment: Alignment.centerLeft,
                       height: 50,
                       child: Text(
-                        widget.playerName,
+                        '$playerName',
                         style: TextStyle(
                           fontSize: 26, 
                           fontWeight: FontWeight.bold, 
