@@ -6,7 +6,7 @@ import 'package:nsb/game_state.dart';
 // GAME STATE PROVIDER
 
 final gameStateProvider = StateNotifierProvider<GameStateNotifier, GameState>(
-  (ref) => GameStateNotifier(ref, p1Handicap: 20, p2Handicap: 30, equalizingInnings:true),
+  (ref) => GameStateNotifier(ref, p1Handicap: 45, p2Handicap: 30, p1Extensions: 2, p2Extensions: 5, equalizingInnings:true),
 );
 
 //Providers to signal resetTimer()

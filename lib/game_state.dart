@@ -14,6 +14,8 @@ class GameState {
   final int p2PendingPoints;
   final int p1Handicap;
   final int p2Handicap;
+  final int p1Extensions;
+  final int p2Extensions;
   final bool equalizingInnings;
   final String? matchResult;
 
@@ -30,6 +32,8 @@ class GameState {
     this.p2PendingPoints = 0,
     this.p1Handicap = 40,
     this.p2Handicap = 40,
+    this.p1Extensions = 2,
+    this.p2Extensions = 2,
     this.equalizingInnings = true,
     this.matchResult,
   });
@@ -47,6 +51,8 @@ class GameState {
     int? p2PendingPoints,
     int? p1Handicap,
     int? p2Handicap,
+    int? p1Extensions,
+    int? p2Extensions,
     bool? equalizingInnings,
     String? matchResult,
   }) {
@@ -63,6 +69,8 @@ class GameState {
       p2PendingPoints: p2PendingPoints ?? this.p2PendingPoints,
       p1Handicap: p1Handicap ?? this.p1Handicap,
       p2Handicap: p2Handicap ?? this.p2Handicap,
+      p1Extensions: p1Extensions ?? this.p1Extensions,
+      p2Extensions: p2Extensions ?? this.p2Extensions,
       equalizingInnings: equalizingInnings ?? this.equalizingInnings,
       matchResult: matchResult ?? this.matchResult,
     );
@@ -74,8 +82,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
   List<GameState> stateHistory = [];
   int? potentialWinner;
 
-  GameStateNotifier(this.ref, {int p1Handicap = 40, int p2Handicap = 40, bool equalizingInnings = true}) 
-  : super(GameState(p1Handicap: p1Handicap, p2Handicap: p2Handicap, equalizingInnings:equalizingInnings ));
+  GameStateNotifier(this.ref, {int p1Handicap = 40, int p2Handicap = 40, int p1Extensions = 2, int p2Extensions = 2, bool equalizingInnings = true}) 
+  : super(GameState(p1Handicap: p1Handicap, p2Handicap: p2Handicap, p1Extensions: p1Extensions,p2Extensions: p2Extensions,equalizingInnings:equalizingInnings ));
 
   void updatePendingPoints(int player, int points){
     if (player == 1) {

@@ -7,12 +7,10 @@ class Scorecard extends ConsumerStatefulWidget {
   const Scorecard ({
     super.key,
     this.playerName = 'Luis',
-    this.extensions = 2,
     this.isP2 = false,
     });
   
   final String playerName;
-  final int extensions;
   final bool isP2;
 
 
@@ -74,6 +72,7 @@ void _endTurn() {
               //Existing Variables
         final gameState = ref.watch(gameStateProvider);
         final handicap = widget.isP2 ? gameState.p2Handicap : gameState.p1Handicap;
+        final extensions = widget.isP2 ? gameState.p2Extensions : gameState.p1Extensions;
         final pendingPoints = widget.isP2 ? gameState.p2PendingPoints : gameState.p1PendingPoints;
         final history = ref.watch(gameStateProvider.select((state) => widget.isP2 ? state.p2History : state.p1History));
         final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
@@ -186,7 +185,7 @@ void _endTurn() {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
                                   children: List.generate(
-                                    widget.extensions,
+                                    extensions,
                                     (index) => Container(
                                       margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                                       width: 32,

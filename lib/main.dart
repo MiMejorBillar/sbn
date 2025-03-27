@@ -39,7 +39,7 @@ class ScreenGame extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(width: 8),
-                    Expanded(child: Scorecard(playerName: 'Marco Zanetti', extensions:5)),
+                    Expanded(child: Scorecard(playerName: 'Marco Zanetti')),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -62,7 +62,7 @@ class ScreenGame extends ConsumerWidget {
                           ),
                       ],
                     ),
-                    Expanded(child: Scorecard(playerName: 'Dick Jaspers', extensions: 5, isP2: true)),
+                    Expanded(child: Scorecard(playerName: 'Dick Jaspers', isP2: true)),
                     SizedBox(width: 8),
                   ],
                 )
