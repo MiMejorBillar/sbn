@@ -32,6 +32,11 @@ void _endTurn() {
   final gameState = ref.read(gameStateProvider);
   final playerName = widget.isP2 ? gameState.p2Name : gameState.p1Name;
   final turnEnded = gameStateNotifier.endTurn(widget.isP2 ? 2 : 1);
+  if(turnEnded && gameState.currentPlayer == 1 && !gameState.isFirstTurnTaken){
+    final p1BallColor = widget.isBallColorSwapped ? 'yellow' : 'white';
+    final p2BallColor = widget.isBallColorSwapped ? 'white' : 'yellow';
+    gameStateNotifier.setBallColors(p1BallColor, p2BallColor);
+  }
   if (turnEnded){
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
   ScaffoldMessenger.of(context).showSnackBar(

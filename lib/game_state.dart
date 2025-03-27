@@ -21,6 +21,8 @@ class GameState {
   final int p2Extensions;
   final int p1UsedExtensions;
   final int p2UsedExtensions;
+  final String p1BallColor;
+  final String p2BallColor;
   final bool equalizingInnings;
   final String? matchResult;
 
@@ -44,6 +46,8 @@ class GameState {
     this.p2Extensions = 2,
     this.p1UsedExtensions = 0,
     this.p2UsedExtensions = 0,
+    this.p1BallColor = 'white',
+    this.p2BallColor = 'yellow',
     this.equalizingInnings = true,
     this.matchResult,
   });
@@ -68,6 +72,8 @@ class GameState {
     int? p2Extensions,
     int? p1UsedExtensions,
     int? p2UsedExtensions,
+    String? p1BallColor,
+    String? p2BallColor,
     bool? equalizingInnings,
     String? matchResult,
   }) {
@@ -91,6 +97,8 @@ class GameState {
       p2Extensions: p2Extensions ?? this.p2Extensions,
       p1UsedExtensions: p1UsedExtensions ?? this.p1UsedExtensions,
       p2UsedExtensions: p2UsedExtensions ?? this.p2UsedExtensions,
+      p1BallColor: p1BallColor ?? this.p1BallColor,
+      p2BallColor: p2BallColor ?? this.p2BallColor,
       equalizingInnings: equalizingInnings ?? this.equalizingInnings,
       matchResult: matchResult ?? this.matchResult,
     );
@@ -130,7 +138,6 @@ class GameStateNotifier extends StateNotifier<GameState> {
   }
 
   void useExtension() {
-
     if(state.currentPlayer == 1 && state.p1UsedExtensions < state.p1Extensions) {
       state = state.copyWith(p1UsedExtensions: state.p1UsedExtensions + 1);
       resetTimerController.add(true);
@@ -139,7 +146,9 @@ class GameStateNotifier extends StateNotifier<GameState> {
       resetTimerController.add(true);
     }      
   }
-
+  void setBallColors(String p1BallColor, String p2BallColor){
+    state = state.copyWith(p1BallColor: p1BallColor, p2BallColor: p2BallColor);
+  }
 
   bool endTurn(int player) {
     if (state.currentPlayer != player) {
@@ -189,9 +198,13 @@ class GameStateNotifier extends StateNotifier<GameState> {
   void undo() {
     if (stateHistory.isNotEmpty) {
       state = stateHistory.removeLast();
-      
+
       if (state.p1History.isEmpty && state.p2History.isEmpty) {
-        state = state.copyWith(isFirstTurnTaken: false);
+        state = state.copyWith(
+          isFirstTurnTaken: false,
+          p1BallColor: 'white',
+          p2BallColor: 'yellow'
+          );
       }
     }
   }
@@ -235,6 +248,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
   }
   void _endMatch(String result){
     print('Match ended with result: $result');
+    print('Player 1: ${state.p1Name} used ${state.p1BallColor} ball');
+    print('Player 2: ${state.p2Name} used ${state.p2BallColor} ball');
     state = state.copyWith(matchResult: result);
     potentialWinner = null;
   }
