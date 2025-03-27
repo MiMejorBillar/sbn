@@ -31,9 +31,12 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
   }
 
   void _swapBallColors () {
+    final gameState = ref.read(gameStateProvider);
+    if(!gameState.isFirstTurnTaken){
     setState(() {
       _isBallColorSwapped = !_isBallColorSwapped;
     });
+    }
   }
 
   void _showMatchEndDialog(BuildContext context, WidgetRef ref, String result){

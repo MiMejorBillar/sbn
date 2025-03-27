@@ -8,6 +8,7 @@ class GameState {
   final List<int> p1History;
   final List<int> p2History;
   final int inningCount;
+  final bool isFirstTurnTaken;
   final int p1TotalScore;
   final int p2TotalScore;
   final int p1HighRun;
@@ -30,6 +31,7 @@ class GameState {
     this.p1History = const [],
     this.p2History = const [],
     this.inningCount = 1,
+    this.isFirstTurnTaken = false,
     this.p1TotalScore = 0,
     this.p2TotalScore = 0,
     this.p1HighRun = 0,
@@ -53,6 +55,7 @@ class GameState {
     List<int>? p1History,
     List<int>? p2History,
     int? inningCount,
+    bool? isFirstTurnTaken,
     int? p1TotalScore,
     int? p2TotalScore,
     int? p1HighRun,
@@ -75,6 +78,7 @@ class GameState {
       p1History: p1History ?? this.p1History,
       p2History: p2History ?? this.p2History,
       inningCount: inningCount ?? this.inningCount,
+      isFirstTurnTaken: isFirstTurnTaken ?? this.isFirstTurnTaken,
       p1TotalScore: p1TotalScore ?? this.p1TotalScore,
       p2TotalScore: p2TotalScore ?? this.p2TotalScore,
       p1HighRun: p1HighRun ?? this.p1HighRun,
@@ -170,6 +174,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p2HighRun: player == 2 ? newHighRun : state.p2HighRun,
       p1PendingPoints: player == 1 ? 0 : state.p1PendingPoints,
       p2PendingPoints: player == 2 ? 0 : state.p2PendingPoints,
+      isFirstTurnTaken: state.isFirstTurnTaken || player == 1,
     );
     resetTimerController.add(true);
 
@@ -184,6 +189,10 @@ class GameStateNotifier extends StateNotifier<GameState> {
   void undo() {
     if (stateHistory.isNotEmpty) {
       state = stateHistory.removeLast();
+      
+      if (state.p1History.isEmpty && state.p2History.isEmpty) {
+        state = state.copyWith(isFirstTurnTaken: false);
+      }
     }
   }
 
