@@ -16,6 +16,8 @@ class GameState {
   final int p2Handicap;
   final int p1Extensions;
   final int p2Extensions;
+  final int p1UsedExtensions;
+  final int p2UsedExtensions;
   final bool equalizingInnings;
   final String? matchResult;
 
@@ -34,6 +36,8 @@ class GameState {
     this.p2Handicap = 40,
     this.p1Extensions = 2,
     this.p2Extensions = 2,
+    this.p1UsedExtensions = 0,
+    this.p2UsedExtensions = 0,
     this.equalizingInnings = true,
     this.matchResult,
   });
@@ -53,6 +57,8 @@ class GameState {
     int? p2Handicap,
     int? p1Extensions,
     int? p2Extensions,
+    int? p1UsedExtensions,
+    int? p2UsedExtensions,
     bool? equalizingInnings,
     String? matchResult,
   }) {
@@ -71,6 +77,8 @@ class GameState {
       p2Handicap: p2Handicap ?? this.p2Handicap,
       p1Extensions: p1Extensions ?? this.p1Extensions,
       p2Extensions: p2Extensions ?? this.p2Extensions,
+      p1UsedExtensions: p1UsedExtensions ?? this.p1UsedExtensions,
+      p2UsedExtensions: p2UsedExtensions ?? this.p2UsedExtensions,
       equalizingInnings: equalizingInnings ?? this.equalizingInnings,
       matchResult: matchResult ?? this.matchResult,
     );
@@ -91,6 +99,17 @@ class GameStateNotifier extends StateNotifier<GameState> {
     } else {
       state = state.copyWith(p2PendingPoints: points);
     }
+  }
+
+  void useExtension() {
+
+    if(state.currentPlayer == 1 && state.p1UsedExtensions < state.p1Extensions) {
+      state = state.copyWith(p1UsedExtensions: state.p1UsedExtensions + 1);
+      resetTimerController.add(true);
+    } else if (state.currentPlayer == 2 && state.p2UsedExtensions < state.p2Extensions){
+      state = state.copyWith(p2UsedExtensions: state.p2UsedExtensions + 1);
+      resetTimerController.add(true);
+    }      
   }
 
 

@@ -73,6 +73,7 @@ void _endTurn() {
         final gameState = ref.watch(gameStateProvider);
         final handicap = widget.isP2 ? gameState.p2Handicap : gameState.p1Handicap;
         final extensions = widget.isP2 ? gameState.p2Extensions : gameState.p1Extensions;
+        final usedExtensions = widget.isP2 ? gameState.p2UsedExtensions : gameState.p1UsedExtensions;
         final pendingPoints = widget.isP2 ? gameState.p2PendingPoints : gameState.p1PendingPoints;
         final history = ref.watch(gameStateProvider.select((state) => widget.isP2 ? state.p2History : state.p1History));
         final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
@@ -191,7 +192,7 @@ void _endTurn() {
                                       width: 32,
                                       height: 12,
                                       decoration: BoxDecoration(
-                                        color: Colors.green,
+                                        color: index < usedExtensions ? Colors.grey : Colors.green,
                                         borderRadius: BorderRadius.circular(5),
                                         boxShadow: [
                                           BoxShadow(
@@ -554,7 +555,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
   });
   ref.listen<String?>(timerActionProvider, (previous,action){
     if(action == 'pause') pauseTimer();
-    if(action == 'resume') resumeTimer();
+    if(action == 'extend') resumeTimer();
     if(action == 'reset') resetTimer();
     ref.read(timerActionProvider.notifier).state = null;
   });

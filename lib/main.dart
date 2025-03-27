@@ -88,10 +88,15 @@ class ScreenGame extends ConsumerWidget {
                   ),
                   ElevatedButton(
                     onPressed: (){
-                      ref.read(timerActionProvider.notifier).state = 'reset'; 
+                      ref.read(gameStateProvider.notifier).useExtension(); 
                     },
                     style: buttonStyle,
-                    child: Icon(Icons.loop,color: Colors.white,),
+                    child: Text(
+                      'Ext.',
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
+                    ),
                   )                                          
                 ]
               ),
