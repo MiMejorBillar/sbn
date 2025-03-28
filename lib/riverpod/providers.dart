@@ -35,7 +35,8 @@ final timerActionProvider = StateProvider<String?> ((ref) => null);
 // PLAYER MANAGEMENT ////////////
 class Player {
   final String name;
-  Player(this.name);
+  final int handicap;
+  Player({required this.name, required this.handicap});
 }
 
 final playersProvider = StateNotifierProvider<PlayersNotifier, List<Player>>((ref) {
@@ -45,8 +46,8 @@ final playersProvider = StateNotifierProvider<PlayersNotifier, List<Player>>((re
 class PlayersNotifier extends StateNotifier<List<Player>> {
   PlayersNotifier() : super ([]);
 
-  void addPlayer(String name) {
-    state = [...state, Player(name)];
+  void addPlayer(Player player) {
+    state = [...state, player];
   }
 
   void removePlayer(String name) {

@@ -12,6 +12,8 @@ class PlayersSelectionDialog extends ConsumerStatefulWidget {
 class _PlayersSelectionDialogState extends ConsumerState<PlayersSelectionDialog> {
   String? selectedP1;
   String? selectedP2;
+  int? selectedHandicapP1;
+  int? selectedHandicapP2;
   bool equalizingInnings = true;
   int selectedDuration = 40;
 
@@ -46,12 +48,13 @@ class _PlayersSelectionDialogState extends ConsumerState<PlayersSelectionDialog>
               items: players
                   .map((player) => DropdownMenuItem(
                         value: player.name,
-                        child: Text(player.name),
+                        child: Text('${player.name} (handicap : ${player.handicap})'),
                   ))
                   .toList(),
               onChanged: (value) {
                 setState(() {
                   selectedP1 = value;
+                  selectedHandicapP1 = players.firstWhere((p) => p.name == value).handicap;
                 });
               },
             ),
@@ -62,12 +65,13 @@ class _PlayersSelectionDialogState extends ConsumerState<PlayersSelectionDialog>
               items: players
                   .map((player) => DropdownMenuItem(
                         value: player.name,
-                        child: Text(player.name),
+                        child: Text('${player.name} (handicap : ${player.handicap})'),
                   ))
                   .toList(),
               onChanged: (value) {
                 setState(() {
                   selectedP2 = value;
+                  selectedHandicapP2 = players.firstWhere((p) => p.name == value).handicap;
                 });
               },
             ),
@@ -111,6 +115,8 @@ class _PlayersSelectionDialogState extends ConsumerState<PlayersSelectionDialog>
                       ref.read(gameStateProvider.notifier).resetGame(
                         p1Name: selectedP1,
                         p2Name: selectedP2,
+                        p1Handicap: selectedHandicapP1,
+                        p2Handicap: selectedHandicapP2,
                         equalizingInnings: equalizingInnings,
                         timerDuration: selectedDuration
                       );
