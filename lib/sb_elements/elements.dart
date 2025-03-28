@@ -451,6 +451,85 @@ class TimerBarState extends ConsumerState<TimerBar> {
   late int remainingSeconds;
   Timer? myTimer;
   bool isPaused = false;
+  bool isResetting = false;
+
+  @override
+  Widget build(BuildContext context) {
+  ref.listen(resetTimerProvider, (previous, next){
+    if(next is AsyncData<bool>){
+      final shouldReset = next.value;
+      if(shouldReset){
+        resetTimer();
+      }
+    }
+  });
+  ref.listen<String?>(timerActionProvider, (previous,action){
+    if(action == 'pause') {
+      pauseTimer();
+    } else if (action == 'resume') {
+      resumeTimer();
+    } else if (action == 'counterReset') {
+      counterResetTimer();
+    }
+    ref.read(timerActionProvider.notifier).state = null;
+  });
+
+
+    print('Building with remainingSeconds: $remainingSeconds');
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const double paddingTimer = 8.0;
+        
+        return Padding(
+          padding: const EdgeInsets.all(paddingTimer),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+              boxShadow: [BoxShadow(
+                color: Colors.black,
+                spreadRadius: 2,
+                blurRadius: 5,
+              )]
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: List.generate(widget.duration, (index) {
+                      final isActive = index >= (widget.duration - remainingSeconds);
+                      final color = _getSegmentColor(index, widget.duration, remainingSeconds, isActive);
+                      return Expanded(
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds:800),
+                          height: 40,
+                          decoration: BoxDecoration(
+                            border : Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1),
+                            color: color
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                SizedBox(
+                  width: 25.0,
+                  child: Text(
+                    '$remainingSeconds',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: _getTextColor(widget.duration,remainingSeconds, isPaused),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -461,6 +540,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
 
 
   void startTimer(){
+    myTimer?.cancel();
     myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingSeconds > 0 && !isPaused){
         setState(() {
@@ -475,17 +555,13 @@ class TimerBarState extends ConsumerState<TimerBar> {
 
   void pauseTimer(){
     if (myTimer?.isActive ?? false) {
-      print('Pausing timer');
       isPaused = true;
       myTimer?.cancel();
-    } else {
-      print('Timer is not active or already paused');
     }
   }
 
   void resumeTimer(){
     if(isPaused && remainingSeconds > 0) {
-      print('Resuming timer');
       isPaused = false;
       myTimer?.cancel();
       myTimer = Timer.periodic(const Duration(seconds:1), (timer) {
@@ -497,8 +573,6 @@ class TimerBarState extends ConsumerState<TimerBar> {
           timer.cancel();
         }
       });
-    } else {
-      print('Cannot resume: not paused or timer finished');
     }
   }
 
@@ -509,6 +583,20 @@ class TimerBarState extends ConsumerState<TimerBar> {
       isPaused = false;
     });
     startTimer();
+  }
+
+  void counterResetTimer(){
+    if(isResetting) return;
+    isResetting = true;
+    myTimer?.cancel();
+    setState(() {
+      remainingSeconds = widget.duration;
+      isPaused = false;
+    });
+    Future.delayed(Duration(seconds: 3), (){
+      startTimer();
+      isResetting = false;
+    });
   }
 
   @override
@@ -595,78 +683,5 @@ class TimerBarState extends ConsumerState<TimerBar> {
     }
 
     return textColor;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-  ref.listen(resetTimerProvider, (previous, next){
-    if(next is AsyncData<bool>){
-      final shouldReset = next.value;
-      if(shouldReset){
-        resetTimer();
-      }
-    }
-  });
-  ref.listen<String?>(timerActionProvider, (previous,action){
-    if(action == 'pause') pauseTimer();
-    if(action == 'resume') resumeTimer();
-    ref.read(timerActionProvider.notifier).state = null;
-  });
-
-
-    print('Building with remainingSeconds: $remainingSeconds');
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const double paddingTimer = 8.0;
-        
-        return Padding(
-          padding: const EdgeInsets.all(paddingTimer),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black,
-              boxShadow: [BoxShadow(
-                color: Colors.black,
-                spreadRadius: 2,
-                blurRadius: 5,
-              )]
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Row(
-                    children: List.generate(widget.duration, (index) {
-                      final isActive = index >= (widget.duration - remainingSeconds);
-                      final color = _getSegmentColor(index, widget.duration, remainingSeconds, isActive);
-                      return Expanded(
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds:800),
-                          height: 40,
-                          decoration: BoxDecoration(
-                            border : Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1),
-                            color: color
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-                SizedBox(
-                  width: 25.0,
-                  child: Text(
-                    '$remainingSeconds',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: _getTextColor(widget.duration,remainingSeconds, isPaused),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 }

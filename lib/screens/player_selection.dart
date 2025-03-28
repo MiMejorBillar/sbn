@@ -112,7 +112,5 @@ class _PlayersSelectionDialogState extends ConsumerState<PlayersSelectionDialog>
         ),
       )
     );
-
-
   }
 }

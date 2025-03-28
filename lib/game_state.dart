@@ -138,7 +138,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
     } else {
       state = state.copyWith(p2PendingPoints: points);
     }
-    resetTimerController.add(true);
+    ref.read(timerActionProvider.notifier).state = 'counterReset';
   }
 
   void useExtension() {
@@ -189,7 +189,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p2PendingPoints: player == 2 ? 0 : state.p2PendingPoints,
       isFirstTurnTaken: state.isFirstTurnTaken || player == 1,
     );
-    resetTimerController.add(true);
+    ref.read(timerActionProvider.notifier).state = 'counterReset';
 
     if (state.p1History.length == state.p2History.length) {
       state = state.copyWith(inningCount: state.inningCount + 1);
