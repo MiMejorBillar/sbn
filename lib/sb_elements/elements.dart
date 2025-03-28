@@ -85,7 +85,7 @@ void _endTurn() {
         final history = ref.watch(gameStateProvider.select((state) => widget.isP2 ? state.p2History : state.p1History));
         final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
         final highRun = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2HighRun : state.p1HighRun));
-        final average = history.isNotEmpty ? totalScore / history.length : 0.0;
+        final average = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2Average : state.p1Average));
         final currentPlayer = ref.watch(gameStateProvider.select((state) => state.currentPlayer));
         final activePlayerColor = _contColor(currentPlayer == 2, widget.isBallColorSwapped) ;
         final isActive = (widget.isP2 ? 2 : 1) == currentPlayer;
@@ -611,7 +611,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
   });
   ref.listen<String?>(timerActionProvider, (previous,action){
     if(action == 'pause') pauseTimer();
-    if(action == 'extend') resumeTimer();
+    if(action == 'resume') resumeTimer();
     ref.read(timerActionProvider.notifier).state = null;
   });
 
@@ -619,13 +619,18 @@ class TimerBarState extends ConsumerState<TimerBar> {
     print('Building with remainingSeconds: $remainingSeconds');
     return LayoutBuilder(
       builder: (context, constraints) {
-        const double paddingHorizontal = 8.0;
+        const double paddingTimer = 8.0;
         
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal),
+          padding: const EdgeInsets.all(paddingTimer),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.black,
+              boxShadow: [BoxShadow(
+                color: Colors.black,
+                spreadRadius: 2,
+                blurRadius: 5,
+              )]
             ),
             child: Row(
               children: [
@@ -635,7 +640,8 @@ class TimerBarState extends ConsumerState<TimerBar> {
                       final isActive = index >= (widget.duration - remainingSeconds);
                       final color = _getSegmentColor(index, widget.duration, remainingSeconds, isActive);
                       return Expanded(
-                        child: Container(
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds:800),
                           height: 40,
                           decoration: BoxDecoration(
                             border : Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1),

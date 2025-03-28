@@ -36,6 +36,14 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
     setState(() {
       _isBallColorSwapped = !_isBallColorSwapped;
     });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Ball colors can only be swapped before the first turn'
+          )
+        )
+      );
     }
   }
 
@@ -83,8 +91,7 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
       side: const BorderSide(color: Color.fromARGB(255, 85, 85, 85), width: 2),
     );
 
-    return MaterialApp(
-      home: Scaffold(
+    return  Scaffold(
         backgroundColor: const Color.fromARGB(255, 0, 61, 110),
         body: SafeArea(
           child: Column(
@@ -127,25 +134,40 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                       ref.read(timerActionProvider.notifier).state = 'pause';
                     },
                     style: buttonStyle,
-                    child: Icon(Icons.pause, color: Colors.white,),                    
+                    child: Tooltip(
+                      message: 'Pause timer',
+                      child: Icon(
+                        Icons.pause, 
+                        color: Colors.white,
+                      ),
+                    ),                    
                   ),
                   ElevatedButton(
                     onPressed: (){
                       ref.read(timerActionProvider.notifier).state = 'resume'; 
                     },
                     style: buttonStyle,
-                    child: Icon(Icons.play_arrow,color: Colors.white,),
+                    child: Tooltip(
+                      message: 'Resume timer',
+                      child: Icon(
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        ),
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: (){
                       ref.read(gameStateProvider.notifier).useExtension();
                     },
                     style: buttonStyle,
-                    child: Text(
-                      'Ext.',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    child: Tooltip(
+                      message: 'Call an extension',
+                      child: Text(
+                        'Ext.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   )                                          
@@ -158,12 +180,15 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                       ref.read(gameStateProvider.notifier).undo();
                     },
                     style: buttonStyle, 
-                    child: Text(
-                      'Fix',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold
-                      )
+                    child: Tooltip(
+                      message: 'Fix a previous inning',
+                      child: Text(
+                        'Fix',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold
+                        )
+                      ),
                     )
                   ),
 
@@ -172,21 +197,32 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                       _swapScorecards();
                     },
                     style: buttonStyle,
-                    child: Icon(Icons.swap_horiz, color: Colors.white,),
+                    child: Tooltip(
+                      message: 'Swap cards position',
+                      child: Icon(
+                        Icons.swap_horiz, 
+                        color: Colors.white,
+                        ),
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       _swapBallColors();
                     },
                     style: buttonStyle,
-                    child: Icon(Icons.swap_horizontal_circle, color: Colors.white,),
+                    child: Tooltip(
+                      message: 'Swap ball colors',
+                      child: Icon(
+                        Icons.swap_horizontal_circle, 
+                        color: Colors.white,
+                        ),
+                    ),
                   ),
                 ],
               )
             ],
           )
         )
-      )
-    );
+      );
   }
 }

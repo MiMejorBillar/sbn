@@ -26,6 +26,9 @@ class GameState {
   final bool equalizingInnings;
   final String? matchResult;
 
+  double get p1Average => p1History.isEmpty ? 0.0 : p1TotalScore / p1History.length;
+  double get p2Average => p2History.isEmpty ? 0.0 : p2TotalScore / p2History.length;
+
   GameState({
     this.p1Name = 'Player 1',
     this.p2Name = 'Player 2',
