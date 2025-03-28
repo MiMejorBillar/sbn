@@ -138,7 +138,7 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
               Row(
                 children:[
                   Expanded(
-                    child: TimerBar(duration: 40)
+                    child: TimerBar()
                   ),
                   ElevatedButton(
                     onPressed: () {

@@ -434,10 +434,8 @@ class InningCounter extends ConsumerWidget {
 }
 
 class TimerBar extends ConsumerStatefulWidget {
-  final int duration;
   const TimerBar ({
     super.key,
-    this.duration = 40,
   });
 
 
@@ -455,24 +453,28 @@ class TimerBarState extends ConsumerState<TimerBar> {
 
   @override
   Widget build(BuildContext context) {
-  ref.listen(resetTimerProvider, (previous, next){
-    if(next is AsyncData<bool>){
-      final shouldReset = next.value;
-      if(shouldReset){
-        resetTimer();
+
+    final duration = ref.watch(gameStateProvider).timerDuration;
+
+    ref.listen(resetTimerProvider, (previous, next){
+      if(next is AsyncData<bool>){
+        final shouldReset = next.value;
+        if(shouldReset){
+          resetTimer();
+        }
       }
-    }
-  });
-  ref.listen<String?>(timerActionProvider, (previous,action){
-    if(action == 'pause') {
-      pauseTimer();
-    } else if (action == 'resume') {
-      resumeTimer();
-    } else if (action == 'counterReset') {
-      counterResetTimer();
-    }
-    ref.read(timerActionProvider.notifier).state = null;
-  });
+    });
+    
+    ref.listen<String?>(timerActionProvider, (previous,action){
+      if(action == 'pause') {
+        pauseTimer();
+      } else if (action == 'resume') {
+        resumeTimer();
+      } else if (action == 'counterReset') {
+        counterResetTimer();
+      }
+      ref.read(timerActionProvider.notifier).state = null;
+    });
 
 
     print('Building with remainingSeconds: $remainingSeconds');
@@ -495,9 +497,9 @@ class TimerBarState extends ConsumerState<TimerBar> {
               children: [
                 Expanded(
                   child: Row(
-                    children: List.generate(widget.duration, (index) {
-                      final isActive = index >= (widget.duration - remainingSeconds);
-                      final color = _getSegmentColor(index, widget.duration, remainingSeconds, isActive);
+                    children: List.generate(duration, (index) {
+                      final isActive = index >= (duration - remainingSeconds);
+                      final color = _getSegmentColor(index, duration, remainingSeconds, isActive);
                       return Expanded(
                         child: AnimatedContainer(
                           duration: Duration(milliseconds:800),
@@ -518,7 +520,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: _getTextColor(widget.duration,remainingSeconds, isPaused),
+                      color: _getTextColor(duration,remainingSeconds, isPaused),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -534,7 +536,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
   @override
   void initState() {
     super.initState();
-    remainingSeconds = widget.duration;
+    remainingSeconds = ref.read(gameStateProvider).timerDuration;
     startTimer();
   }
 
@@ -579,7 +581,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
   void resetTimer(){
     myTimer?.cancel();
     setState(() {
-      remainingSeconds = widget.duration;
+      remainingSeconds = ref.read(gameStateProvider).timerDuration;
       isPaused = false;
     });
     startTimer();
@@ -590,7 +592,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
     isResetting = true;
     myTimer?.cancel();
     setState(() {
-      remainingSeconds = widget.duration;
+      remainingSeconds = ref.read(gameStateProvider).timerDuration;
       isPaused = false;
     });
     Future.delayed(Duration(seconds: 3), (){

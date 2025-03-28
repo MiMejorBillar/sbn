@@ -14,7 +14,8 @@ final gameStateProvider = StateNotifierProvider<GameStateNotifier, GameState>(
     p2Handicap: 20, 
     p1Extensions: 2, 
     p2Extensions: 2, 
-    equalizingInnings:false
+    equalizingInnings:false,
+    timerDuration: 40,
   ),
 );
 

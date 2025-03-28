@@ -12,7 +12,10 @@ class PlayersSelectionDialog extends ConsumerStatefulWidget {
 class _PlayersSelectionDialogState extends ConsumerState<PlayersSelectionDialog> {
   String? selectedP1;
   String? selectedP2;
-  bool equalizingInnings = true; 
+  bool equalizingInnings = true;
+  int selectedDuration = 40;
+
+  final List<int> durationOptions = [25, 30, 40]; 
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +71,21 @@ class _PlayersSelectionDialogState extends ConsumerState<PlayersSelectionDialog>
                 });
               },
             ),
+            DropdownButtonFormField<int>(
+              decoration: const InputDecoration(labelText: 'Timer Duration'),
+              value: selectedDuration,
+              items: durationOptions
+                  .map((duration) => DropdownMenuItem(
+                        value: duration,
+                        child: Text('$duration'),
+                  ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedDuration = value!;
+                });
+              },
+            ),            
             const SizedBox(height: 16,),
             SwitchListTile(
               title: const Text('Equalizing Innings'),
@@ -94,6 +112,7 @@ class _PlayersSelectionDialogState extends ConsumerState<PlayersSelectionDialog>
                         p1Name: selectedP1,
                         p2Name: selectedP2,
                         equalizingInnings: equalizingInnings,
+                        timerDuration: selectedDuration
                       );
                       Navigator.of(context).pop(true);
                     } else {

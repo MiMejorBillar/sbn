@@ -24,6 +24,7 @@ class GameState {
   final String p1BallColor;
   final String p2BallColor;
   final bool equalizingInnings;
+  final int timerDuration;
   final String? matchResult;
 
   double get p1Average => p1History.isEmpty ? 0.0 : p1TotalScore / p1History.length;
@@ -52,6 +53,7 @@ class GameState {
     this.p1BallColor = 'white',
     this.p2BallColor = 'yellow',
     this.equalizingInnings = true,
+    this.timerDuration = 40,
     this.matchResult,
   });
 
@@ -78,6 +80,7 @@ class GameState {
     String? p1BallColor,
     String? p2BallColor,
     bool? equalizingInnings,
+    int? timerDuration,
     String? matchResult,
   }) {
     return GameState(
@@ -103,6 +106,7 @@ class GameState {
       p1BallColor: p1BallColor ?? this.p1BallColor,
       p2BallColor: p2BallColor ?? this.p2BallColor,
       equalizingInnings: equalizingInnings ?? this.equalizingInnings,
+      timerDuration: timerDuration ?? this.timerDuration,
       matchResult: matchResult ?? this.matchResult,
     );
   }
@@ -121,7 +125,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
       int p2Handicap = 40, 
       int p1Extensions = 2, 
       int p2Extensions = 2, 
-      bool equalizingInnings = true
+      bool equalizingInnings = true,
+      int timerDuration = 40,
   }) : super(GameState(
         p1Name: p1Name,
         p2Name: p2Name,
@@ -129,7 +134,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
         p2Handicap: p2Handicap, 
         p1Extensions: p1Extensions,
         p2Extensions: p2Extensions,
-        equalizingInnings:equalizingInnings 
+        equalizingInnings:equalizingInnings,
+        timerDuration: timerDuration,
       ));
 
   void updatePendingPoints(int player, int points){
@@ -246,7 +252,14 @@ class GameStateNotifier extends StateNotifier<GameState> {
     potentialWinner = null;
   }
 
-  void resetGame({String? p1Name, String? p2Name, int? p1Handicap, int? p2Handicap, bool? equalizingInnings}) {
+  void resetGame({
+    String? p1Name, 
+    String? p2Name, 
+    int? p1Handicap, 
+    int? p2Handicap, 
+    bool? equalizingInnings,
+    int? timerDuration,
+  }) {
     stateHistory.clear();
     potentialWinner = null;
     state = GameState(
@@ -255,6 +268,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p1Handicap: p1Handicap ?? state.p1Handicap,
       p2Handicap: p2Handicap ?? state.p2Handicap,
       equalizingInnings: equalizingInnings ?? state.equalizingInnings,
+      timerDuration: timerDuration ?? state.timerDuration,
     );
     resetTimerController.add(true);
   }
