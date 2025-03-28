@@ -82,7 +82,6 @@ void _endTurn() {
         final extensions = widget.isP2 ? gameState.p2Extensions : gameState.p1Extensions;
         final usedExtensions = widget.isP2 ? gameState.p2UsedExtensions : gameState.p1UsedExtensions;
         final pendingPoints = widget.isP2 ? gameState.p2PendingPoints : gameState.p1PendingPoints;
-        final history = ref.watch(gameStateProvider.select((state) => widget.isP2 ? state.p2History : state.p1History));
         final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
         final highRun = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2HighRun : state.p1HighRun));
         final average = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2Average : state.p1Average));
