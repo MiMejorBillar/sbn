@@ -514,7 +514,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
                   ),
                 ),
                 SizedBox(
-                  width: 25.0,
+                  width: 30,
                   child: Text(
                     '$remainingSeconds',
                     style: TextStyle(
