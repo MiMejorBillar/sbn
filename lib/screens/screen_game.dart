@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/riverpod/providers.dart';
 import 'package:nsb/sb_elements/elements.dart';
@@ -15,6 +16,25 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
   bool _isSwapped = false;
   bool _isBallColorSwapped = false;
 
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+  
+  @override
+  void dispose(){
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    super.dispose();
+  }
   void _swapScorecards() {
     setState(() {
       _isSwapped = !_isSwapped;

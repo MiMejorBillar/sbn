@@ -194,7 +194,6 @@ class GameStateNotifier extends StateNotifier<GameState> {
     if (state.p1History.length == state.p2History.length) {
       state = state.copyWith(inningCount: state.inningCount + 1);
     }
-    print('Player $player ended turn. P1 Score: ${state.p1TotalScore}, P2 Score: ${state.p2TotalScore}');
     checkMatchEnd();
     return true;
   }
@@ -216,25 +215,20 @@ class GameStateNotifier extends StateNotifier<GameState> {
   void checkMatchEnd() {
     final p1Reached = state.p1TotalScore >= state.p1Handicap;
     final p2Reached = state.p2TotalScore >= state.p2Handicap;
-    print('Check match end: P1 Score: ${state.p1TotalScore}/${state.p1Handicap}, P2 Score: ${state.p2TotalScore}/${state.p2Handicap}, Potential Winner: $potentialWinner, Current Player: ${state.currentPlayer}');
-    //Allowed Equalizing innings
+      //Allowed Equalizing innings
     if (state.equalizingInnings){
       //No one has potentially won yet
       if(potentialWinner == null) {
         if(p1Reached && !p2Reached) {
           potentialWinner = 1;
-          print('P1 reached first, potentialWinner set to 1');
         } else if(p2Reached) {
           _endMatch('P2');
-          print('P2 reached first, ending with P2 win');
         }
       } else if (potentialWinner == 1 && state.currentPlayer == 1) {
         if (p2Reached){
           _endMatch('draw');
-          print('P2 also reached, ending with draw');
         } else {
           _endMatch('P1');
-          print('P2 did not reach, ending with P1 win');
         }
         potentialWinner = null;
       }
@@ -242,31 +236,27 @@ class GameStateNotifier extends StateNotifier<GameState> {
       //No equalizing innings
       if (p1Reached) {
         _endMatch('P1');
-        print('No equalizing, P1 wins');
       } else if (p2Reached) {
         _endMatch('P2');
-        print('No equalizing, P2 wins');
       }
     }
   }
   void _endMatch(String result){
-    print('Match ended with result: $result');
-    print('Player 1: ${state.p1Name} used ${state.p1BallColor} ball');
-    print('Player 2: ${state.p2Name} used ${state.p2BallColor} ball');
     state = state.copyWith(matchResult: result);
     potentialWinner = null;
   }
 
-  void resetGame({int? p1Handicap, int? p2Handicap, bool? equalizingInnings}) {
+  void resetGame({String? p1Name, String? p2Name, int? p1Handicap, int? p2Handicap, bool? equalizingInnings}) {
     stateHistory.clear();
     potentialWinner = null;
     state = GameState(
+      p1Name: p1Name ?? state.p1Name,
+      p2Name: p2Name ?? state.p2Name,
       p1Handicap: p1Handicap ?? state.p1Handicap,
       p2Handicap: p2Handicap ?? state.p2Handicap,
       equalizingInnings: equalizingInnings ?? state.equalizingInnings,
-      p1Name: state.p1Name,
-      p2Name: state.p2Name,
     );
     resetTimerController.add(true);
   }
 }
+

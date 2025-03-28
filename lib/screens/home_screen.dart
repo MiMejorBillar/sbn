@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nsb/screens/player_selection.dart';
 import 'package:nsb/screens/screen_game.dart';
-import 'package:nsb/screens/setup_match.dart';
+import 'package:nsb/screens/players_list.dart';
 
 
 class HomeScreen extends StatelessWidget{
@@ -20,22 +21,26 @@ class HomeScreen extends StatelessWidget{
               onPressed: () {
                 Navigator.push(
                   context, 
-                  MaterialPageRoute(builder: (context) => SetupMatch() ));
+                  MaterialPageRoute(builder: (context) => PlayersList() ));
               }, 
               child: Text(
-                'Set up Match!'
+                'Players List'
                 )
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ScreenGame())
-                );
-              }, 
-              child: Text(
-                'Start Game'
-              )
+                showDialog<bool>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => const PlayersSelectionDialog(),
+                ).then((confirmed) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ScreenGame())
+                  );
+                });
+              },
+              child: const Text('Start Match') ,
             )
           ],
         )

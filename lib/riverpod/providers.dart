@@ -19,7 +19,7 @@ final gameStateProvider = StateNotifierProvider<GameStateNotifier, GameState>(
 );
 
 
-//Providers to signal resetTimer()
+//Providers to signal resetTimer() and TIMER STUFF
 final resetTimerController = StreamController<bool>.broadcast();
 
 final resetTimerProvider = StreamProvider.autoDispose<bool>((ref) {
@@ -31,3 +31,24 @@ final resetTimerProvider = StreamProvider.autoDispose<bool>((ref) {
 
 final timerActionProvider = StateProvider<String?> ((ref) => null);
 
+// PLAYER MANAGEMENT ////////////
+class Player {
+  final String name;
+  Player(this.name);
+}
+
+final playersProvider = StateNotifierProvider<PlayersNotifier, List<Player>>((ref) {
+  return PlayersNotifier();
+});
+
+class PlayersNotifier extends StateNotifier<List<Player>> {
+  PlayersNotifier() : super ([]);
+
+  void addPlayer(String name) {
+    state = [...state, Player(name)];
+  }
+
+  void removePlayer(String name) {
+    state = state.where((player) => player.name != name).toList();
+  }
+}

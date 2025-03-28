@@ -20,7 +20,6 @@ class Scorecard extends ConsumerStatefulWidget {
 
 class ScorecardState extends ConsumerState<Scorecard> {
 
-
 Color _contColor(bool isP2, bool isBallColorSwapped){
 
   bool useYellowScheme = (isP2 && !isBallColorSwapped) || (!isP2 && isBallColorSwapped);
