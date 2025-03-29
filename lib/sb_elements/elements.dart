@@ -338,7 +338,7 @@ class ScorecardState extends ConsumerState<Scorecard> {
                         ),
                       )),
                       Container(
-                        width: 160,
+                        width: 143,
                         decoration: BoxDecoration(
                             color: Colors.blueGrey,
                             borderRadius: BorderRadius.only(
@@ -372,7 +372,7 @@ class ScorecardState extends ConsumerState<Scorecard> {
                                     child: Container(
                                       color: Colors.transparent,
                                       alignment: Alignment.center,
-                                      width: 100,
+                                      width: 83,
                                       child: Text(
                                         '$pendingPoints',
                                         style: TextStyle(
@@ -400,7 +400,7 @@ class ScorecardState extends ConsumerState<Scorecard> {
                                       },
                                       child: Image.asset(
                                         ballIcon,
-                                        width: 60,
+                                        width:60,
                                       ))
                                 ],
                               )

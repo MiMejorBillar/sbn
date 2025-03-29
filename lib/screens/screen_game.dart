@@ -131,11 +131,14 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                 SizedBox(width: 8),
               ],
             )),
-            Row(children: [
-              Expanded(child: TimerBar()),
-            ]),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(children: [
+                Expanded(child: TimerBar()),
+              ]),
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Row(
                   children: [
@@ -220,7 +223,7 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
+                        ), 
                       ),
                     )
                   ],
