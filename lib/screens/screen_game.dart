@@ -110,15 +110,11 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                   children: [
                     const SizedBox(width: 8),
                     Expanded(
-                      child: _isSwapped 
-                          ? Padding(
+                      child: 
+                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Scorecard(isP2: true, isBallColorSwapped: _isBallColorSwapped),
+                            child: Scorecard(isP2: _isSwapped, isBallColorSwapped: _isBallColorSwapped),
                           ) 
-                          : Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Scorecard(isP2: false, isBallColorSwapped: _isBallColorSwapped),
-                          )
                       ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -130,15 +126,10 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                       ],
                     ),
                     Expanded(
-                      child: _isSwapped 
-                      ? Padding(
+                      child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Scorecard(isP2: false, isBallColorSwapped: _isBallColorSwapped,),
+                        child: Scorecard(isP2: !_isSwapped, isBallColorSwapped: _isBallColorSwapped,),
                       ) 
-                      : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Scorecard(isP2: true, isBallColorSwapped: _isBallColorSwapped),
-                      )
                       ),
                     SizedBox(width: 8),
                   ],

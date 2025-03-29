@@ -59,14 +59,16 @@ class _HomeScreenState extends State<HomeScreen>{
                   context: context,
                   barrierDismissible: false,
                   builder: (context) => const PlayersSelectionDialog(),
-                ).then((confirmed) {
+                ).then((result) {
+                  if (result == true){
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ScreenGame())
+                    MaterialPageRoute(builder: (context) => ScreenGame())
                   );
+                  }
                 });
               },
-              child: const Text('Start Match') ,
+              child: const Text('Match') ,
             )
           ],
         )

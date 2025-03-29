@@ -252,25 +252,54 @@ class GameStateNotifier extends StateNotifier<GameState> {
     potentialWinner = null;
   }
 
-  void resetGame({
-    String? p1Name, 
-    String? p2Name, 
-    int? p1Handicap, 
-    int? p2Handicap, 
-    bool? equalizingInnings,
-    int? timerDuration,
+  // void resetGame({
+  //   String? p1Name, 
+  //   String? p2Name, 
+  //   int? p1Handicap, 
+  //   int? p2Handicap, 
+  //   bool? equalizingInnings,
+  //   int? timerDuration,
+  // }) {
+  //   stateHistory.clear();
+  //   potentialWinner = null;
+  //   state = GameState(
+  //     p1Name: p1Name ?? state.p1Name,
+  //     p2Name: p2Name ?? state.p2Name,
+  //     p1Handicap: p1Handicap ?? state.p1Handicap,
+  //     p2Handicap: p2Handicap ?? state.p2Handicap,
+  //     equalizingInnings: equalizingInnings ?? state.equalizingInnings,
+  //     timerDuration: timerDuration ?? state.timerDuration,
+  //   );
+  //   resetTimerController.add(true);
+  // }
+
+  void startNewGame({
+    required String p1Name,
+    required String p2Name,
+    required int p1Handicap,
+    required int p2Handicap,
+    required bool equalizingInnings,
+    required int timerDuration,
+    int p1Extensions = 2,
+    int p2Extensions = 2,
+    String p1BallColor = 'white',
+    String p2BallColor = 'yellow',
   }) {
     stateHistory.clear();
     potentialWinner = null;
     state = GameState(
-      p1Name: p1Name ?? state.p1Name,
-      p2Name: p2Name ?? state.p2Name,
-      p1Handicap: p1Handicap ?? state.p1Handicap,
-      p2Handicap: p2Handicap ?? state.p2Handicap,
-      equalizingInnings: equalizingInnings ?? state.equalizingInnings,
-      timerDuration: timerDuration ?? state.timerDuration,
+      p1Name: p1Name,
+      p2Name: p2Name,
+      p1Handicap: p1Handicap,
+      p2Handicap: p2Handicap,
+      equalizingInnings: equalizingInnings,
+      timerDuration: timerDuration,
+      p1Extensions: p1Extensions,
+      p2Extensions: p2Extensions,
+      p1BallColor: p1BallColor,
+      p2BallColor: p2BallColor,
     );
-    resetTimerController.add(true);
+    ref.read(timerActionProvider.notifier).state = 'counterReset';
   }
+  
 }
-

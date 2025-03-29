@@ -112,11 +112,11 @@ class _PlayersSelectionDialogState extends ConsumerState<PlayersSelectionDialog>
                 ElevatedButton(
                   onPressed: (){
                     if (selectedP1 != null && selectedP2 != null && selectedP1 != selectedP2) {
-                      ref.read(gameStateProvider.notifier).resetGame(
-                        p1Name: selectedP1,
-                        p2Name: selectedP2,
-                        p1Handicap: selectedHandicapP1,
-                        p2Handicap: selectedHandicapP2,
+                      ref.read(gameStateProvider.notifier).startNewGame(
+                        p1Name: selectedP1!,
+                        p2Name: selectedP2!,
+                        p1Handicap: selectedHandicapP1!,
+                        p2Handicap: selectedHandicapP2!,
                         equalizingInnings: equalizingInnings,
                         timerDuration: selectedDuration
                       );
