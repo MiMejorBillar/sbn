@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nsb/riverpod/providers.dart';
+import 'package:nsb/riverpod/timer_provider.dart';
 
 class GameState {
   final String? p1Name;
@@ -146,20 +146,18 @@ class GameStateNotifier extends StateNotifier<GameState> {
     } else {
       state = state.copyWith(p2PendingPoints: points);
     }
-    print(
-        'Setting timerActionProvider to counterReset from updatePendingPoints');
-    ref.read(timerActionProvider.notifier).state = 'counterReset';
+    ref.read(timerActionProvider.notifier).state = 'delayedReset';
   }
 
   void useExtension() {
     if (state.currentPlayer == 1 &&
         state.p1UsedExtensions < state.p1Extensions) {
       state = state.copyWith(p1UsedExtensions: state.p1UsedExtensions + 1);
-      resetTimerController.add(true);
+      ref.read(timerActionProvider.notifier).state = 'quickReset';
     } else if (state.currentPlayer == 2 &&
         state.p2UsedExtensions < state.p2Extensions) {
       state = state.copyWith(p2UsedExtensions: state.p2UsedExtensions + 1);
-      resetTimerController.add(true);
+      ref.read(timerActionProvider.notifier).state = 'quickReset';
     }
   }
 
@@ -204,8 +202,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p2PendingPoints: player == 2 ? 0 : state.p2PendingPoints,
       isFirstTurnTaken: state.isFirstTurnTaken || player == 1,
     );
-    print('Setting timerActionProvider to counterReset from endTurn');
-    ref.read(timerActionProvider.notifier).state = 'counterReset';
+    ref.read(timerActionProvider.notifier).state = 'delayedReset';
 
     if (state.p1History.length == state.p2History.length) {
       state = state.copyWith(inningCount: state.inningCount + 1);
@@ -280,7 +277,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
       equalizingInnings: equalizingInnings ?? state.equalizingInnings,
       timerDuration: timerDuration ?? state.timerDuration,
     );
-    resetTimerController.add(true);
+    ref.read(timerActionProvider.notifier).state = 'quickReset';
   }
 
   void startNewGame({
@@ -309,6 +306,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p1BallColor: p1BallColor,
       p2BallColor: p2BallColor,
     );
-    resetTimerController.add(true);
+    print('Starting new game with timerDuration: $timerDuration');
+    ref.read(timerActionProvider.notifier).state = 'delayedReset';
+    print('Timer action set to delayedReset');
   }
 }

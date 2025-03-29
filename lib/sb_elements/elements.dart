@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:async';
 import '../riverpod/providers.dart';
+import '../riverpod/timer_provider.dart';
 
 class Scorecard extends ConsumerStatefulWidget {
   const Scorecard({
@@ -465,50 +465,41 @@ class InningCounter extends ConsumerWidget {
 }
 
 class TimerBar extends ConsumerStatefulWidget {
-  const TimerBar({
-    super.key,
-  });
+  const TimerBar({super.key});
 
   @override
   ConsumerState<TimerBar> createState() => TimerBarState();
 }
 
 class TimerBarState extends ConsumerState<TimerBar> {
-  late int remainingSeconds;
-  Timer? myTimer;
-  bool isPaused = false;
-  bool isResetting = false;
+  @override
+  void initState(){
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    print('TimerBar is building');
-    final duration = ref.watch(gameStateProvider).timerDuration;
-    final timerAction = ref.watch(timerActionProvider);
-    print('Current timerAction: $timerAction');
+    final timerState = ref.watch(timerStateProvider);
+    final initialDuration = ref.read(gameStateProvider).timerDuration;
+    final remainingSeconds = timerState.remainingSeconds;
+    final isPaused = timerState.isPaused;
 
-    ref.listen(resetTimerProvider, (previous, next) {
-      if (next is AsyncData<bool>) {
-        final shouldReset = next.value;
-        if (shouldReset) {
-          resetTimer();
-        }
-      }
-    });
-
-    ref.listen<String?>(timerActionProvider, (previous, action) {
-      print('Listener triggered with action: $action');
+    //Listen to actions and trigger methods
+    ref.listen<String?>(timerActionProvider, (previous, action){
+      print('Timer action received: $action');
+      final notifier = ref.read(timerStateProvider.notifier);
       if (action == 'pause') {
-        pauseTimer();
+        notifier.pause();
       } else if (action == 'resume') {
-        resumeTimer();
-      } else if (action == 'counterReset') {
-        print('Calling counterResetTimer');
-        counterResetTimer();
+        notifier.resume();
+      } else if (action == 'quickReset') {
+        notifier.quickReset();
+      } else if (action == 'delayedReset') {
+        notifier.delayedReset();
       }
       ref.read(timerActionProvider.notifier).state = null;
     });
 
-    print('Building with remainingSeconds: $remainingSeconds');
     return LayoutBuilder(
       builder: (context, constraints) {
         const double paddingTimer = 8.0;
@@ -527,10 +518,9 @@ class TimerBarState extends ConsumerState<TimerBar> {
               children: [
                 Expanded(
                   child: Row(
-                    children: List.generate(duration, (index) {
-                      final isActive = index >= (duration - remainingSeconds);
+                    children: List.generate(initialDuration, (index) {
                       final color = _getSegmentColor(
-                          index, duration, remainingSeconds, isActive);
+                          index, initialDuration, remainingSeconds);
                       return Expanded(
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 800),
@@ -553,7 +543,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color:
-                          _getTextColor(duration, remainingSeconds, isPaused),
+                          _getTextColor(initialDuration, remainingSeconds, isPaused)
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -566,159 +556,93 @@ class TimerBarState extends ConsumerState<TimerBar> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    remainingSeconds = ref.read(gameStateProvider).timerDuration;
-    startTimer();
-  }
 
-  void startTimer() {
-    myTimer?.cancel();
-    myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (remainingSeconds > 0 && !isPaused) {
-        setState(() {
-          remainingSeconds--;
-        });
-      } else if (remainingSeconds <= 0) {
-        timer.cancel();
-      }
-    });
-  }
-
-  void pauseTimer() {
-    if (myTimer?.isActive ?? false) {
-      isPaused = true;
-      myTimer?.cancel();
-    }
-  }
-
-  void resumeTimer() {
-    if (isPaused && remainingSeconds > 0) {
-      isPaused = false;
-      myTimer?.cancel();
-      myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (remainingSeconds > 0 && !isPaused) {
-          setState(() {
-            remainingSeconds--;
-          });
+  Color _getSegmentColor(int index, int initialDuration, int remainingSeconds) {
+        final isActive = index >= (initialDuration - remainingSeconds);
+        if (isActive) {
+          final fraction = (index + 1) / initialDuration;
+          if(fraction > 0.6) return Colors.green;
+          if(fraction > 0.3) return Colors.amber;
+          return Colors.red;
         } else {
-          timer.cancel();
+          return Colors.grey.withValues(alpha: 0.9);
         }
-      });
-    }
+    // Color baseColor;
+
+    // if (duration == 40) {
+    //   int second = duration - index;
+    //   if (second >= 25 && second <= 40) {
+    //     baseColor = Colors.green;
+    //   } else if (second >= 11 && second <= 24) {
+    //     baseColor = Colors.amber;
+    //   } else if (second >= 1 && second <= 10) {
+    //     baseColor = Colors.red;
+    //   } else {
+    //     baseColor = Colors.grey;
+    //   }
+    // } else if (duration == 30) {
+    //   int second = duration - index;
+    //   if (second >= 21 && second <= 30) {
+    //     baseColor = Colors.green;
+    //   } else if (second >= 11 && second <= 20) {
+    //     baseColor = Colors.amber;
+    //   } else if (second >= 1 && second <= 10) {
+    //     baseColor = Colors.red;
+    //   } else {
+    //     baseColor = Colors.grey;
+    //   }
+    // } else {
+    //   if (isActive) {
+    //     baseColor = remainingSeconds > 20
+    //         ? Colors.green
+    //         : remainingSeconds >= 10
+    //             ? Colors.amber
+    //             : Colors.red;
+    //   } else {
+    //     return Colors.grey.withValues(alpha: 0.90);
+    //   }
+    // }
+
+    // return isActive ? baseColor : Colors.grey.withValues(alpha: 0.90);
   }
 
-  void resetTimer() {
-    myTimer?.cancel();
-    setState(() {
-      remainingSeconds = ref.read(gameStateProvider).timerDuration;
-      isPaused = false;
-    });
-    startTimer();
-  }
+  Color _getTextColor( int remainingSeconds, int initialDuration, bool isPaused) {
+    if (isPaused || remainingSeconds <= 0) return Colors.grey.withValues(alpha: 0.90);
+    final fraction = remainingSeconds / initialDuration;
+    if(fraction > 0.6) return Colors.green;
+    if(fraction > 0.3) return Colors.amber;
+    return Colors.red;
 
-  void counterResetTimer() {
-    print('Inside counterResetTimer');
-    if (isResetting) return;
-    print('Already resetting, returning');
-    isResetting = true;
-    myTimer?.cancel();
-    setState(() {
-      remainingSeconds = ref.read(gameStateProvider).timerDuration;
-      isPaused = false;
-      print('Reset remainingSeconds to $remainingSeconds');
-    });
-    Future.delayed(Duration(seconds: 3), () {
-      print('Starting timer after delay');
-      startTimer();
-      isResetting = false;
-    });
-  }
+    // if (duration == 40) {
+    //   if (remainingSeconds >= 25 && remainingSeconds <= 40) {
+    //     textColor = Colors.green;
+    //   } else if (remainingSeconds >= 11 && remainingSeconds <= 24) {
+    //     textColor = Colors.amber;
+    //   } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
+    //     textColor = Colors.red;
+    //   } else {
+    //     textColor = Colors.grey;
+    //   }
+    // } else if (duration == 30) {
+    //   if (remainingSeconds >= 21 && remainingSeconds <= 30) {
+    //     textColor = Colors.green;
+    //   } else if (remainingSeconds >= 11 && remainingSeconds <= 20) {
+    //     textColor = Colors.amber;
+    //   } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
+    //     textColor = Colors.red;
+    //   } else {
+    //     textColor = Colors.grey;
+    //   }
+    // } else {
+    //   if (remainingSeconds > 20) {
+    //     textColor = Colors.green;
+    //   } else if (remainingSeconds >= 10) {
+    //     textColor = Colors.amber;
+    //   } else {
+    //     textColor = Colors.red;
+    //   }
+    // }
 
-  @override
-  void dispose() {
-    myTimer?.cancel();
-    super.dispose();
-  }
-
-  Color _getSegmentColor(
-      int index, int duration, int remainingSeconds, bool isActive) {
-    Color baseColor;
-
-    if (duration == 40) {
-      int second = duration - index;
-      if (second >= 25 && second <= 40) {
-        baseColor = Colors.green;
-      } else if (second >= 11 && second <= 24) {
-        baseColor = Colors.amber;
-      } else if (second >= 1 && second <= 10) {
-        baseColor = Colors.red;
-      } else {
-        baseColor = Colors.grey;
-      }
-    } else if (duration == 30) {
-      int second = duration - index;
-      if (second >= 21 && second <= 30) {
-        baseColor = Colors.green;
-      } else if (second >= 11 && second <= 20) {
-        baseColor = Colors.amber;
-      } else if (second >= 1 && second <= 10) {
-        baseColor = Colors.red;
-      } else {
-        baseColor = Colors.grey;
-      }
-    } else {
-      if (isActive) {
-        baseColor = remainingSeconds > 20
-            ? Colors.green
-            : remainingSeconds >= 10
-                ? Colors.amber
-                : Colors.red;
-      } else {
-        return Colors.grey.withValues(alpha: 0.90);
-      }
-    }
-
-    return isActive ? baseColor : Colors.grey.withValues(alpha: 0.90);
-  }
-
-  Color _getTextColor(int duration, int remainingSeconds, bool isPaused) {
-    if (isPaused || remainingSeconds <= 0) {
-      return Colors.grey.withValues(alpha: 0.90);
-    }
-    Color textColor;
-
-    if (duration == 40) {
-      if (remainingSeconds >= 25 && remainingSeconds <= 40) {
-        textColor = Colors.green;
-      } else if (remainingSeconds >= 11 && remainingSeconds <= 24) {
-        textColor = Colors.amber;
-      } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
-        textColor = Colors.red;
-      } else {
-        textColor = Colors.grey;
-      }
-    } else if (duration == 30) {
-      if (remainingSeconds >= 21 && remainingSeconds <= 30) {
-        textColor = Colors.green;
-      } else if (remainingSeconds >= 11 && remainingSeconds <= 20) {
-        textColor = Colors.amber;
-      } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
-        textColor = Colors.red;
-      } else {
-        textColor = Colors.grey;
-      }
-    } else {
-      if (remainingSeconds > 20) {
-        textColor = Colors.green;
-      } else if (remainingSeconds >= 10) {
-        textColor = Colors.amber;
-      } else {
-        textColor = Colors.red;
-      }
-    }
-
-    return textColor;
+    // return textColor;
   }
 }

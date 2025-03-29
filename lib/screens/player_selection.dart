@@ -131,6 +131,7 @@ class _PlayersSelectionDialogState
                             p2Handicap: selectedHandicapP2!,
                             equalizingInnings: equalizingInnings,
                             timerDuration: selectedDuration);
+                            print('startNewGame is called');
                         Navigator.of(context).pop(true);
                       } else {
                         ScaffoldMessenger.of(context)

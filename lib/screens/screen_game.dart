@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nsb/riverpod/timer_provider.dart';
 import '/riverpod/providers.dart';
 import 'package:nsb/sb_elements/elements.dart';
 export 'screen_game.dart';

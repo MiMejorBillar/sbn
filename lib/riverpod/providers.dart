@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nsb/game_state.dart';
 
@@ -18,18 +16,6 @@ final gameStateProvider = StateNotifierProvider<GameStateNotifier, GameState>(
     timerDuration: 40,
   ),
 );
-
-//Providers to signal resetTimer() and TIMER STUFF
-final resetTimerController = StreamController<bool>.broadcast();
-
-final resetTimerProvider = StreamProvider.autoDispose<bool>((ref) {
-  ref.onDispose(() {
-    resetTimerController.close();
-  });
-  return resetTimerController.stream;
-});
-
-final timerActionProvider = StateProvider<String?>((ref) => null);
 
 // PLAYER MANAGEMENT ////////////
 class Player {
