@@ -475,11 +475,12 @@ class TimerBarState extends ConsumerState<TimerBar> {
   
   @override
   Widget build(BuildContext context) {
+  
     final timerState = ref.watch(timerStateProvider);
     final remainingSeconds = timerState.remainingSeconds;
     final initialDuration = timerState.initialDuration;
     final isPaused = timerState.isPaused;
-
+    print('Building with $remainingSeconds');
     return LayoutBuilder(
       builder: (context, constraints) {
         const double paddingTimer = 8.0;
@@ -522,7 +523,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color:
-                          _getTextColor(initialDuration, remainingSeconds, isPaused)
+                          _getTextColor(remainingSeconds, initialDuration, isPaused)
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -550,7 +551,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
 
   Color _getTextColor( int remainingSeconds, int initialDuration, bool isPaused) {
     if (isPaused || remainingSeconds <= 0) return Colors.grey.withValues(alpha: 0.90);
-    final fraction = remainingSeconds / initialDuration;
+    final fraction = (remainingSeconds - 1) / initialDuration.toDouble();
     if(fraction > 0.6) return Colors.green;
     if(fraction > 0.3) return Colors.amber;
     return Colors.red;
