@@ -537,9 +537,9 @@ class TimerBarState extends ConsumerState<TimerBar> {
 
 
   Color _getSegmentColor(int index, int initialDuration, int remainingSeconds) {
-    final isActive = index < remainingSeconds;
+    final isActive = index >= (initialDuration- remainingSeconds);
     if (isActive) {
-      final fraction = (index+1) / initialDuration;
+      final fraction = (initialDuration - index) / initialDuration;
       if(fraction > 0.6) return Colors.green;
       if(fraction > 0.3) return Colors.amber;
       return Colors.red;
