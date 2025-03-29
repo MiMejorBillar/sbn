@@ -288,8 +288,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
     required int p2Handicap,
     required bool equalizingInnings,
     required int timerDuration,
-    int p1Extensions = 2,
-    int p2Extensions = 2,
+    required int p1Extensions,
+    required int p2Extensions,
     String p1BallColor = 'white',
     String p2BallColor = 'yellow',
   }) {

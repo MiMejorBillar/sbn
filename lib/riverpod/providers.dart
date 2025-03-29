@@ -21,7 +21,7 @@ final gameStateProvider = StateNotifierProvider<GameStateNotifier, GameState>(
 class Player {
   final String name;
   final int handicap;
-  Player({required this.name, required this.handicap});
+  Player({required this.name, required this.handicap,});
 }
 
 final playersProvider =

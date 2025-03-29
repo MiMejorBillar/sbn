@@ -18,12 +18,15 @@ class _PlayersSelectionDialogState
   int? selectedHandicapP2;
   bool equalizingInnings = true;
   int selectedDuration = 40;
+  int selectedExtension = 3;
 
   final List<int> durationOptions = [25, 30, 40];
+  final List<int> extensionOptions = [2, 3, 5];
 
   @override
   Widget build(BuildContext context) {
     final players = ref.watch(playersProvider);
+    print('Building dialog: selectedDuration=$selectedDuration, selectedExtension=$selectedExtension');
     if (players.isEmpty) {
       return const Dialog(
         child: Padding(
@@ -92,9 +95,25 @@ class _PlayersSelectionDialogState
                     .toList(),
                 onChanged: (value) {
                   setState(() {
-                    selectedDuration = value!;
+                    selectedDuration = value!;;
                   });
                 },
+              ),
+              DropdownButtonFormField<int>(
+                decoration: const InputDecoration(labelText: 'Extensions'),
+                value: selectedExtension,
+                items: extensionOptions
+                    .map((extension) => DropdownMenuItem(
+                          value: extension,
+                          child: Text('$extension')
+                        ))
+                      .toList(), 
+                onChanged: (value) {
+                  setState(() {
+                    selectedExtension = value!;
+                    print('Extensions changed to: $selectedExtension');  
+                  });
+                }
               ),
               const SizedBox(
                 height: 16,
@@ -129,9 +148,13 @@ class _PlayersSelectionDialogState
                             p2Name: selectedP2!,
                             p1Handicap: selectedHandicapP1!,
                             p2Handicap: selectedHandicapP2!,
+                            p1Extensions: selectedExtension,
+                            p2Extensions: selectedExtension,
                             equalizingInnings: equalizingInnings,
                             timerDuration: selectedDuration);
                             print('startNewGame is called');
+                            print(
+                            'startNewGame called with extensions: $selectedExtension');
                         Navigator.of(context).pop(true);
                       } else {
                         ScaffoldMessenger.of(context)
