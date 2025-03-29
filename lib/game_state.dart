@@ -146,18 +146,18 @@ class GameStateNotifier extends StateNotifier<GameState> {
     } else {
       state = state.copyWith(p2PendingPoints: points);
     }
-    ref.read(timerActionProvider.notifier).state = 'delayedReset';
+    ref.read(timerStateProvider.notifier).delayedReset();
   }
 
   void useExtension() {
     if (state.currentPlayer == 1 &&
         state.p1UsedExtensions < state.p1Extensions) {
       state = state.copyWith(p1UsedExtensions: state.p1UsedExtensions + 1);
-      ref.read(timerActionProvider.notifier).state = 'quickReset';
+      ref.read(timerStateProvider.notifier).quickReset();
     } else if (state.currentPlayer == 2 &&
         state.p2UsedExtensions < state.p2Extensions) {
       state = state.copyWith(p2UsedExtensions: state.p2UsedExtensions + 1);
-      ref.read(timerActionProvider.notifier).state = 'quickReset';
+      ref.read(timerStateProvider.notifier).quickReset();
     }
   }
 
@@ -202,7 +202,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p2PendingPoints: player == 2 ? 0 : state.p2PendingPoints,
       isFirstTurnTaken: state.isFirstTurnTaken || player == 1,
     );
-    ref.read(timerActionProvider.notifier).state = 'delayedReset';
+    ref.read(timerStateProvider.notifier).delayedReset();
 
     if (state.p1History.length == state.p2History.length) {
       state = state.copyWith(inningCount: state.inningCount + 1);
@@ -277,7 +277,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
       equalizingInnings: equalizingInnings ?? state.equalizingInnings,
       timerDuration: timerDuration ?? state.timerDuration,
     );
-    ref.read(timerActionProvider.notifier).state = 'quickReset';
+    ref.read(timerStateProvider.notifier).quickReset();
+
   }
 
   void startNewGame({
@@ -306,8 +307,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p1BallColor: p1BallColor,
       p2BallColor: p2BallColor,
     );
-    print('Starting new game with timerDuration: $timerDuration');
-    ref.read(timerActionProvider.notifier).state = 'delayedReset';
-    print('Timer action set to delayedReset');
+    ref.read(timerStateProvider.notifier).delayedReset();
+
   }
 }

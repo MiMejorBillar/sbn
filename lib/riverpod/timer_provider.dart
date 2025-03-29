@@ -3,56 +3,74 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nsb/game_state.dart';
 import 'package:nsb/riverpod/providers.dart';
 
-class TimerState{
+class TimerState {
   final int remainingSeconds;
+  final int initialDuration;
   final bool isPaused;
+  final bool isResetting;
 
-  TimerState({required this.remainingSeconds, this.isPaused = false});
-  TimerState copyWith({int? remainingSeconds, bool? isPaused}) {
+  TimerState({
+    required this.remainingSeconds,
+    required this.initialDuration,
+    this.isPaused = false,
+    this.isResetting = false,
+  });
+
+  TimerState copyWith({
+    int? remainingSeconds,
+    int? initialDuration,
+    bool? isPaused,
+    bool? isResetting,
+  }) {
     return TimerState(
-      remainingSeconds: remainingSeconds ?? this.remainingSeconds,
-      isPaused: isPaused ?? this.isPaused
-      );
+      remainingSeconds: remainingSeconds ?? this.remainingSeconds, 
+      initialDuration: initialDuration ?? this.initialDuration,
+      isPaused: isPaused ?? this.isPaused,
+      isResetting: isResetting ?? this.isResetting,
+    );
   }
 }
 
 class TimerStateNotifier extends StateNotifier<TimerState> {
   final Ref ref;
   Timer? _timer;
-  int _currentDuration; // dynamic duration
-  bool _isDelayedResetting = false;
 
   TimerStateNotifier(this.ref)
-      : _currentDuration = ref.read(gameStateProvider).timerDuration,
-      super(TimerState(remainingSeconds: ref.read(gameStateProvider).timerDuration)) {
-
-        ref.listen<GameState>(gameStateProvider, (previous, next) {
-          if(next.timerDuration !=_currentDuration){
-            _currentDuration = next.timerDuration;
-          }
-        });
-      }
+      : super(TimerState(
+        remainingSeconds: ref.read(gameStateProvider).timerDuration,
+        initialDuration: ref.read(gameStateProvider).timerDuration,
+      )) {
+        ref.listen<GameState>(gameStateProvider,(previous,next){
+          if (next.timerDuration != state.initialDuration) {
+            state = state.copyWith(
+              initialDuration: next.timerDuration,
+              remainingSeconds: next.timerDuration,
+            );
+            quickReset();
+        }
+    });        
+  }
 
   void _startTimer() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), (_) {
       if (!state.isPaused && state.remainingSeconds > 0) {
         state = state.copyWith(remainingSeconds: state.remainingSeconds - 1);
-      } else if (state.remainingSeconds <= 0){
-        timer.cancel();
+      } else if (state.remainingSeconds <= 0) {
+        _timer?.cancel();
       }
     });
   }
 
   void pause() {
-    if(!state.isPaused) {
+    if (!state.isPaused) {
       state = state.copyWith(isPaused: true);
       _timer?.cancel();
     }
   }
 
   void resume() {
-    if(state.isPaused){
+    if(state.isPaused) {
       state = state.copyWith(isPaused: false);
       _startTimer();
     }
@@ -60,29 +78,35 @@ class TimerStateNotifier extends StateNotifier<TimerState> {
 
   void quickReset() {
     _timer?.cancel();
-    state = state.copyWith(remainingSeconds: _currentDuration, isPaused: false);
+    state = state.copyWith(
+      remainingSeconds: state.initialDuration,
+      isPaused: false,
+      isResetting: false,
+    );
     _startTimer();
   }
 
-  void delayedReset() {
-    _isDelayedResetting = true;
+  void delayedReset(){
+    if (state.isResetting) return;
+    state = state.copyWith(isResetting: true);
     _timer?.cancel();
-    print('delayedReset called with duration: $_currentDuration');
-    state = state.copyWith(remainingSeconds: _currentDuration , isPaused: false);
-    Future.delayed(const Duration(seconds: 3), (){
+    state = state.copyWith(
+      remainingSeconds: state.initialDuration,
+      isPaused: false,
+    );
+    Future.delayed(Duration(seconds: 3), () {
       _startTimer();
-      _isDelayedResetting = false;
+      state = state.copyWith(isResetting: false);
     });
   }
 
   @override
-  void dispose() {
+  void dispose(){
     _timer?.cancel();
     super.dispose();
   }
 }
-// Provider definition(default duration of 40 seconds)
-final timerStateProvider = StateNotifierProvider<TimerStateNotifier, TimerState>
-  ((ref) => TimerStateNotifier(ref),
+
+final timerStateProvider = StateNotifierProvider<TimerStateNotifier, TimerState>(
+  (ref)=> TimerStateNotifier(ref),
 );
-final timerActionProvider = StateProvider<String?>((ref) => null);

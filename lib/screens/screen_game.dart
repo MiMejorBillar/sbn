@@ -183,7 +183,7 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        ref.read(timerActionProvider.notifier).state = 'pause';
+                        ref.read(timerStateProvider.notifier).pause();
                       },
                       style: buttonStyle,
                       child: Tooltip(
@@ -196,7 +196,7 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        ref.read(timerActionProvider.notifier).state = 'resume';
+                        ref.read(timerStateProvider.notifier).resume();
                       },
                       style: buttonStyle,
                       child: Tooltip(

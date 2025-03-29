@@ -472,38 +472,17 @@ class TimerBar extends ConsumerStatefulWidget {
 }
 
 class TimerBarState extends ConsumerState<TimerBar> {
-  @override
-  void initState(){
-    super.initState();
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     final timerState = ref.watch(timerStateProvider);
-    final initialDuration = ref.read(gameStateProvider).timerDuration;
     final remainingSeconds = timerState.remainingSeconds;
+    final initialDuration = timerState.initialDuration;
     final isPaused = timerState.isPaused;
-
-    //Listen to actions and trigger methods
-    ref.listen<String?>(timerActionProvider, (previous, action){
-      print('Timer action received: $action');
-      final notifier = ref.read(timerStateProvider.notifier);
-      if (action == 'pause') {
-        notifier.pause();
-      } else if (action == 'resume') {
-        notifier.resume();
-      } else if (action == 'quickReset') {
-        notifier.quickReset();
-      } else if (action == 'delayedReset') {
-        notifier.delayedReset();
-      }
-      ref.read(timerActionProvider.notifier).state = null;
-    });
 
     return LayoutBuilder(
       builder: (context, constraints) {
         const double paddingTimer = 8.0;
-
         return Padding(
           padding: const EdgeInsets.all(paddingTimer),
           child: Container(
@@ -558,52 +537,15 @@ class TimerBarState extends ConsumerState<TimerBar> {
 
 
   Color _getSegmentColor(int index, int initialDuration, int remainingSeconds) {
-        final isActive = index >= (initialDuration - remainingSeconds);
-        if (isActive) {
-          final fraction = (index + 1) / initialDuration;
-          if(fraction > 0.6) return Colors.green;
-          if(fraction > 0.3) return Colors.amber;
-          return Colors.red;
-        } else {
-          return Colors.grey.withValues(alpha: 0.9);
-        }
-    // Color baseColor;
-
-    // if (duration == 40) {
-    //   int second = duration - index;
-    //   if (second >= 25 && second <= 40) {
-    //     baseColor = Colors.green;
-    //   } else if (second >= 11 && second <= 24) {
-    //     baseColor = Colors.amber;
-    //   } else if (second >= 1 && second <= 10) {
-    //     baseColor = Colors.red;
-    //   } else {
-    //     baseColor = Colors.grey;
-    //   }
-    // } else if (duration == 30) {
-    //   int second = duration - index;
-    //   if (second >= 21 && second <= 30) {
-    //     baseColor = Colors.green;
-    //   } else if (second >= 11 && second <= 20) {
-    //     baseColor = Colors.amber;
-    //   } else if (second >= 1 && second <= 10) {
-    //     baseColor = Colors.red;
-    //   } else {
-    //     baseColor = Colors.grey;
-    //   }
-    // } else {
-    //   if (isActive) {
-    //     baseColor = remainingSeconds > 20
-    //         ? Colors.green
-    //         : remainingSeconds >= 10
-    //             ? Colors.amber
-    //             : Colors.red;
-    //   } else {
-    //     return Colors.grey.withValues(alpha: 0.90);
-    //   }
-    // }
-
-    // return isActive ? baseColor : Colors.grey.withValues(alpha: 0.90);
+    final isActive = index < remainingSeconds;
+    if (isActive) {
+      final fraction = (index+1) / initialDuration;
+      if(fraction > 0.6) return Colors.green;
+      if(fraction > 0.3) return Colors.amber;
+      return Colors.red;
+    } else {
+      return Colors.grey.withValues(alpha: 0.9);
+    }
   }
 
   Color _getTextColor( int remainingSeconds, int initialDuration, bool isPaused) {
@@ -612,37 +554,5 @@ class TimerBarState extends ConsumerState<TimerBar> {
     if(fraction > 0.6) return Colors.green;
     if(fraction > 0.3) return Colors.amber;
     return Colors.red;
-
-    // if (duration == 40) {
-    //   if (remainingSeconds >= 25 && remainingSeconds <= 40) {
-    //     textColor = Colors.green;
-    //   } else if (remainingSeconds >= 11 && remainingSeconds <= 24) {
-    //     textColor = Colors.amber;
-    //   } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
-    //     textColor = Colors.red;
-    //   } else {
-    //     textColor = Colors.grey;
-    //   }
-    // } else if (duration == 30) {
-    //   if (remainingSeconds >= 21 && remainingSeconds <= 30) {
-    //     textColor = Colors.green;
-    //   } else if (remainingSeconds >= 11 && remainingSeconds <= 20) {
-    //     textColor = Colors.amber;
-    //   } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
-    //     textColor = Colors.red;
-    //   } else {
-    //     textColor = Colors.grey;
-    //   }
-    // } else {
-    //   if (remainingSeconds > 20) {
-    //     textColor = Colors.green;
-    //   } else if (remainingSeconds >= 10) {
-    //     textColor = Colors.amber;
-    //   } else {
-    //     textColor = Colors.red;
-    //   }
-    // }
-
-    // return textColor;
   }
 }
