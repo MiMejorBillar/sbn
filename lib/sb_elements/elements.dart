@@ -4,270 +4,285 @@ import 'dart:async';
 import '../riverpod/providers.dart';
 
 class Scorecard extends ConsumerStatefulWidget {
-  const Scorecard ({
+  const Scorecard({
     super.key,
     this.isP2 = false,
     this.isBallColorSwapped = false,
-    });
-  
+  });
+
   final bool isP2;
   final bool isBallColorSwapped;
-
 
   @override
   ConsumerState<Scorecard> createState() => ScorecardState();
 }
 
 class ScorecardState extends ConsumerState<Scorecard> {
-
-Color _contColor(bool isP2, bool isBallColorSwapped){
-
-  bool useYellowScheme = (isP2 && !isBallColorSwapped) || (!isP2 && isBallColorSwapped);
-  return useYellowScheme ? Colors.amber : const Color.fromARGB(255, 249, 246, 238);
-}
-
-void _endTurn() {
-  final gameStateNotifier = ref.read(gameStateProvider.notifier);
-  final gameState = ref.read(gameStateProvider);
-  final playerName = widget.isP2 ? gameState.p2Name : gameState.p1Name;
-  final turnEnded = gameStateNotifier.endTurn(widget.isP2 ? 2 : 1);
-  if(turnEnded && gameState.currentPlayer == 1 && !gameState.isFirstTurnTaken){
-    final p1BallColor = widget.isBallColorSwapped ? 'yellow' : 'white';
-    final p2BallColor = widget.isBallColorSwapped ? 'white' : 'yellow';
-    gameStateNotifier.setBallColors(p1BallColor, p2BallColor);
+  Color _contColor(bool isP2, bool isBallColorSwapped) {
+    bool useYellowScheme =
+        (isP2 && !isBallColorSwapped) || (!isP2 && isBallColorSwapped);
+    return useYellowScheme
+        ? Colors.amber
+        : const Color.fromARGB(255, 249, 246, 238);
   }
-  if (turnEnded){
-  ScaffoldMessenger.of(context).removeCurrentSnackBar();
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Center(
-        child: Text(
-          'Turn ended for $playerName', 
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: _contColor(widget.isP2, widget.isBallColorSwapped),
-            shadows:[
-              Shadow(
-                color: Colors.black.withValues(alpha: 0.50),
-                offset: Offset(0, 0),
-                blurRadius: 10,
-              )
-            ]
-            )
-        )
-      ),
-      width: 250,
-      duration: Duration(seconds: 1),
-      backgroundColor: Colors.green.withValues(alpha: 0.90),
-      behavior: SnackBarBehavior.floating,
-      padding: EdgeInsets.symmetric(vertical: 10),
-      // shape:Border.all(
-      //   color: Colors.black
-      // ) ,
-    ),
-  );
+
+  void _endTurn() {
+    final gameStateNotifier = ref.read(gameStateProvider.notifier);
+    final gameState = ref.read(gameStateProvider);
+    final playerName = widget.isP2 ? gameState.p2Name : gameState.p1Name;
+    final turnEnded = gameStateNotifier.endTurn(widget.isP2 ? 2 : 1);
+    if (turnEnded &&
+        gameState.currentPlayer == 1 &&
+        !gameState.isFirstTurnTaken) {
+      final p1BallColor = widget.isBallColorSwapped ? 'yellow' : 'white';
+      final p2BallColor = widget.isBallColorSwapped ? 'white' : 'yellow';
+      gameStateNotifier.setBallColors(p1BallColor, p2BallColor);
+    }
+    if (turnEnded) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Center(
+              child: Text('Turn ended for $playerName',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: _contColor(widget.isP2, widget.isBallColorSwapped),
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withValues(alpha: 0.50),
+                          offset: Offset(0, 0),
+                          blurRadius: 10,
+                        )
+                      ]))),
+          width: 250,
+          duration: Duration(seconds: 1),
+          backgroundColor: Colors.green.withValues(alpha: 0.90),
+          behavior: SnackBarBehavior.floating,
+          padding: EdgeInsets.symmetric(vertical: 10),
+          // shape:Border.all(
+          //   color: Colors.black
+          // ) ,
+        ),
+      );
+    }
   }
-}
 
   @override
-  Widget build(BuildContext context){
-          
+  Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-              //Existing Variables
+        //Existing Variables
         final gameState = ref.watch(gameStateProvider);
         final playerName = widget.isP2 ? gameState.p2Name : gameState.p1Name;
-        final handicap = widget.isP2 ? gameState.p2Handicap : gameState.p1Handicap;
-        final extensions = widget.isP2 ? gameState.p2Extensions : gameState.p1Extensions;
-        final usedExtensions = widget.isP2 ? gameState.p2UsedExtensions : gameState.p1UsedExtensions;
-        final pendingPoints = widget.isP2 ? gameState.p2PendingPoints : gameState.p1PendingPoints;
-        final totalScore = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2TotalScore : state.p1TotalScore));
-        final highRun = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2HighRun : state.p1HighRun));
-        final average = ref.watch(gameStateProvider.select((state) => widget.isP2? state.p2Average : state.p1Average));
-        final currentPlayer = ref.watch(gameStateProvider.select((state) => state.currentPlayer));
-        final activePlayerColor = _contColor(currentPlayer == 2, widget.isBallColorSwapped) ;
+        final handicap =
+            widget.isP2 ? gameState.p2Handicap : gameState.p1Handicap;
+        final extensions =
+            widget.isP2 ? gameState.p2Extensions : gameState.p1Extensions;
+        final usedExtensions = widget.isP2
+            ? gameState.p2UsedExtensions
+            : gameState.p1UsedExtensions;
+        final pendingPoints =
+            widget.isP2 ? gameState.p2PendingPoints : gameState.p1PendingPoints;
+        final totalScore = ref.watch(gameStateProvider.select(
+            (state) => widget.isP2 ? state.p2TotalScore : state.p1TotalScore));
+        final highRun = ref.watch(gameStateProvider.select(
+            (state) => widget.isP2 ? state.p2HighRun : state.p1HighRun));
+        final average = ref.watch(gameStateProvider.select(
+            (state) => widget.isP2 ? state.p2Average : state.p1Average));
+        final currentPlayer =
+            ref.watch(gameStateProvider.select((state) => state.currentPlayer));
+        final activePlayerColor =
+            _contColor(currentPlayer == 2, widget.isBallColorSwapped);
         final isActive = (widget.isP2 ? 2 : 1) == currentPlayer;
-        final activePlayerName = currentPlayer == 1? gameState.p1Name : gameState.p2Name;
+        final activePlayerName =
+            currentPlayer == 1 ? gameState.p1Name : gameState.p2Name;
         //Ball color changes
-        final bool showYellowBall = (widget.isP2 && !widget.isBallColorSwapped) || (!widget.isP2 && widget.isBallColorSwapped);
-        final String ballIcon = showYellowBall ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png';
-        final String headerIcon = widget.isP2 ? 'assets/icons/creeper.png' : 'assets/icons/trophy.png';  
-      return Stack(
-        children: [
+        final bool showYellowBall =
+            (widget.isP2 && !widget.isBallColorSwapped) ||
+                (!widget.isP2 && widget.isBallColorSwapped);
+        final String ballIcon =
+            showYellowBall ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png';
+        final String headerIcon = widget.isP2
+            ? 'assets/icons/creeper.png'
+            : 'assets/icons/trophy.png';
+        return Stack(children: [
           Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: const Color.fromARGB(134, 0, 0, 0).withValues(alpha: 0.90),
-                spreadRadius: 2,
-                blurRadius: 5,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              // ICON NAME AND HANDICAP
-              Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: const Color.fromARGB(255, 85, 85, 85),
-                      width: 8
-                    )
-                  ),
-                  color: const Color.fromARGB(255, 36, 36, 36),
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8)),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color.fromARGB(134, 0, 0, 0)
+                      .withValues(alpha: 0.90),
+                  spreadRadius: 2,
+                  blurRadius: 5,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Image.asset(
-                        headerIcon ,
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // ICON NAME AND HANDICAP
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                            color: const Color.fromARGB(255, 85, 85, 85),
+                            width: 8)),
+                    color: const Color.fromARGB(255, 36, 36, 36),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                          child: Image.asset(
+                        headerIcon,
                         width: 50,
-                      )
-                    ),
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        height: 50,
-                        child: widget.isBallColorSwapped
-                          ? RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: playerName,
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: _contColor(widget.isP2, widget.isBallColorSwapped),
+                      )),
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          height: 50,
+                          child: widget.isBallColorSwapped
+                              ? RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: playerName,
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: _contColor(widget.isP2,
+                                              widget.isBallColorSwapped),
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: widget.isP2 ? ' (P2)' : ' (P1)',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.normal,
+                                          color: _contColor(widget.isP2,
+                                              widget.isBallColorSwapped),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                TextSpan(
-                                  text: widget.isP2 ? ' (P2)' : ' (P1)',
+                                )
+                              : Text(
+                                  '$playerName',
                                   style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.normal,
-                                    color: _contColor(widget.isP2, widget.isBallColorSwapped),
-                                  ),
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: _contColor(widget.isP2,
+                                          widget.isBallColorSwapped)),
                                 ),
-                              ],
-                            ),
-                          )
-                          : Text(
-                            '$playerName',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: _contColor(widget.isP2, widget.isBallColorSwapped)
-                            ),
-                          ),
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      width: 50,
-                      decoration: BoxDecoration(),
-                      child: Text(
-                        '$handicap',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold, 
-                          color: _contColor(widget.isP2,widget.isBallColorSwapped)
                         ),
                       ),
-                    ),
-                  ],
+                      Container(
+                        alignment: Alignment.center,
+                        width: 50,
+                        decoration: BoxDecoration(),
+                        child: Text(
+                          '$handicap',
+                          style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: _contColor(
+                                  widget.isP2, widget.isBallColorSwapped)),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              // SCORE AND EXTENSION
-              Expanded(
-                child: Consumer(
-                  builder: (context, ref, child){
-                  return GestureDetector(
-                    onTap: isActive ? _endTurn : null,
-                    child: Container(
-                      color: _contColor(widget.isP2,widget.isBallColorSwapped),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Stack(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Center(
-                                      child: Text(
-                                        '$totalScore',
-                                        style: const TextStyle(
-                                          fontSize: 80,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
+                // SCORE AND EXTENSION
+                Expanded(
+                  child: Consumer(builder: (context, ref, child) {
+                    return GestureDetector(
+                      onTap: isActive ? _endTurn : null,
+                      child: Container(
+                        color:
+                            _contColor(widget.isP2, widget.isBallColorSwapped),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Stack(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Center(
+                                        child: Text(
+                                          '$totalScore',
+                                          style: const TextStyle(
+                                            fontSize: 80,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Positioned.fill(
-                                child:Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: 
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center, //EXTENSION COLUMN
-                                    children: List.generate(
-                                      extensions,
-                                      (index) => Container(
-                                        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                                        width: 32,
-                                        height: 12,
-                                        decoration: BoxDecoration(
-                                          color: index < usedExtensions ? Colors.grey : Colors.green,
-                                          borderRadius: BorderRadius.circular(5),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black,
-                                              spreadRadius: 0.4,
-                                              blurRadius: 1,
-                                            )
-                                          ]
-                                        )
-                                      ),
-                                    )
-                                  )
-                                )
-                              )
-                            ],
-                          ),
-                        ],
+                                  ],
+                                ),
+                                Positioned.fill(
+                                    child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Column(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .center, //EXTENSION COLUMN
+                                            children: List.generate(
+                                              extensions,
+                                              (index) => Container(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 2,
+                                                      horizontal: 8),
+                                                  width: 32,
+                                                  height: 12,
+                                                  decoration: BoxDecoration(
+                                                      color:
+                                                          index < usedExtensions
+                                                              ? Colors.grey
+                                                              : Colors.green,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black,
+                                                          spreadRadius: 0.4,
+                                                          blurRadius: 1,
+                                                        )
+                                                      ])),
+                                            ))))
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                  } 
+                    );
+                  }),
                 ),
-              ),
-              // STATS AND COUNTER
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 36, 36, 36),
-                  border: Border(
-                    top: BorderSide(
-                      color: const Color.fromARGB(255, 85, 85, 85),
-                      width: 8
-                    )
-                  ),
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8))
-                ),
-                height: 70,
-                // AVERAGE AND HIGH RUN
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child:Container(
+                // STATS AND COUNTER
+                Container(
+                  decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 36, 36, 36),
+                      border: Border(
+                          top: BorderSide(
+                              color: const Color.fromARGB(255, 85, 85, 85),
+                              width: 8)),
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(8),
+                          bottomRight: Radius.circular(8))),
+                  height: 70,
+                  // AVERAGE AND HIGH RUN
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                          child: Container(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -277,13 +292,16 @@ void _endTurn() {
                               children: [
                                 Text('Avg.',
                                     style: TextStyle(
-                                        fontSize: 16, color: _contColor(widget.isP2, widget.isBallColorSwapped))),
+                                        fontSize: 16,
+                                        color: _contColor(widget.isP2,
+                                            widget.isBallColorSwapped))),
                                 Text(
                                   average.toStringAsFixed(3),
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: _contColor(widget.isP2, widget.isBallColorSwapped)),
+                                      color: _contColor(widget.isP2,
+                                          widget.isBallColorSwapped)),
                                 ),
                               ],
                             ),
@@ -291,12 +309,10 @@ void _endTurn() {
                               height: 50,
                               decoration: BoxDecoration(
                                 border: Border(
-                                  right: BorderSide(
-                                    color: const Color.fromARGB(255, 85, 85, 85
-                                    ),
-                                    width: 2,
-                                  )
-                                ),
+                                    right: BorderSide(
+                                  color: const Color.fromARGB(255, 85, 85, 85),
+                                  width: 2,
+                                )),
                               ),
                             ),
                             // HIGH RUN
@@ -305,108 +321,126 @@ void _endTurn() {
                               children: [
                                 Text('H.R.',
                                     style: TextStyle(
-                                        fontSize: 16, color: _contColor(widget.isP2, widget.isBallColorSwapped))),
+                                        fontSize: 16,
+                                        color: _contColor(widget.isP2,
+                                            widget.isBallColorSwapped))),
                                 Text(
                                   '$highRun',
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: _contColor(widget.isP2, widget.isBallColorSwapped)),
+                                      color: _contColor(widget.isP2,
+                                          widget.isBallColorSwapped)),
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      )
-                    ),
-                    Container(
-                      width: 160,
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey,
-                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(8))
-                      ),
-                      child: isActive 
-                      ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              if (totalScore + pendingPoints + 1 > handicap){
-                                ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Cannot add more points. You\'ve reached your handicap of $handicap'),
-                                            duration: Duration(seconds: 2),));
-                              } else {
-                                final newPendingPoints = pendingPoints + 1;
-                                ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints );
-                              }
-                            },
-                            child: Container(  
-                              color: Colors.transparent,
-                              alignment: Alignment.center,
-                              width: 100,
-                              child: Text(
-                                '$pendingPoints',
-                                style: TextStyle(
-                                  color: _contColor(widget.isP2, widget.isBallColorSwapped),
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold
-                                ),                                                                              
+                      )),
+                      Container(
+                        width: 160,
+                        decoration: BoxDecoration(
+                            color: Colors.blueGrey,
+                            borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(8))),
+                        child: isActive
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (totalScore + pendingPoints + 1 >
+                                          handicap) {
+                                        ScaffoldMessenger.of(context)
+                                            .removeCurrentSnackBar();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                              'Cannot add more points. You\'ve reached your handicap of $handicap'),
+                                          duration: Duration(seconds: 2),
+                                        ));
+                                      } else {
+                                        final newPendingPoints =
+                                            pendingPoints + 1;
+                                        ref
+                                            .read(gameStateProvider.notifier)
+                                            .updatePendingPoints(
+                                                widget.isP2 ? 2 : 1,
+                                                newPendingPoints);
+                                      }
+                                    },
+                                    child: Container(
+                                      color: Colors.transparent,
+                                      alignment: Alignment.center,
+                                      width: 100,
+                                      child: Text(
+                                        '$pendingPoints',
+                                        style: TextStyle(
+                                            color: _contColor(widget.isP2,
+                                                widget.isBallColorSwapped),
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          if (pendingPoints > 0) {
+                                            final newPendingPoints =
+                                                pendingPoints - 1;
+                                            ref
+                                                .read(
+                                                    gameStateProvider.notifier)
+                                                .updatePendingPoints(
+                                                    widget.isP2 ? 2 : 1,
+                                                    newPendingPoints);
+                                          }
+                                        });
+                                      },
+                                      child: Image.asset(
+                                        ballIcon,
+                                        width: 60,
+                                      ))
+                                ],
+                              )
+                            : Center(
+                                child: Text(
+                                  '$activePlayerName \n is playing...',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: activePlayerColor,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if(pendingPoints > 0) {
-                                  final newPendingPoints = pendingPoints - 1;
-                                  ref.read(gameStateProvider.notifier).updatePendingPoints(widget.isP2 ? 2 : 1, newPendingPoints);
-                                }
-                              });
-                            },
-                            child: Image.asset(ballIcon, width: 60,)
-                          )
-                        ],
                       )
-                    : Center(
-                      child: Text(
-                        '$activePlayerName \n is playing...',
-                        style: TextStyle(
-                          fontSize: 18, 
-                          fontWeight: FontWeight.bold,
-                          color: activePlayerColor,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],  
+              ],
+            ),
           ),
-        ),
-        if(!isActive)
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withAlpha(70),
-            borderRadius: BorderRadius.circular(8)
-          ),
-        )
-        ]
-      );
-    },
+          if (!isActive)
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(70),
+                  borderRadius: BorderRadius.circular(8)),
+            )
+        ]);
+      },
     );
   }
 }
 
 class InningCounter extends ConsumerWidget {
-  const InningCounter ({super.key});
+  const InningCounter({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref){
-    final inningCount = ref.watch(gameStateProvider.select((state) => state.inningCount));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final inningCount =
+        ref.watch(gameStateProvider.select((state) => state.inningCount));
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -421,10 +455,7 @@ class InningCounter extends ConsumerWidget {
           child: Text(
             '$inningCount',
             style: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-              color: Colors.white
-            ),
+                fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
             textAlign: TextAlign.center,
           ),
         ),
@@ -434,18 +465,15 @@ class InningCounter extends ConsumerWidget {
 }
 
 class TimerBar extends ConsumerStatefulWidget {
-  const TimerBar ({
+  const TimerBar({
     super.key,
   });
 
-
-  
   @override
   ConsumerState<TimerBar> createState() => TimerBarState();
 }
 
 class TimerBarState extends ConsumerState<TimerBar> {
-  
   late int remainingSeconds;
   Timer? myTimer;
   bool isPaused = false;
@@ -453,61 +481,65 @@ class TimerBarState extends ConsumerState<TimerBar> {
 
   @override
   Widget build(BuildContext context) {
-
+    print('TimerBar is building');
     final duration = ref.watch(gameStateProvider).timerDuration;
+    final timerAction = ref.watch(timerActionProvider);
+    print('Current timerAction: $timerAction');
 
-    ref.listen(resetTimerProvider, (previous, next){
-      if(next is AsyncData<bool>){
+    ref.listen(resetTimerProvider, (previous, next) {
+      if (next is AsyncData<bool>) {
         final shouldReset = next.value;
-        if(shouldReset){
+        if (shouldReset) {
           resetTimer();
         }
       }
     });
-    
-    ref.listen<String?>(timerActionProvider, (previous,action){
-      if(action == 'pause') {
+
+    ref.listen<String?>(timerActionProvider, (previous, action) {
+      print('Listener triggered with action: $action');
+      if (action == 'pause') {
         pauseTimer();
       } else if (action == 'resume') {
         resumeTimer();
       } else if (action == 'counterReset') {
+        print('Calling counterResetTimer');
         counterResetTimer();
       }
       ref.read(timerActionProvider.notifier).state = null;
     });
 
-
     print('Building with remainingSeconds: $remainingSeconds');
     return LayoutBuilder(
       builder: (context, constraints) {
         const double paddingTimer = 8.0;
-        
+
         return Padding(
           padding: const EdgeInsets.all(paddingTimer),
           child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black,
-              boxShadow: [BoxShadow(
+            decoration: BoxDecoration(color: Colors.black, boxShadow: [
+              BoxShadow(
                 color: Colors.black,
                 spreadRadius: 2,
                 blurRadius: 5,
-              )]
-            ),
+              )
+            ]),
             child: Row(
               children: [
                 Expanded(
                   child: Row(
                     children: List.generate(duration, (index) {
                       final isActive = index >= (duration - remainingSeconds);
-                      final color = _getSegmentColor(index, duration, remainingSeconds, isActive);
+                      final color = _getSegmentColor(
+                          index, duration, remainingSeconds, isActive);
                       return Expanded(
                         child: AnimatedContainer(
-                          duration: Duration(milliseconds:800),
+                          duration: Duration(milliseconds: 800),
                           height: 40,
                           decoration: BoxDecoration(
-                            border : Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1),
-                            color: color
-                          ),
+                              border: Border.all(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                  width: 1),
+                              color: color),
                         ),
                       );
                     }),
@@ -520,7 +552,8 @@ class TimerBarState extends ConsumerState<TimerBar> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: _getTextColor(duration,remainingSeconds, isPaused),
+                      color:
+                          _getTextColor(duration, remainingSeconds, isPaused),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -540,11 +573,10 @@ class TimerBarState extends ConsumerState<TimerBar> {
     startTimer();
   }
 
-
-  void startTimer(){
+  void startTimer() {
     myTimer?.cancel();
     myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (remainingSeconds > 0 && !isPaused){
+      if (remainingSeconds > 0 && !isPaused) {
         setState(() {
           remainingSeconds--;
         });
@@ -554,19 +586,18 @@ class TimerBarState extends ConsumerState<TimerBar> {
     });
   }
 
-
-  void pauseTimer(){
+  void pauseTimer() {
     if (myTimer?.isActive ?? false) {
       isPaused = true;
       myTimer?.cancel();
     }
   }
 
-  void resumeTimer(){
-    if(isPaused && remainingSeconds > 0) {
+  void resumeTimer() {
+    if (isPaused && remainingSeconds > 0) {
       isPaused = false;
       myTimer?.cancel();
-      myTimer = Timer.periodic(const Duration(seconds:1), (timer) {
+      myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         if (remainingSeconds > 0 && !isPaused) {
           setState(() {
             remainingSeconds--;
@@ -578,7 +609,7 @@ class TimerBarState extends ConsumerState<TimerBar> {
     }
   }
 
-  void resetTimer(){
+  void resetTimer() {
     myTimer?.cancel();
     setState(() {
       remainingSeconds = ref.read(gameStateProvider).timerDuration;
@@ -587,15 +618,19 @@ class TimerBarState extends ConsumerState<TimerBar> {
     startTimer();
   }
 
-  void counterResetTimer(){
-    if(isResetting) return;
+  void counterResetTimer() {
+    print('Inside counterResetTimer');
+    if (isResetting) return;
+    print('Already resetting, returning');
     isResetting = true;
     myTimer?.cancel();
     setState(() {
       remainingSeconds = ref.read(gameStateProvider).timerDuration;
       isPaused = false;
+      print('Reset remainingSeconds to $remainingSeconds');
     });
-    Future.delayed(Duration(seconds: 3), (){
+    Future.delayed(Duration(seconds: 3), () {
+      print('Starting timer after delay');
       startTimer();
       isResetting = false;
     });
@@ -607,27 +642,28 @@ class TimerBarState extends ConsumerState<TimerBar> {
     super.dispose();
   }
 
-  Color _getSegmentColor (int index, int duration, int remainingSeconds, bool isActive) {
+  Color _getSegmentColor(
+      int index, int duration, int remainingSeconds, bool isActive) {
     Color baseColor;
 
     if (duration == 40) {
       int second = duration - index;
       if (second >= 25 && second <= 40) {
         baseColor = Colors.green;
-      } else if (second >= 11 && second <= 24){
+      } else if (second >= 11 && second <= 24) {
         baseColor = Colors.amber;
-      } else if (second >=1 && second <= 10) {
+      } else if (second >= 1 && second <= 10) {
         baseColor = Colors.red;
       } else {
         baseColor = Colors.grey;
       }
     } else if (duration == 30) {
       int second = duration - index;
-      if (second >= 21 && second <= 30){
+      if (second >= 21 && second <= 30) {
         baseColor = Colors.green;
-      } else if (second >= 11 && second <=20) {
+      } else if (second >= 11 && second <= 20) {
         baseColor = Colors.amber;
-      } else if (second >= 1 && second <=10) {
+      } else if (second >= 1 && second <= 10) {
         baseColor = Colors.red;
       } else {
         baseColor = Colors.grey;
@@ -644,20 +680,19 @@ class TimerBarState extends ConsumerState<TimerBar> {
       }
     }
 
-    return isActive ? baseColor: Colors.grey.withValues(alpha: 0.90);
+    return isActive ? baseColor : Colors.grey.withValues(alpha: 0.90);
   }
 
-  Color _getTextColor(int duration, int remainingSeconds, bool isPaused){
-
+  Color _getTextColor(int duration, int remainingSeconds, bool isPaused) {
     if (isPaused || remainingSeconds <= 0) {
       return Colors.grey.withValues(alpha: 0.90);
-      }
+    }
     Color textColor;
 
     if (duration == 40) {
-      if (remainingSeconds >= 25 && remainingSeconds <= 40){
+      if (remainingSeconds >= 25 && remainingSeconds <= 40) {
         textColor = Colors.green;
-      } else if (remainingSeconds >= 11 && remainingSeconds <= 24){
+      } else if (remainingSeconds >= 11 && remainingSeconds <= 24) {
         textColor = Colors.amber;
       } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
         textColor = Colors.red;
@@ -665,15 +700,15 @@ class TimerBarState extends ConsumerState<TimerBar> {
         textColor = Colors.grey;
       }
     } else if (duration == 30) {
-      if (remainingSeconds >= 21 && remainingSeconds <= 30){
+      if (remainingSeconds >= 21 && remainingSeconds <= 30) {
         textColor = Colors.green;
-      } else if (remainingSeconds >= 11 && remainingSeconds <= 20){
+      } else if (remainingSeconds >= 11 && remainingSeconds <= 20) {
         textColor = Colors.amber;
       } else if (remainingSeconds >= 1 && remainingSeconds <= 10) {
         textColor = Colors.red;
       } else {
         textColor = Colors.grey;
-      }      
+      }
     } else {
       if (remainingSeconds > 20) {
         textColor = Colors.green;

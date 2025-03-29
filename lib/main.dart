@@ -8,14 +8,12 @@ void main() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-      )
-  );
+  runApp(const ProviderScope(
+    child: MyApp(),
+  ));
 }
 
-class MyApp extends StatelessWidget{
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
@@ -25,4 +23,3 @@ class MyApp extends StatelessWidget{
     );
   }
 }
-

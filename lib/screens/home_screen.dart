@@ -4,16 +4,15 @@ import 'package:nsb/screens/player_selection.dart';
 import 'package:nsb/screens/screen_game.dart';
 import 'package:nsb/screens/players_list.dart';
 
-
-class HomeScreen extends StatefulWidget{
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>{
+class _HomeScreenState extends State<HomeScreen> {
   @override
-  void initState(){
+  void initState() {
     super.initState();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -21,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen>{
   }
 
   @override
-  void dispose(){
+  void dispose() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -34,25 +33,19 @@ class _HomeScreenState extends State<HomeScreen>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Home'
+        appBar: AppBar(
+          title: Text('Home'),
         ),
-      ),
-      body: Center(
-        child: Column(
+        body: Center(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(builder: (context) => PlayersList() ));
-              }, 
-              child: Text(
-                'Players List'
-                )
-            ),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => PlayersList()));
+                },
+                child: Text('Players List')),
             ElevatedButton(
               onPressed: () {
                 showDialog<bool>(
@@ -60,19 +53,15 @@ class _HomeScreenState extends State<HomeScreen>{
                   barrierDismissible: false,
                   builder: (context) => const PlayersSelectionDialog(),
                 ).then((result) {
-                  if (result == true){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ScreenGame())
-                  );
+                  if (result == true) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ScreenGame()));
                   }
                 });
               },
-              child: const Text('Match') ,
+              child: const Text('Match'),
             )
           ],
-        )
-      )
-    );
+        )));
   }
 }

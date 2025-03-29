@@ -7,7 +7,7 @@ class PlayersList extends ConsumerWidget {
   const PlayersList({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref){
+  Widget build(BuildContext context, WidgetRef ref) {
     final players = ref.watch(playersProvider);
     final playersNotifier = ref.read(playersProvider.notifier);
 
@@ -16,20 +16,19 @@ class PlayersList extends ConsumerWidget {
       body: players.isEmpty
           ? const Center(child: Text('No players added yet'))
           : ListView.builder(
-            itemCount: players.length,
-            itemBuilder: (context, index) {
-              final player = players[index];
-              return ListTile(
-                title: Text(player.name),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: (){
-                    playersNotifier.removePlayer(player.name);
-                  },
-                ),
-              );
-            }
-          ),
+              itemCount: players.length,
+              itemBuilder: (context, index) {
+                final player = players[index];
+                return ListTile(
+                  title: Text(player.name),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      playersNotifier.removePlayer(player.name);
+                    },
+                  ),
+                );
+              }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(

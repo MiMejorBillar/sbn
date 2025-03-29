@@ -9,16 +9,15 @@ final gameStateProvider = StateNotifierProvider<GameStateNotifier, GameState>(
   (ref) => GameStateNotifier(
     ref,
     p1Name: 'Jose Luis Perales',
-    p2Name: 'Juan Gabriel', 
-    p1Handicap: 15, 
-    p2Handicap: 20, 
-    p1Extensions: 2, 
-    p2Extensions: 2, 
-    equalizingInnings:false,
+    p2Name: 'Juan Gabriel',
+    p1Handicap: 15,
+    p2Handicap: 20,
+    p1Extensions: 2,
+    p2Extensions: 2,
+    equalizingInnings: false,
     timerDuration: 40,
   ),
 );
-
 
 //Providers to signal resetTimer() and TIMER STUFF
 final resetTimerController = StreamController<bool>.broadcast();
@@ -30,7 +29,7 @@ final resetTimerProvider = StreamProvider.autoDispose<bool>((ref) {
   return resetTimerController.stream;
 });
 
-final timerActionProvider = StateProvider<String?> ((ref) => null);
+final timerActionProvider = StateProvider<String?>((ref) => null);
 
 // PLAYER MANAGEMENT ////////////
 class Player {
@@ -39,12 +38,13 @@ class Player {
   Player({required this.name, required this.handicap});
 }
 
-final playersProvider = StateNotifierProvider<PlayersNotifier, List<Player>>((ref) {
+final playersProvider =
+    StateNotifierProvider<PlayersNotifier, List<Player>>((ref) {
   return PlayersNotifier();
 });
 
 class PlayersNotifier extends StateNotifier<List<Player>> {
-  PlayersNotifier() : super ([]);
+  PlayersNotifier() : super([]);
 
   void addPlayer(Player player) {
     state = [...state, player];

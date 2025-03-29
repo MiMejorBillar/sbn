@@ -27,8 +27,10 @@ class GameState {
   final int timerDuration;
   final String? matchResult;
 
-  double get p1Average => p1History.isEmpty ? 0.0 : p1TotalScore / p1History.length;
-  double get p2Average => p2History.isEmpty ? 0.0 : p2TotalScore / p2History.length;
+  double get p1Average =>
+      p1History.isEmpty ? 0.0 : p1TotalScore / p1History.length;
+  double get p2Average =>
+      p2History.isEmpty ? 0.0 : p2TotalScore / p2History.length;
 
   GameState({
     this.p1Name = 'Player 1',
@@ -119,44 +121,49 @@ class GameStateNotifier extends StateNotifier<GameState> {
 
   GameStateNotifier(
     this.ref, {
-      String p1Name = 'Player 1',
-      String p2Name = 'Player 2',
-      int p1Handicap = 40, 
-      int p2Handicap = 40, 
-      int p1Extensions = 2, 
-      int p2Extensions = 2, 
-      bool equalizingInnings = true,
-      int timerDuration = 40,
+    String p1Name = 'Player 1',
+    String p2Name = 'Player 2',
+    int p1Handicap = 40,
+    int p2Handicap = 40,
+    int p1Extensions = 2,
+    int p2Extensions = 2,
+    bool equalizingInnings = true,
+    int timerDuration = 40,
   }) : super(GameState(
-        p1Name: p1Name,
-        p2Name: p2Name,
-        p1Handicap: p1Handicap, 
-        p2Handicap: p2Handicap, 
-        p1Extensions: p1Extensions,
-        p2Extensions: p2Extensions,
-        equalizingInnings:equalizingInnings,
-        timerDuration: timerDuration,
-      ));
+          p1Name: p1Name,
+          p2Name: p2Name,
+          p1Handicap: p1Handicap,
+          p2Handicap: p2Handicap,
+          p1Extensions: p1Extensions,
+          p2Extensions: p2Extensions,
+          equalizingInnings: equalizingInnings,
+          timerDuration: timerDuration,
+        ));
 
-  void updatePendingPoints(int player, int points){
+  void updatePendingPoints(int player, int points) {
     if (player == 1) {
       state = state.copyWith(p1PendingPoints: points);
     } else {
       state = state.copyWith(p2PendingPoints: points);
     }
+    print(
+        'Setting timerActionProvider to counterReset from updatePendingPoints');
     ref.read(timerActionProvider.notifier).state = 'counterReset';
   }
 
   void useExtension() {
-    if(state.currentPlayer == 1 && state.p1UsedExtensions < state.p1Extensions) {
+    if (state.currentPlayer == 1 &&
+        state.p1UsedExtensions < state.p1Extensions) {
       state = state.copyWith(p1UsedExtensions: state.p1UsedExtensions + 1);
       resetTimerController.add(true);
-    } else if (state.currentPlayer == 2 && state.p2UsedExtensions < state.p2Extensions){
+    } else if (state.currentPlayer == 2 &&
+        state.p2UsedExtensions < state.p2Extensions) {
       state = state.copyWith(p2UsedExtensions: state.p2UsedExtensions + 1);
       resetTimerController.add(true);
-    }      
+    }
   }
-  void setBallColors(String p1BallColor, String p2BallColor){
+
+  void setBallColors(String p1BallColor, String p2BallColor) {
     state = state.copyWith(p1BallColor: p1BallColor, p2BallColor: p2BallColor);
   }
 
@@ -173,14 +180,16 @@ class GameStateNotifier extends StateNotifier<GameState> {
     int newTotalScore;
     int newHighRun;
 
-    if(player == 1) {
+    if (player == 1) {
       newHistory = [...state.p1History, points];
       newTotalScore = newHistory.fold(0, (sum, p) => sum + p);
-      newHighRun = newHistory.isEmpty ? 0 : newHistory.reduce((a,b) => a > b ? a : b);
+      newHighRun =
+          newHistory.isEmpty ? 0 : newHistory.reduce((a, b) => a > b ? a : b);
     } else {
       newHistory = [...state.p2History, points];
       newTotalScore = newHistory.fold(0, (sum, p) => sum + p);
-      newHighRun = newHistory.isEmpty ? 0 : newHistory.reduce((a,b) => a > b ? a : b);      
+      newHighRun =
+          newHistory.isEmpty ? 0 : newHistory.reduce((a, b) => a > b ? a : b);
     }
 
     state = state.copyWith(
@@ -195,6 +204,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p2PendingPoints: player == 2 ? 0 : state.p2PendingPoints,
       isFirstTurnTaken: state.isFirstTurnTaken || player == 1,
     );
+    print('Setting timerActionProvider to counterReset from endTurn');
     ref.read(timerActionProvider.notifier).state = 'counterReset';
 
     if (state.p1History.length == state.p2History.length) {
@@ -210,10 +220,9 @@ class GameStateNotifier extends StateNotifier<GameState> {
 
       if (state.p1History.isEmpty && state.p2History.isEmpty) {
         state = state.copyWith(
-          isFirstTurnTaken: false,
-          p1BallColor: 'white',
-          p2BallColor: 'yellow'
-          );
+            isFirstTurnTaken: false,
+            p1BallColor: 'white',
+            p2BallColor: 'yellow');
       }
     }
   }
@@ -221,17 +230,17 @@ class GameStateNotifier extends StateNotifier<GameState> {
   void checkMatchEnd() {
     final p1Reached = state.p1TotalScore >= state.p1Handicap;
     final p2Reached = state.p2TotalScore >= state.p2Handicap;
-      //Allowed Equalizing innings
-    if (state.equalizingInnings){
+    //Allowed Equalizing innings
+    if (state.equalizingInnings) {
       //No one has potentially won yet
-      if(potentialWinner == null) {
-        if(p1Reached && !p2Reached) {
+      if (potentialWinner == null) {
+        if (p1Reached && !p2Reached) {
           potentialWinner = 1;
-        } else if(p2Reached) {
+        } else if (p2Reached) {
           _endMatch('P2');
         }
       } else if (potentialWinner == 1 && state.currentPlayer == 1) {
-        if (p2Reached){
+        if (p2Reached) {
           _endMatch('draw');
         } else {
           _endMatch('P1');
@@ -247,31 +256,32 @@ class GameStateNotifier extends StateNotifier<GameState> {
       }
     }
   }
-  void _endMatch(String result){
+
+  void _endMatch(String result) {
     state = state.copyWith(matchResult: result);
     potentialWinner = null;
   }
 
-  // void resetGame({
-  //   String? p1Name, 
-  //   String? p2Name, 
-  //   int? p1Handicap, 
-  //   int? p2Handicap, 
-  //   bool? equalizingInnings,
-  //   int? timerDuration,
-  // }) {
-  //   stateHistory.clear();
-  //   potentialWinner = null;
-  //   state = GameState(
-  //     p1Name: p1Name ?? state.p1Name,
-  //     p2Name: p2Name ?? state.p2Name,
-  //     p1Handicap: p1Handicap ?? state.p1Handicap,
-  //     p2Handicap: p2Handicap ?? state.p2Handicap,
-  //     equalizingInnings: equalizingInnings ?? state.equalizingInnings,
-  //     timerDuration: timerDuration ?? state.timerDuration,
-  //   );
-  //   resetTimerController.add(true);
-  // }
+  void resetGame({
+    String? p1Name,
+    String? p2Name,
+    int? p1Handicap,
+    int? p2Handicap,
+    bool? equalizingInnings,
+    int? timerDuration,
+  }) {
+    stateHistory.clear();
+    potentialWinner = null;
+    state = GameState(
+      p1Name: p1Name ?? state.p1Name,
+      p2Name: p2Name ?? state.p2Name,
+      p1Handicap: p1Handicap ?? state.p1Handicap,
+      p2Handicap: p2Handicap ?? state.p2Handicap,
+      equalizingInnings: equalizingInnings ?? state.equalizingInnings,
+      timerDuration: timerDuration ?? state.timerDuration,
+    );
+    resetTimerController.add(true);
+  }
 
   void startNewGame({
     required String p1Name,
@@ -299,7 +309,6 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p1BallColor: p1BallColor,
       p2BallColor: p2BallColor,
     );
-    ref.read(timerActionProvider.notifier).state = 'counterReset';
+    resetTimerController.add(true);
   }
-  
 }
