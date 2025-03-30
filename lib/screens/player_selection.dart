@@ -14,6 +14,8 @@ class _PlayersSelectionDialogState
     extends ConsumerState<PlayersSelectionDialog> {
   String? selectedP1;
   String? selectedP2;
+  String? selectedIconP1;
+  String? selectedIconP2;
   int? selectedHandicapP1;
   int? selectedHandicapP2;
   bool equalizingInnings = true;
@@ -62,6 +64,8 @@ class _PlayersSelectionDialogState
                     selectedP1 = value;
                     selectedHandicapP1 =
                         players.firstWhere((p) => p.name == value).handicap;
+                    selectedIconP1 = 
+                        players.firstWhere((p) => p.name == value).icon;
                   });
                 },
               ),
@@ -81,6 +85,7 @@ class _PlayersSelectionDialogState
                     selectedP2 = value;
                     selectedHandicapP2 =
                         players.firstWhere((p) => p.name == value).handicap;
+                    selectedIconP2 = players.firstWhere((p) => p.name == value).icon;
                   });
                 },
               ),
@@ -95,7 +100,7 @@ class _PlayersSelectionDialogState
                     .toList(),
                 onChanged: (value) {
                   setState(() {
-                    selectedDuration = value!;;
+                    selectedDuration = value!;
                   });
                 },
               ),
@@ -146,6 +151,8 @@ class _PlayersSelectionDialogState
                         ref.read(gameStateProvider.notifier).startNewGame(
                             p1Name: selectedP1!,
                             p2Name: selectedP2!,
+                            iconP1: selectedIconP1!,
+                            iconP2: selectedIconP2!,
                             p1Handicap: selectedHandicapP1!,
                             p2Handicap: selectedHandicapP2!,
                             p1Extensions: selectedExtension,

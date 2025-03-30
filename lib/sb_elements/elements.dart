@@ -102,9 +102,9 @@ class ScorecardState extends ConsumerState<Scorecard> {
                 (!widget.isP2 && widget.isBallColorSwapped);
         final String ballIcon =
             showYellowBall ? 'assets/icons/ybi.png' : 'assets/icons/wbi.png';
-        final String headerIcon = widget.isP2
-            ? 'assets/icons/creeper.png'
-            : 'assets/icons/trophy.png';
+        final headerIcon = widget.isP2
+            ? gameState.iconP2 
+            : gameState.iconP1;
         return Stack(children: [
           Container(
             decoration: BoxDecoration(
@@ -139,7 +139,7 @@ class ScorecardState extends ConsumerState<Scorecard> {
                     children: [
                       Container(
                           child: Image.asset(
-                        headerIcon,
+                        '$headerIcon',
                         width: 50,
                       )),
                       Expanded(

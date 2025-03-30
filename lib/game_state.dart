@@ -4,6 +4,8 @@ import 'package:nsb/riverpod/timer_provider.dart';
 class GameState {
   final String? p1Name;
   final String? p2Name;
+  final String? iconP1;
+  final String? iconP2;
   final int currentPlayer;
   final List<int> p1History;
   final List<int> p2History;
@@ -35,6 +37,8 @@ class GameState {
   GameState({
     this.p1Name = 'Player 1',
     this.p2Name = 'Player 2',
+    this.iconP1 = 'assets/flags/canada.png',
+    this.iconP2 = 'assets/flags/korea.png',
     this.currentPlayer = 1,
     this.p1History = const [],
     this.p2History = const [],
@@ -62,6 +66,8 @@ class GameState {
   GameState copyWith({
     String? p1Name,
     String? p2Name,
+    String? iconP1,
+    String? iconP2,
     int? currentPlayer,
     List<int>? p1History,
     List<int>? p2History,
@@ -88,6 +94,8 @@ class GameState {
     return GameState(
       p1Name: p1Name ?? this.p1Name,
       p2Name: p2Name ?? this.p2Name,
+      iconP1: iconP1 ?? this.iconP1,
+      iconP2: iconP2 ?? this.iconP2,
       currentPlayer: currentPlayer ?? this.currentPlayer,
       p1History: p1History ?? this.p1History,
       p2History: p2History ?? this.p2History,
@@ -123,6 +131,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
     this.ref, {
     String p1Name = 'Player 1',
     String p2Name = 'Player 2',
+    String iconP1 = 'assets/flags/canada.png',
+    String iconP2 = 'assets/flags/korea.png',
     int p1Handicap = 40,
     int p2Handicap = 40,
     int p1Extensions = 2,
@@ -132,6 +142,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
   }) : super(GameState(
           p1Name: p1Name,
           p2Name: p2Name,
+          iconP1: iconP1,
+          iconP2: iconP2,
           p1Handicap: p1Handicap,
           p2Handicap: p2Handicap,
           p1Extensions: p1Extensions,
@@ -284,6 +296,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
   void startNewGame({
     required String p1Name,
     required String p2Name,
+    required String iconP1,
+    required String iconP2,
     required int p1Handicap,
     required int p2Handicap,
     required bool equalizingInnings,
@@ -298,6 +312,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
     state = GameState(
       p1Name: p1Name,
       p2Name: p2Name,
+      iconP1: iconP1,
+      iconP2: iconP2,
       p1Handicap: p1Handicap,
       p2Handicap: p2Handicap,
       equalizingInnings: equalizingInnings,

@@ -13,6 +13,13 @@ class AddPlayerState extends ConsumerState<AddPlayer> {
   String? errorMessage;
   late TextEditingController nameController;
   late TextEditingController handicapController;
+  String selectedIcon = "assets/flags/canada.png";
+
+  final List<String> iconOptions = [
+    "assets/flags/canada.png",
+    "assets/flags/peru.png",
+    "assets/flags/korea.png",
+  ];
 
   @override
   void initState() {
@@ -71,6 +78,28 @@ class AddPlayerState extends ConsumerState<AddPlayer> {
                     }
                   },
                 ),
+                SizedBox(height: 16,),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(labelText: 'Choose your icon'),
+                  value: selectedIcon,
+                  items: iconOptions
+                      .map((icon) => DropdownMenuItem(
+                        value: icon,
+                        child: Row(
+                          children: [
+                            Image.asset(icon, width: 24, height: 24,),
+                            const SizedBox(width: 8,),
+                            Text(icon.split('/').last.split('.').first),
+                          ],
+                        )
+                      ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedIcon = value!;
+                    });
+                  } ,
+                ),
                 if (errorMessage != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8),
@@ -93,6 +122,7 @@ class AddPlayerState extends ConsumerState<AddPlayer> {
                       onPressed: () {
                         String name = nameController.text.trim();
                         String handicapText = handicapController.text.trim();
+                        String icon = selectedIcon;
 
                         if (name.isEmpty || handicapText.isEmpty) {
                           setState(() {
@@ -109,7 +139,7 @@ class AddPlayerState extends ConsumerState<AddPlayer> {
                           return;
                         }
                         playersNotifier
-                            .addPlayer(Player(name: name, handicap: handicap));
+                            .addPlayer(Player(name: name, handicap: handicap, icon: icon ));
                         Navigator.of(context).pop();
                       },
                       child: const Text('Add'),
