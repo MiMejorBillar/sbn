@@ -240,7 +240,7 @@ class ScorecardState extends ConsumerState<Scorecard> {
                                                       vertical: 2,
                                                       horizontal: 8),
                                                   width: 32,
-                                                  height: 12,
+                                                  height: 8,
                                                   decoration: BoxDecoration(
                                                       color:
                                                           index < usedExtensions
@@ -483,53 +483,49 @@ class TimerBarState extends ConsumerState<TimerBar> {
     print('Building with $remainingSeconds');
     return LayoutBuilder(
       builder: (context, constraints) {
-        const double paddingTimer = 8.0;
-        return Padding(
-          padding: const EdgeInsets.all(paddingTimer),
-          child: Container(
-            decoration: BoxDecoration(color: Colors.black, boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                spreadRadius: 2,
-                blurRadius: 5,
-              )
-            ]),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Row(
-                    children: List.generate(initialDuration, (index) {
-                      final color = _getSegmentColor(
-                          index, initialDuration, remainingSeconds);
-                      return Expanded(
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 800),
-                          height: 40,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: const Color.fromARGB(255, 0, 0, 0),
-                                  width: 1),
-                              color: color),
-                        ),
-                      );
-                    }),
-                  ),
+        return Container(
+          decoration: BoxDecoration(color: Colors.black, boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              spreadRadius: 2,
+              blurRadius: 5,
+            )
+          ]),
+          child: Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: List.generate(initialDuration, (index) {
+                    final color = _getSegmentColor(
+                        index, initialDuration, remainingSeconds);
+                    return Expanded(
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 800),
+                        height: 40,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                                width: 1),
+                            color: color),
+                      ),
+                    );
+                  }),
                 ),
-                SizedBox(
-                  width: 30,
-                  child: Text(
-                    '$remainingSeconds',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color:
-                          _getTextColor(remainingSeconds, initialDuration, isPaused)
-                    ),
-                    textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                width: 30,
+                child: Text(
+                  '$remainingSeconds',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color:
+                        _getTextColor(remainingSeconds, initialDuration, isPaused)
                   ),
-                )
-              ],
-            ),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ],
           ),
         );
       },

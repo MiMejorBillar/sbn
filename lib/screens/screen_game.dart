@@ -105,10 +105,9 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                 child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const SizedBox(width: 8),
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Scorecard(
                       isP2: _isSwapped,
                       isBallColorSwapped: _isBallColorSwapped),
@@ -117,118 +116,120 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                        padding: EdgeInsets.all(8), child: InningCounter()),
+                        padding: EdgeInsets.all(4), child: InningCounter()),
                   ],
                 ),
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Scorecard(
                     isP2: !_isSwapped,
                     isBallColorSwapped: _isBallColorSwapped,
                   ),
                 )),
-                SizedBox(width: 8),
               ],
             )),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
               child: Row(children: [
                 Expanded(child: TimerBar()),
               ]),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Row(
-                  children: [
-                    ElevatedButton(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            ref.read(gameStateProvider.notifier).undo();
+                          },
+                          style: buttonStyle,
+                          child: Tooltip(
+                            message: 'Fix a previous inning',
+                            child: Text('Fix',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                          )),
+                      ElevatedButton(
                         onPressed: () {
-                          ref.read(gameStateProvider.notifier).undo();
+                          _swapScorecards();
                         },
                         style: buttonStyle,
                         child: Tooltip(
-                          message: 'Fix a previous inning',
-                          child: Text('Fix',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
-                        )),
-                    ElevatedButton(
-                      onPressed: () {
-                        _swapScorecards();
-                      },
-                      style: buttonStyle,
-                      child: Tooltip(
-                        message: 'Swap cards position',
-                        child: Icon(
-                          Icons.swap_horiz,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _swapBallColors();
-                      },
-                      style: buttonStyle,
-                      child: Tooltip(
-                        message: 'Swap ball colors',
-                        child: Icon(
-                          Icons.swap_horizontal_circle,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        ref.read(timerStateProvider.notifier).pause();
-                      },
-                      style: buttonStyle,
-                      child: Tooltip(
-                        message: 'Pause timer',
-                        child: Icon(
-                          Icons.pause,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        ref.read(timerStateProvider.notifier).resume();
-                      },
-                      style: buttonStyle,
-                      child: Tooltip(
-                        message: 'Resume timer',
-                        child: Icon(
-                          Icons.play_arrow,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        ref.read(gameStateProvider.notifier).useExtension();
-                      },
-                      style: buttonStyle,
-                      child: Tooltip(
-                        message: 'Call an extension',
-                        child: Text(
-                          'Ext.',
-                          style: TextStyle(
+                          message: 'Swap cards position',
+                          child: Icon(
+                            Icons.swap_horiz,
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
                           ),
-                        ), 
+                        ),
                       ),
-                    )
-                  ],
-                ),
-              ],
+                      ElevatedButton(
+                        onPressed: () {
+                          _swapBallColors();
+                        },
+                        style: buttonStyle,
+                        child: Tooltip(
+                          message: 'Swap ball colors',
+                          child: Icon(
+                            Icons.swap_horizontal_circle,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          ref.read(timerStateProvider.notifier).pause();
+                        },
+                        style: buttonStyle,
+                        child: Tooltip(
+                          message: 'Pause timer',
+                          child: Icon(
+                            Icons.pause,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          ref.read(timerStateProvider.notifier).resume();
+                        },
+                        style: buttonStyle,
+                        child: Tooltip(
+                          message: 'Resume timer',
+                          child: Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          ref.read(gameStateProvider.notifier).useExtension();
+                        },
+                        style: buttonStyle,
+                        child: Tooltip(
+                          message: 'Call an extension',
+                          child: Text(
+                            'Ext.',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ), 
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             )
           ],
         )));
