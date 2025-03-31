@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nsb/widgets/scoresheet.dart';
+import 'package:open_file/open_file.dart';
 import '/state_management/providers.dart';
 import 'package:nsb/widgets/elements.dart';
 export 'screen_game.dart';
@@ -67,6 +69,18 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                         : '${gameState.p2Name} wins!',
               ),
               actions: [
+                TextButton(
+                  onPressed: () async {
+                    final filePath = await generateScoresheetPdf(gameState);
+                    final result = await OpenFile.open(filePath);
+                    if (result.type != ResultType.done){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Couldn\'t open PDF. No viewer found ')),
+                      );
+                    }
+                  }, 
+                  child: const Text('View Scoresheet'),
+                  ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
