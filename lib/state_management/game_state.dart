@@ -214,12 +214,17 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p2PendingPoints: player == 2 ? 0 : state.p2PendingPoints,
       isFirstTurnTaken: state.isFirstTurnTaken || player == 1,
     );
-    ref.read(timerStateProvider.notifier).delayedReset();
+    checkMatchEnd();
+
+    if (state.matchResult == null){
+      ref.read(timerStateProvider.notifier).delayedReset();
+    }
+    
 
     if (state.p1History.length == state.p2History.length) {
       state = state.copyWith(inningCount: state.inningCount + 1);
     }
-    checkMatchEnd();
+
     return true;
   }
 
@@ -267,8 +272,11 @@ class GameStateNotifier extends StateNotifier<GameState> {
   }
 
   void _endMatch(String result) {
+    ref.read(timerStateProvider.notifier).stopTimer();
     state = state.copyWith(matchResult: result);
     potentialWinner = null;
+    print('Timer stopped');
+    
   }
 
   void resetGame({

@@ -8,12 +8,14 @@ class TimerState {
   final int initialDuration;
   final bool isPaused;
   final bool isResetting;
+  final bool isRunning;
 
   TimerState({
     required this.remainingSeconds,
     required this.initialDuration,
     this.isPaused = false,
     this.isResetting = false,
+    this.isRunning = false,
   });
 
   TimerState copyWith({
@@ -21,12 +23,14 @@ class TimerState {
     int? initialDuration,
     bool? isPaused,
     bool? isResetting,
+    bool? isRunning,
   }) {
     return TimerState(
       remainingSeconds: remainingSeconds ?? this.remainingSeconds, 
       initialDuration: initialDuration ?? this.initialDuration,
       isPaused: isPaused ?? this.isPaused,
       isResetting: isResetting ?? this.isResetting,
+      isRunning: isRunning ?? this.isRunning,
     );
   }
 }
@@ -98,6 +102,12 @@ class TimerStateNotifier extends StateNotifier<TimerState> {
       _startTimer();
       state = state.copyWith(isResetting: false);
     });
+  }
+
+  void stopTimer(){
+    state = state.copyWith(remainingSeconds: 0 ,isRunning: false);
+    _timer?.cancel();
+
   }
 
   @override
