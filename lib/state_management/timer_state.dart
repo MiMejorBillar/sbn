@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nsb/game_state.dart';
-import 'package:nsb/riverpod/providers.dart';
+import 'package:nsb/state_management/game_state.dart';
+import 'package:nsb/state_management/providers.dart';
 
 class TimerState {
   final int remainingSeconds;
@@ -107,6 +107,3 @@ class TimerStateNotifier extends StateNotifier<TimerState> {
   }
 }
 
-final timerStateProvider = StateNotifierProvider<TimerStateNotifier, TimerState>(
-  (ref)=> TimerStateNotifier(ref),
-);

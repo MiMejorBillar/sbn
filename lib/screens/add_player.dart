@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../riverpod/providers.dart';
+import '../state_management/providers.dart';
+import '../state_management/players_logic.dart';
 
 class AddPlayer extends ConsumerStatefulWidget {
   const AddPlayer({super.key});

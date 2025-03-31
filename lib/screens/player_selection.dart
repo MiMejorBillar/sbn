@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../riverpod/providers.dart';
+import '../state_management/providers.dart';
 
 class PlayersSelectionDialog extends ConsumerStatefulWidget {
   const PlayersSelectionDialog({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nsb/screens/add_player.dart';
-import '../riverpod/providers.dart';
+import '../state_management/providers.dart';
 
 class PlayersList extends ConsumerWidget {
   const PlayersList({super.key});

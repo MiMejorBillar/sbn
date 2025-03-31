@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../riverpod/providers.dart';
-import '../riverpod/timer_provider.dart';
+import '../state_management/providers.dart';
+
 
 class Scorecard extends ConsumerStatefulWidget {
   const Scorecard({

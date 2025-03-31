@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nsb/riverpod/timer_provider.dart';
+import '../state_management/providers.dart';
 
 class GameState {
   final String? p1Name;
