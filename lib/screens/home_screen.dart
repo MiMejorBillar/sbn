@@ -3,14 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:nsb/screens/player_selection.dart';
 import 'package:nsb/screens/screen_game.dart';
 import 'package:nsb/screens/players_list.dart';
+import 'package:nsb/main.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with RouteAware {
   @override
   void initState() {
     super.initState();
@@ -20,7 +21,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    final ModalRoute? route = ModalRoute.of(context);
+    if(route != null){
+      routeObserver.subscribe(this,route);
+    }
+  }
+
+  @override
+  void didPopNext() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
+  @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
