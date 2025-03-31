@@ -96,6 +96,7 @@ class ScorecardState extends ConsumerState<Scorecard> {
         final isActive = (widget.isP2 ? 2 : 1) == currentPlayer;
         final activePlayerName =
             currentPlayer == 1 ? gameState.p1Name : gameState.p2Name;
+        final matchEnded = gameState.matchResult != null;
         //Ball color changes
         final bool showYellowBall =
             (widget.isP2 && !widget.isBallColorSwapped) ||
@@ -343,78 +344,89 @@ class ScorecardState extends ConsumerState<Scorecard> {
                             color: Colors.blueGrey,
                             borderRadius: BorderRadius.only(
                                 bottomRight: Radius.circular(8))),
-                        child: isActive
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (totalScore + pendingPoints + 1 >
-                                          handicap) {
-                                        ScaffoldMessenger.of(context)
-                                            .removeCurrentSnackBar();
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: Text(
-                                              'Cannot add more points. You\'ve reached your handicap of $handicap'),
-                                          duration: Duration(seconds: 2),
-                                        ));
-                                      } else {
-                                        final newPendingPoints =
-                                            pendingPoints + 1;
-                                        ref
-                                            .read(gameStateProvider.notifier)
-                                            .updatePendingPoints(
-                                                widget.isP2 ? 2 : 1,
-                                                newPendingPoints);
-                                      }
-                                    },
-                                    child: Container(
-                                      color: Colors.transparent,
-                                      alignment: Alignment.center,
-                                      width: 83,
+                        child: matchEnded
+                            ? Center(
+                              child: Text(
+                                'Match Ended',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white
+                                ),
+                              )
+                            ) 
+                            :  isActive
+                                  ? Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (totalScore + pendingPoints + 1 >
+                                                handicap) {
+                                              ScaffoldMessenger.of(context)
+                                                  .removeCurrentSnackBar();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Cannot add more points. You\'ve reached your handicap of $handicap'),
+                                                duration: Duration(seconds: 2),
+                                              ));
+                                            } else {
+                                              final newPendingPoints =
+                                                  pendingPoints + 1;
+                                              ref
+                                                  .read(gameStateProvider.notifier)
+                                                  .updatePendingPoints(
+                                                      widget.isP2 ? 2 : 1,
+                                                      newPendingPoints);
+                                            }
+                                          },
+                                          child: Container(
+                                            color: Colors.transparent,
+                                            alignment: Alignment.center,
+                                            width: 83,
+                                            child: Text(
+                                              '$pendingPoints',
+                                              style: TextStyle(
+                                                  color: _contColor(widget.isP2,
+                                                      widget.isBallColorSwapped),
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                if (pendingPoints > 0) {
+                                                  final newPendingPoints =
+                                                      pendingPoints - 1;
+                                                  ref
+                                                      .read(
+                                                          gameStateProvider.notifier)
+                                                      .updatePendingPoints(
+                                                          widget.isP2 ? 2 : 1,
+                                                          newPendingPoints);
+                                                }
+                                              });
+                                            },
+                                            child: Image.asset(
+                                              ballIcon,
+                                              width:60,
+                                            ))
+                                      ],
+                                    )
+                                  : Center(
                                       child: Text(
-                                        '$pendingPoints',
+                                        '$activePlayerName \n is playing...',
                                         style: TextStyle(
-                                            color: _contColor(widget.isP2,
-                                                widget.isBallColorSwapped),
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: activePlayerColor,
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
-                                  ),
-                                  GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          if (pendingPoints > 0) {
-                                            final newPendingPoints =
-                                                pendingPoints - 1;
-                                            ref
-                                                .read(
-                                                    gameStateProvider.notifier)
-                                                .updatePendingPoints(
-                                                    widget.isP2 ? 2 : 1,
-                                                    newPendingPoints);
-                                          }
-                                        });
-                                      },
-                                      child: Image.asset(
-                                        ballIcon,
-                                        width:60,
-                                      ))
-                                ],
-                              )
-                            : Center(
-                                child: Text(
-                                  '$activePlayerName \n is playing...',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: activePlayerColor,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
                       )
                     ],
                   ),
