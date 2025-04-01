@@ -14,7 +14,105 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
   //     : gameState.p2History.length;
 
   // final bool hasIncompleteInning = gameState.p1History.length > gameState.p2History.length;
-  final String currentDataTime = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());    
+  final String currentDataTime = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+  const int maxInningsPerTable = 25;    
+
+  pw.Widget buildInningTable(List<int> history, int startIndex, int endIndex){
+    return pw.Table(
+      border: pw.TableBorder.all(),
+      columnWidths: {
+        0: pw.FixedColumnWidth(25),
+        1: pw.FixedColumnWidth(25),
+        2: pw.FixedColumnWidth(25),
+      },
+      children: [
+        pw.TableRow(
+          children: [
+            pw.Container(
+              height:25,
+              alignment: pw.Alignment.center,
+              decoration: pw.BoxDecoration(
+                border: pw.Border(right: pw.BorderSide(color: PdfColors.white)),
+                color: PdfColors.black,
+              ),
+              child:pw.Text(
+                'In', 
+                style: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.white), 
+                textAlign: pw.TextAlign.center
+              ),
+            ),
+            pw.Container(
+              height: 25,
+              alignment: pw.Alignment.center,
+              decoration: pw.BoxDecoration(
+                border: pw.Border(right: pw.BorderSide(color: PdfColors.white)),
+                color: PdfColors.black,
+              ),
+              child:pw.Text(
+                'PS', 
+                style: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.white), 
+                textAlign: pw.TextAlign.center
+              ),
+            ),
+            pw.Container(
+              height: 25,
+              alignment: pw.Alignment.center,
+              color: PdfColors.black,
+              child:pw.Text(
+                'TS', 
+                style: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.white), 
+                textAlign: pw.TextAlign.center
+              ),
+            )
+          ],  
+        ),
+        ...List.generate(
+          endIndex - startIndex,
+            (i){
+            final inningIndex = startIndex + i;
+            final partial = history[inningIndex];
+            final int total = history.sublist(0, inningIndex + 1).fold(0, (a,b) => a+b);
+            return pw.TableRow(
+              children: [
+                pw.Container(
+                  height: 20,
+                  alignment: pw.Alignment.center,
+                  color: PdfColors.blueGrey200,
+                  child:pw.Text('${inningIndex + 1}', style:pw.TextStyle(fontWeight: pw.FontWeight.bold),textAlign: pw.TextAlign.center), ),
+                pw.Container(
+                  alignment: pw.Alignment.center,
+                  height: 20,
+                  child:pw.Text('$partial', textAlign: pw.TextAlign.center),),
+                pw.Container(
+                  alignment: pw.Alignment.center,
+                  height: 20,
+                  child:pw.Text('$total', textAlign: pw.TextAlign.center),)
+              ], 
+            );
+          },
+        ),
+      ]
+    );
+  }
+
+  List<pw.Widget> buildWrappedHistory(List<int> history) {
+    if(history.isEmpty) {
+      return [pw.Text('No innings recorded')];
+    }
+    final List<pw.Widget> tables = [];
+    for(int i = 0; i < history.length; i += maxInningsPerTable){
+      final end = (i + maxInningsPerTable < history.length) ? i + maxInningsPerTable : history.length;
+      tables.add(buildInningTable(history, i, end));
+    }
+    return tables;
+  }
+
 
   pdf.addPage(
     pw.Page(
@@ -48,21 +146,27 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                           'Extensions Used: ${gameState.p1UsedExtensions}/${gameState.p1Extensions}',
                         ),
                       ),
-                      pw.SizedBox(height: 10), 
-                      pw.TableHelper.fromTextArray(
-                        headers: ['Inning','Partial','Total'],                // History
-                        data: List.generate(
-                          gameState.p1History.length,
-                          (i) {
-                            final score = gameState.p1History[i];
-                            final int cumulative = gameState.p1History.sublist(0, i+1).fold(0, (a,b) => a + b);
-                            return ['${i + 1}', '$score','$cumulative'];
-                          },
-                        ),
-                        border: pw.TableBorder.all(),
-                        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                        cellAlignment: pw.Alignment.center,
-                      ),
+                      pw.SizedBox(height: 10),
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.start,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [...buildWrappedHistory(gameState.p1History)]
+                      ), 
+
+                      // pw.TableHelper.fromTextArray(
+                      //   headers: ['Inning','Partial','Total'],                // History
+                      //   data: List.generate(
+                      //     gameState.p1History.length,
+                      //     (i) {
+                      //       final score = gameState.p1History[i];
+                      //       final int cumulative = gameState.p1History.sublist(0, i+1).fold(0, (a,b) => a + b);
+                      //       return ['${i + 1}', '$score','$cumulative'];
+                      //     },
+                      //   ),
+                      //   border: pw.TableBorder.all(),
+                      //   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      //   cellAlignment: pw.Alignment.center,
+                      // ),
                       pw.SizedBox(height: 10),   
                       pw.Row(         // P1 Summary
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -74,7 +178,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                             child: pw.Text('Total Innings \n ${gameState.p1History.length}')
                           ), // P1 TI,
                           pw.Container(
-                            child: pw.Text('Average \n ${gameState.p1Average}')
+                            child: pw.Text('Average \n ${gameState.p1Average.toStringAsFixed(3)}')
                           ), // P1 avg
                           pw.Container(child: pw.Text('H.R. \n ${gameState.p1HighRun}')), //P1 HR
                         ]
@@ -97,21 +201,27 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                           'Extensions Used: ${gameState.p2UsedExtensions}/${gameState.p2Extensions}',
                         ),
                       ),
-                      pw.SizedBox(height: 10), 
-                      pw.TableHelper.fromTextArray(
-                        headers: ['Inning','Partial','Total'],                // History
-                        data: List.generate(
-                          gameState.p2History.length,
-                          (i) {
-                            final score = gameState.p2History[i];
-                            final int cumulative = gameState.p2History.sublist(0, i+1).fold(0, (a,b) => a + b);
-                            return ['${i + 1}', '$score','$cumulative'];
-                          },
-                        ),
-                        border: pw.TableBorder.all(),
-                        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                        cellAlignment: pw.Alignment.center,
-                      ),
+                      pw.SizedBox(height: 10),
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.start,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [...buildWrappedHistory(gameState.p2History)]
+                      ), 
+
+                      // pw.TableHelper.fromTextArray(
+                      //   headers: ['Inning','Partial','Total'],                // History
+                      //   data: List.generate(
+                      //     gameState.p2History.length,
+                      //     (i) {
+                      //       final score = gameState.p2History[i];
+                      //       final int cumulative = gameState.p2History.sublist(0, i+1).fold(0, (a,b) => a + b);
+                      //       return ['${i + 1}', '$score','$cumulative'];
+                      //     },
+                      //   ),
+                      //   border: pw.TableBorder.all(),
+                      //   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      //   cellAlignment: pw.Alignment.center,
+                      // ),
                       pw.SizedBox(height: 10),   
                       pw.Row(         // P1 Summary
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -132,7 +242,10 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                   )
                 ), // P2 COLUMN
               ]
-            )
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text('PS : Partial Score'),
+            pw.Text('TS: Total Score'),
             // pw.SizedBox(height: 20),
             // pw.Text('Player 1: ${gameState.p1Name}'),
             // pw.Text('Player 2: ${gameState.p2Name}'),
