@@ -8,15 +8,11 @@ import 'package:intl/intl.dart';
 
 Future<String> generateScoresheetPdf(GameState gameState) async {
   final pdf = pw.Document();
-
-  // final int completeInnings = gameState.p1History.length < gameState.p2History.length
-  //     ? gameState.p1History.length
-  //     : gameState.p2History.length;
-
-  // final bool hasIncompleteInning = gameState.p1History.length > gameState.p2History.length;
   final String currentDataTime = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
-  const int maxInningsPerTable = 25;    
-
+  const int maxInningsPerTable = 25;
+  final summaryTextStyle = pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.bold);
+  final summaryValueTS = pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.bold, fontSize: 16);   
+  final summaryCellStyle = pw.BoxDecoration(color: PdfColors.white);
   pw.Widget buildInningTable(List<int> history, int startIndex, int endIndex){
     return pw.Table(
       border: pw.TableBorder.all(),
@@ -130,15 +126,19 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
             pw.SizedBox(height:20),
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Expanded(
                   child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start, // P1 COLUMN
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,// P1 COLUMN
                     children: [
                       pw.Container(                                  // P1 NAME
                         child: pw.Text(
                           '${gameState.p1Name ?? "Player 1"}',
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 16
+                          ),
                         )
                       ), 
                       pw.Container(                                 // Number of Extensions Used
@@ -149,54 +149,26 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                       pw.SizedBox(height: 10),
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.start,
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [...buildWrappedHistory(gameState.p1History)]
                       ), 
-
-                      // pw.TableHelper.fromTextArray(
-                      //   headers: ['Inning','Partial','Total'],                // History
-                      //   data: List.generate(
-                      //     gameState.p1History.length,
-                      //     (i) {
-                      //       final score = gameState.p1History[i];
-                      //       final int cumulative = gameState.p1History.sublist(0, i+1).fold(0, (a,b) => a + b);
-                      //       return ['${i + 1}', '$score','$cumulative'];
-                      //     },
-                      //   ),
-                      //   border: pw.TableBorder.all(),
-                      //   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                      //   cellAlignment: pw.Alignment.center,
-                      // ),
                       pw.SizedBox(height: 10),   
-                      pw.Row(         // P1 Summary
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Container(
-                            child: pw.Text('Total Points \n ${gameState.p1TotalScore}')
-                          ), // P1 TS
-                          pw.Container(
-                            child: pw.Text('Total Innings \n ${gameState.p1History.length}')
-                          ), // P1 TI,
-                          pw.Container(
-                            child: pw.Text('Average \n ${gameState.p1Average.toStringAsFixed(3)}')
-                          ), // P1 avg
-                          pw.Container(child: pw.Text('H.R. \n ${gameState.p1HighRun}')), //P1 HR
-                        ]
-                      )
                     ]
                   )
                 ),
                 pw.Expanded(
                   child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start, // P2 COLUMN
+                    crossAxisAlignment: pw.CrossAxisAlignment.start, 
                     children: [
-                      pw.Container(                                  // P2 NAME
+                      pw.Container(                                  
                         child: pw.Text(
                           '${gameState.p2Name ?? "Player 2"}',
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         )
                       ), 
-                      pw.Container(                                 // Number of Extensions Used
+                      pw.Container(                                
                         child: pw.Text(
                           'Extensions Used: ${gameState.p2UsedExtensions}/${gameState.p2Extensions}',
                         ),
@@ -204,113 +176,227 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                       pw.SizedBox(height: 10),
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.start,
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [...buildWrappedHistory(gameState.p2History)]
                       ), 
-
-                      // pw.TableHelper.fromTextArray(
-                      //   headers: ['Inning','Partial','Total'],                // History
-                      //   data: List.generate(
-                      //     gameState.p2History.length,
-                      //     (i) {
-                      //       final score = gameState.p2History[i];
-                      //       final int cumulative = gameState.p2History.sublist(0, i+1).fold(0, (a,b) => a + b);
-                      //       return ['${i + 1}', '$score','$cumulative'];
-                      //     },
-                      //   ),
-                      //   border: pw.TableBorder.all(),
-                      //   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                      //   cellAlignment: pw.Alignment.center,
-                      // ),
                       pw.SizedBox(height: 10),   
-                      pw.Row(         // P1 Summary
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Container(
-                            child: pw.Text('Total Points \n ${gameState.p2TotalScore}')
-                          ), // P1 TS
-                          pw.Container(
-                            child: pw.Text('Total Innings \n ${gameState.p2History.length}')
-                          ), // P1 TI,
-                          pw.Container(
-                            child: pw.Text('Average \n ${gameState.p2Average.toStringAsFixed(3)}')
-                          ), // P1 avg
-                          pw.Container(child: pw.Text('H.R. \n ${gameState.p2HighRun}')), //P1 HR
-                        ]
-                      )
                     ]
                   )
                 ), // P2 COLUMN
               ]
             ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+              children: [
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                  children: [
+                    pw.Table(
+                      border: pw.TableBorder.all(),
+                      children: [
+                        pw.TableRow(
+                          children: [
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                'Total\nPoints', 
+                                style: summaryTextStyle,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                'Total\nInnings', 
+                                style: summaryTextStyle,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                'Average', 
+                                style: summaryTextStyle, 
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                'HR', 
+                                style: summaryTextStyle,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),                                                                                                        
+                          ]
+                        ),
+                        pw.TableRow(
+                          children: [
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                '${gameState.p1TotalScore}', 
+                                style: summaryValueTS,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                '${gameState.p1History.length}', 
+                                style: summaryValueTS,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                gameState.p1Average.toStringAsFixed(3), 
+                                style: summaryValueTS,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                '${gameState.p1HighRun}', 
+                                style: summaryValueTS,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),                                                                                                        
+                          ]
+                        )                      
+                      ]
+                    )
+                  ]
+                ),                         
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                  children: [
+                    pw.Table(
+                      border: pw.TableBorder.all(),
+                      children: [
+                        pw.TableRow(
+                          children: [
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                'Total\nPoints', 
+                                style: summaryTextStyle, 
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                'Total\nInnings', 
+                                style: summaryTextStyle,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                'Average', 
+                                style: summaryTextStyle,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                'HR', 
+                                style: summaryTextStyle,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),                                                                                                        
+                          ]
+                        ),
+                        pw.TableRow(
+                          children: [
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                '${gameState.p2TotalScore}', 
+                                style: summaryValueTS,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                '${gameState.p2History.length}', 
+                                style: summaryValueTS,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                gameState.p2Average.toStringAsFixed(3), 
+                                style: summaryValueTS,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),
+                            pw.Container(
+                              height:40,
+                              alignment: pw.Alignment.center,
+                              decoration: summaryCellStyle,
+                              child:pw.Text(
+                                '${gameState.p2HighRun}', 
+                                style: summaryValueTS,
+                                textAlign: pw.TextAlign.center
+                              ),
+                            ),                                                                                                        
+                          ]
+                        )                      
+                      ]
+                    )
+                  ]
+                ),         
+              ]
+            ),
             pw.SizedBox(height: 10),
             pw.Text('PS : Partial Score'),
-            pw.Text('TS: Total Score'),
-            // pw.SizedBox(height: 20),
-            // pw.Text('Player 1: ${gameState.p1Name}'),
-            // pw.Text('Player 2: ${gameState.p2Name}'),
-            // pw.Text('Match Result: ${gameState.matchResult ?? "In Progress"}'),
-            // pw.SizedBox(height:20),
-            // pw.SizedBox(height: 10),
-            // pw.TableHelper.fromTextArray(
-            //   headers: [
-            //     'Inning',
-            //     gameState.p1Name ?? 'Player 1',
-            //     'Cumulative',                
-            //     gameState.p2Name ?? 'Player 2',
-            //     'Cumulative'
-            //   ],
-            //   data: [
-            //     ... List.generate(
-            //       completeInnings,
-            //       (i) {
-            //         final p1Score = gameState.p1History[i];
-            //         final p2Score = gameState.p2History[i];
-            //         final int p1Cumulative = gameState.p1History.sublist(0, i +1).fold( 0, (a,b) => a + b);
-            //         final int p2Cumulative = gameState.p2History.sublist(0, i + 1).fold( 0, (a,b) => a + b);
-            //         return [
-            //           '${i+1}',
-            //           '$p1Score',
-            //           '$p1Cumulative',
-            //           '$p2Score',
-            //           '$p2Cumulative',
-            //         ];
-            //       }
-            //     ),
-            //     if (hasIncompleteInning)
-            //     [
-            //       '${completeInnings + 1}',
-            //       '${gameState.p1History[completeInnings]}',
-            //       '-',
-            //       '${gameState.p1TotalScore}',
-            //       '${gameState.p2TotalScore}',
-            //     ],
-            //   ],
-            //   border: pw.TableBorder.all(),
-            //   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-            //   cellAlignment: pw.Alignment.center,
-            // ),
-            // pw.SizedBox(height: 20),
-
-            // pw.Text('Final Scores:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-            // pw.Text('${gameState.p1Name}: ${gameState.p1TotalScore}'),
-            // pw.Text('${gameState.p2Name}: ${gameState.p2TotalScore}'),
-            // pw.SizedBox(height: 10),
-            // pw.Text('Statistics:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-            // pw.Text('${gameState.p1Name} High Run: ${gameState.p1HighRun}'),
-            // pw.Text('${gameState.p2Name} High Run: ${gameState.p2HighRun}'),
-            // pw.Text('${gameState.p1Name} Average: ${gameState.p1Average.toStringAsFixed(2)}'),
-            // pw.Text('${gameState.p2Name} Average: ${gameState.p2Average.toStringAsFixed(2)}'),
-            // pw.Text('${gameState.p1Name} Extensions Used: ${gameState.p1UsedExtensions}/${gameState.p1Extensions}'),
-            // pw.Text('${gameState.p2Name} Extensions Used: ${gameState.p2UsedExtensions}/${gameState.p2Extensions}'),            
+            pw.Text('TS: Total Score'),        
           ],
         );
       },
     ),
   );
-
+  
+  final currentDataTimeFile = DateFormat('MM-dd-yyyy_HH:mm').format(DateTime.now());
   final directory = await getApplicationCacheDirectory();
-  final filePath = '${directory.path}/scoresheet.pdf';
+  final filePath = '${directory.path}/${gameState.p1Name}_vs_${gameState.p2Name}_$currentDataTimeFile.pdf';
   final file = File(filePath);
   await file.writeAsBytes(await pdf.save());
   return filePath;
