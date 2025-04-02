@@ -185,214 +185,340 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
               ]
             ),
             pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+              mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Row(
+                //p1
+                pw.Expanded(
+                  child:pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.start,
+                    children: [
+                      pw.Column(
+                        children: [
+                          pw.Table(
+                            border: pw.TableBorder.all(),                            
+                            children: [
+                              pw.TableRow(
+                                children: [
+                                  pw.Container(
+                                    height:40,
+                                    alignment: pw.Alignment.center,
+                                    decoration: summaryCellStyle,
+                                    child:pw.Text(
+                                      'Total\nPoints', 
+                                      style: summaryTextStyle,
+                                      textAlign: pw.TextAlign.center
+                                    ),
+                                  ),                                
+                                ]
+                              ),
+                              pw.TableRow(
+                                children: [
+                                  pw.Container(
+                                    height:40,
+                                    alignment: pw.Alignment.center,
+                                    decoration: summaryCellStyle,
+                                    child:pw.Text(
+                                      '${gameState.p1TotalScore}', 
+                                      style: summaryValueTS,
+                                      textAlign: pw.TextAlign.center
+                                    ),
+                                  ),                                
+                                ]
+                              ),
+                            ]
+                          )
+                        ]
+                      ),
+                      pw.Column(
+                        children: [
+                          pw.Table(
+                            border: pw.TableBorder.all(),                            
+                            children: [
+                              pw.TableRow(
+                                children: [
+                                  pw.Container(
+                                    height:40,
+                                    alignment: pw.Alignment.center,
+                                    decoration: summaryCellStyle,
+                                    child:pw.Text(
+                                      'Total\nInnings', 
+                                      style: summaryTextStyle,
+                                      textAlign: pw.TextAlign.center
+                                    ),
+                                  ),
+                                ]
+                              ),
+                              pw.TableRow(
+                                children: [
+                                  pw.Container(
+                                    height:40,
+                                    alignment: pw.Alignment.center,
+                                    decoration: summaryCellStyle,
+                                    child:pw.Text(
+                                      '${gameState.p1History.length}', 
+                                      style: summaryValueTS,
+                                      textAlign: pw.TextAlign.center
+                                    ),
+                                  ),                                
+                                ]
+                              ),
+                            ]
+                          )
+                        ]
+                      ),
+                      pw.Column(
+                        children: [
+                          pw.Table(
+                            border: pw.TableBorder.all(),                            
+                            children: [
+                              pw.TableRow(
+                                children: [
+                                  pw.Container(
+                                    height:40,
+                                    alignment: pw.Alignment.center,
+                                    decoration: summaryCellStyle,
+                                    child:pw.Text(
+                                      'Average', 
+                                      style: summaryTextStyle,
+                                      textAlign: pw.TextAlign.center
+                                    ),
+                                  ),                                                                
+                                ]
+                              ),
+                              pw.TableRow(
+                                children: [
+                                  pw.Container(
+                                    height:40,
+                                    alignment: pw.Alignment.center,
+                                    decoration: summaryCellStyle,
+                                    child:pw.Text(
+                                      gameState.p1Average.toStringAsFixed(3), 
+                                      style: summaryValueTS,
+                                      textAlign: pw.TextAlign.center
+                                    ),
+                                  ),                                
+                                ]
+                              ),
+                            ]
+                          )
+                        ]
+                      ),
+                      pw.Column(
+                        children: [
+                          pw.Table(
+                            border: pw.TableBorder.all(),                            
+                            children: [
+                              pw.TableRow(
+                                children: [
+                                  pw.Container(
+                                    height:40,
+                                    alignment: pw.Alignment.center,
+                                    decoration: summaryCellStyle,
+                                    child:pw.Text(
+                                      'HR', 
+                                      style: summaryTextStyle,
+                                      textAlign: pw.TextAlign.center
+                                    ),
+                                  ),                                
+                                ]
+                              ),
+                              pw.TableRow(
+                                children: [
+                                  pw.Container(
+                                    height:40,
+                                    alignment: pw.Alignment.center,
+                                    decoration: summaryCellStyle,
+                                    child:pw.Text(
+                                      '${gameState.p1HighRun}', 
+                                      style: summaryValueTS,
+                                      textAlign: pw.TextAlign.center
+                                    ),
+                                  ),                                    
+                                ]
+                              ),
+                            ]
+                          )
+                        ]
+                      ),
+                    ]
+                  ),
+                ),
+                //P2
+                pw.Expanded(
+                  child:pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.start,
-                  children: [
-                    pw.Table(
-                      border: pw.TableBorder.all(),
-                      children: [
-                        pw.TableRow(
-                          children: [
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                'Total\nPoints', 
-                                style: summaryTextStyle,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                'Total\nInnings', 
-                                style: summaryTextStyle,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                'Average', 
-                                style: summaryTextStyle, 
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                'HR', 
-                                style: summaryTextStyle,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),                                                                                                        
-                          ]
-                        ),
-                        pw.TableRow(
-                          children: [
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                '${gameState.p1TotalScore}', 
-                                style: summaryValueTS,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                '${gameState.p1History.length}', 
-                                style: summaryValueTS,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                gameState.p1Average.toStringAsFixed(3), 
-                                style: summaryValueTS,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                '${gameState.p1HighRun}', 
-                                style: summaryValueTS,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),                                                                                                        
-                          ]
-                        )                      
-                      ]
-                    )
-                  ]
-                ),                         
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.start,
-                  children: [
-                    pw.Table(
-                      border: pw.TableBorder.all(),
-                      children: [
-                        pw.TableRow(
-                          children: [
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                'Total\nPoints', 
-                                style: summaryTextStyle, 
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                'Total\nInnings', 
-                                style: summaryTextStyle,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                'Average', 
-                                style: summaryTextStyle,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                'HR', 
-                                style: summaryTextStyle,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),                                                                                                        
-                          ]
-                        ),
-                        pw.TableRow(
-                          children: [
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                '${gameState.p2TotalScore}', 
-                                style: summaryValueTS,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                '${gameState.p2History.length}', 
-                                style: summaryValueTS,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                gameState.p2Average.toStringAsFixed(3), 
-                                style: summaryValueTS,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),
-                            pw.Container(
-                              height:40,
-                              alignment: pw.Alignment.center,
-                              decoration: summaryCellStyle,
-                              child:pw.Text(
-                                '${gameState.p2HighRun}', 
-                                style: summaryValueTS,
-                                textAlign: pw.TextAlign.center
-                              ),
-                            ),                                                                                                        
-                          ]
-                        )                      
-                      ]
-                    )
-                  ]
-                ),         
+                    children: [
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.start,
+                        children: [
+                          pw.Column(
+                            children: [
+                              pw.Table(
+                                border: pw.TableBorder.all(),
+                                children: [
+                                  pw.TableRow(
+                                    children: [
+                                      pw.Container(
+                                        height:40,
+                                        alignment: pw.Alignment.center,
+                                        decoration: summaryCellStyle,
+                                        child:pw.Text(
+                                          'Total\nPoints', 
+                                          style: summaryTextStyle,
+                                          textAlign: pw.TextAlign.center
+                                        ),
+                                      ),                                
+                                    ]
+                                  ),
+                                  pw.TableRow(
+                                    children: [
+                                      pw.Container(
+                                        height:40,
+                                        alignment: pw.Alignment.center,
+                                        decoration: summaryCellStyle,
+                                        child:pw.Text(
+                                          '${gameState.p2TotalScore}', 
+                                          style: summaryValueTS,
+                                          textAlign: pw.TextAlign.center
+                                        ),
+                                      ),                                
+                                    ]
+                                  ),
+                              ]
+                              )
+                            ]
+                          ),
+                          pw.Column(
+                            children: [
+                              pw.Table(
+                                border: pw.TableBorder.all(),                                
+                                children: [
+                                  pw.TableRow(
+                                    children: [
+                                      pw.Container(
+                                        height:40,
+                                        alignment: pw.Alignment.center,
+                                        decoration: summaryCellStyle,
+                                        child:pw.Text(
+                                          'Total\nInnings', 
+                                          style: summaryTextStyle,
+                                          textAlign: pw.TextAlign.center
+                                        ),
+                                      ),                                
+                                    ]
+                                  ),
+                                  pw.TableRow(
+                                    children: [
+                                      pw.Container(
+                                        height:40,
+                                        alignment: pw.Alignment.center,
+                                        decoration: summaryCellStyle,
+                                        child:pw.Text(
+                                          '${gameState.p2History.length}', 
+                                          style: summaryValueTS,
+                                          textAlign: pw.TextAlign.center
+                                        ),
+                                      ),                                
+                                    ]
+                                  ),
+                              ]
+                              )
+                            ]
+                          ),
+                          pw.Column(
+                            children: [
+                              pw.Table(
+                                border: pw.TableBorder.all(),                                
+                                children: [
+                                  pw.TableRow(
+                                    children: [
+                                      pw.Container(
+                                        height:40,
+                                        alignment: pw.Alignment.center,
+                                        decoration: summaryCellStyle,
+                                        child:pw.Text(
+                                          'Average', 
+                                          style: summaryTextStyle,
+                                          textAlign: pw.TextAlign.center
+                                        ),
+                                      ),                                
+                                    ]
+                                  ),
+                                  pw.TableRow(
+                                    children: [
+                                      pw.Container(
+                                        height:40,
+                                        alignment: pw.Alignment.center,
+                                        decoration: summaryCellStyle,
+                                        child:pw.Text(
+                                          gameState.p2Average.toStringAsFixed(3), 
+                                          style: summaryValueTS,
+                                          textAlign: pw.TextAlign.center
+                                        ),
+                                      ),                                
+                                    ]
+                                  ),
+                              ]
+                              )
+                            ]
+                          ),
+                          pw.Column(
+                            children: [
+                              pw.Table(
+                                border: pw.TableBorder.all(),                                
+                                children: [
+                                  pw.TableRow(
+                                    children: [
+                                      pw.Container(
+                                        height:40,
+                                        alignment: pw.Alignment.center,
+                                        decoration: summaryCellStyle,
+                                        child:pw.Text(
+                                          'HR', 
+                                          style: summaryTextStyle,
+                                          textAlign: pw.TextAlign.center
+                                        ),
+                                      ),                                
+                                    ]
+                                  ),
+                                  pw.TableRow(
+                                    children: [
+                                      pw.Container(
+                                        height:40,
+                                        alignment: pw.Alignment.center,
+                                        decoration: summaryCellStyle,
+                                        child:pw.Text(
+                                          '${gameState.p2HighRun}', 
+                                          style: summaryValueTS,
+                                          textAlign: pw.TextAlign.center
+                                        ),
+                                      ),                                
+                                    ]
+                                  ),
+                              ]
+                              )
+                            ]
+                          ),
+                        ]
+                      ),  
+                    ]
+                  )
+                )
               ]
-            ),
-            pw.SizedBox(height: 10),
-            pw.Text('PS : Partial Score'),
-            pw.Text('TS: Total Score'),        
-          ],
+            ),                                  
+          ]
         );
-      },
-    ),
-  );
+      }
+    )
+  );        // pw.SizedBox(height: 10),
+            // pw.Text('PS : Partial Score'),
+            // pw.Text('TS: Total Score'),        
+
+        
+
+    
+
   
   final currentDataTimeFile = DateFormat('MM-dd-yyyy_HH:mm').format(DateTime.now());
   final directory = await getApplicationCacheDirectory();
