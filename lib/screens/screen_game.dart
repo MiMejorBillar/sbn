@@ -56,40 +56,69 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
 
   void _showMatchEndDialog(BuildContext context, WidgetRef ref, String result) {
     final gameState = ref.read(gameStateProvider);
+    final winnerText = result == 'draw'
+        ? 'It\'s a draw!'
+        : result == 'P1'
+            ? '${gameState.p1Name} wins!'
+            : '${gameState.p2Name} wins';
+
     showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => AlertDialog(
-              title: const Text('Match Ended'),
-              content: Text(
-                result == 'draw'
-                    ? 'It\'s a draw!'
-                    : result == 'P1'
-                        ? '${gameState.p1Name} wins!'
-                        : '${gameState.p2Name} wins!',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    final filePath = await generateScoresheetPdf(gameState);
-                    final result = await OpenFile.open(filePath);
-                    if (result.type != ResultType.done){
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Couldn\'t open PDF. No viewer found ')),
-                      );
-                    }
-                  }, 
-                  child: const Text('View Scoresheet'),
-                  ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
-                  child: const Text('BackHome'),
+        barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        useSafeArea: true,
+        builder: (context) => PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result){
+            if (!didPop){
+              Navigator.popUntil(context, (route) => route.isFirst );
+            }
+          },
+          child: Dialog(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Match Ended',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  winnerText,
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        final filePath = await generateScoresheetPdf(gameState);
+                        final result = await OpenFile.open(filePath);
+                        if(result.type != ResultType.done) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Couldn\'t open PDF. No viewer found'))
+                          );
+                        }
+                      },
+                      child: const Text('View Scoresheet'),
+                    ),
+                    SizedBox(width: 20,),
+                    TextButton(
+                      onPressed: (){
+                        Navigator.of(context).pop();
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                      },
+                      child: const Text('Back to Home'),
+                    ),
+                  ],
                 )
               ],
-            ));
+            ),
+          ),
+        )
+    );
   }
 
   @override
