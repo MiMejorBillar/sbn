@@ -65,60 +65,66 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
     showDialog(
         context: context,
         barrierDismissible: false,
-        barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
         useSafeArea: true,
         builder: (context) => PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result){
-            if (!didPop){
-              Navigator.popUntil(context, (route) => route.isFirst );
-            }
-          },
-          child: Dialog(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Match Ended',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  winnerText,
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 16),
-                Row(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, result) {
+                if (!didPop) {
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                }
+              },
+              child: Dialog(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TextButton(
-                      onPressed: () async {
-                        final filePath = await generateScoresheetPdf(gameState);
-                        final result = await OpenFile.open(filePath);
-                        if(result.type != ResultType.done) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Couldn\'t open PDF. No viewer found'))
-                          );
-                        }
-                      },
-                      child: const Text('View Scoresheet'),
+                    Text(
+                      'Match Ended',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(width: 20,),
-                    TextButton(
-                      onPressed: (){
-                        Navigator.of(context).pop();
-                        Navigator.of(context).popUntil((route) => route.isFirst);
-                      },
-                      child: const Text('Back to Home'),
+                    SizedBox(height: 16),
+                    Text(
+                      winnerText,
+                      style: TextStyle(fontSize: 16),
                     ),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () async {
+                            final filePath =
+                                await generateScoresheetPdf(gameState);
+                            final result = await OpenFile.open(filePath);
+                            if (result.type != ResultType.done) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Couldn\'t open PDF. No viewer found')));
+                            }
+                          },
+                          child: const Text('View Scoresheet'),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context)
+                                .popUntil((route) => route.isFirst);
+                          },
+                          child: const Text('Back to Home'),
+                        ),
+                      ],
+                    )
                   ],
-                )
-              ],
-            ),
-          ),
-        )
-    );
+                ),
+              ),
+            ));
   }
 
   @override
@@ -146,7 +152,8 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
               children: [
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Scorecard(
                       isP2: _isSwapped,
                       isBallColorSwapped: _isBallColorSwapped),
@@ -160,7 +167,8 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                 ),
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Scorecard(
                     isP2: !_isSwapped,
                     isBallColorSwapped: _isBallColorSwapped,
@@ -169,7 +177,7 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
               ],
             )),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(children: [
                 Expanded(child: TimerBar()),
               ]),
@@ -262,7 +270,7 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
-                          ), 
+                          ),
                         ),
                       )
                     ],
