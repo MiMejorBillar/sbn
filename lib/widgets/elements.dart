@@ -212,72 +212,122 @@ class ScorecardState extends ConsumerState<Scorecard> {
                 ),
                 // SCORE AND EXTENSION
                 Expanded(
-                  child: Consumer(builder: (context, ref, child) {
-                    return GestureDetector(
-                      onTap: isActive ? _endTurn : null,
-                      child: Container(
-                        color:
-                            _contColor(widget.isP2, widget.isBallColorSwapped),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Stack(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Center(
-                                        child: Text(
-                                          '$totalScore',
-                                          style: const TextStyle(
-                                            fontSize: 80,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                  child: GestureDetector(
+                    onTap: isActive ? _endTurn : null,
+                    child: Container(
+                      color: _contColor(widget.isP2, widget.isBallColorSwapped),
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                '$totalScore',
+                                style: const TextStyle(
+                                  fontSize: 100,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black
                                 ),
-                                Positioned.fill(
-                                    child: Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: Column(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .center, //EXTENSION COLUMN
-                                            children: List.generate(
-                                              extensions,
-                                              (index) => Container(
-                                                  margin: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 2,
-                                                      horizontal: 8),
-                                                  width: 32,
-                                                  height: 8,
-                                                  decoration: BoxDecoration(
-                                                      color:
-                                                          index < usedExtensions
-                                                              ? Colors.grey
-                                                              : Colors.green,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors.black,
-                                                          spreadRadius: 0.4,
-                                                          blurRadius: 1,
-                                                        )
-                                                      ])),
-                                            ))))
-                              ],
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: List.generate(
+                                extensions,
+                                (index) => Container(
+                                  margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                  width: 32,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: index < usedExtensions ? Colors.grey : Colors.green,
+                                    borderRadius: BorderRadius.circular(5),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black,
+                                        spreadRadius: 0.4,
+                                        blurRadius: 1,
+                                      )
+                                    ]
+                                  ),
+                                )
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                    );
-                  }),
+                    ),
+                  )
                 ),
+                // Expanded(
+                //   child: Consumer(builder: (context, ref, child) {
+                //     return GestureDetector(
+                //       onTap: isActive ? _endTurn : null,
+                //       child: Container(
+                //         color:
+                //             _contColor(widget.isP2, widget.isBallColorSwapped),
+                //         child: Column(
+                //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //           children: [
+                //             Stack(
+                //               children: [
+                //                 Row(
+                //                   children: [
+                //                     Expanded(
+                //                       child: Center(
+                //                         child: Text(
+                //                           '$totalScore',
+                //                           style: const TextStyle(
+                //                             fontSize: 100,
+                //                             fontWeight: FontWeight.bold,
+                //                             color: Colors.black,
+                //                           ),
+                //                         ),
+                //                       ),
+                //                     ),
+                //                   ],
+                //                 ),
+                //                 Positioned.fill(
+                //                     child: Align(
+                //                         alignment: Alignment.bottomRight,
+                //                         child: Column(
+                //                             mainAxisAlignment: MainAxisAlignment
+                //                                 .center, //EXTENSION COLUMN
+                //                             children: List.generate(
+                //                               extensions,
+                //                               (index) => Container(
+                //                                   margin: const EdgeInsets
+                //                                       .symmetric(
+                //                                       vertical: 2,
+                //                                       horizontal: 8),
+                //                                   width: 32,
+                //                                   height: 8,
+                //                                   decoration: BoxDecoration(
+                //                                       color:
+                //                                           index < usedExtensions
+                //                                               ? Colors.grey
+                //                                               : Colors.green,
+                //                                       borderRadius:
+                //                                           BorderRadius.circular(
+                //                                               5),
+                //                                       boxShadow: [
+                //                                         BoxShadow(
+                //                                           color: Colors.black,
+                //                                           spreadRadius: 0.4,
+                //                                           blurRadius: 1,
+                //                                         )
+                //                                       ])),
+                //                             ))))
+                //               ],
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     );
+                //   }),
+                // ),
                 // STATS AND COUNTER
                 Container(
                   decoration: BoxDecoration(
@@ -289,67 +339,65 @@ class ScorecardState extends ConsumerState<Scorecard> {
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(8),
                           bottomRight: Radius.circular(8))),
-                  height: 70,
+                  height: 90,
                   // AVERAGE AND HIGH RUN
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
-                          child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            //AVERAGE
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('Avg.',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              //AVERAGE
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('Avg.',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: _contColor(widget.isP2,
+                                              widget.isBallColorSwapped))),
+                                  Text(
+                                    average.toStringAsFixed(3),
                                     style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
                                         color: _contColor(widget.isP2,
-                                            widget.isBallColorSwapped))),
-                                Text(
-                                  average.toStringAsFixed(3),
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: _contColor(widget.isP2,
-                                          widget.isBallColorSwapped)),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                border: Border(
-                                    right: BorderSide(
-                                  color: const Color.fromARGB(255, 85, 85, 85),
-                                  width: 2,
-                                )),
+                                            widget.isBallColorSwapped)),
+                                  ),
+                                ],
                               ),
-                            ),
-                            // HIGH RUN
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('H.R.',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: _contColor(widget.isP2,
-                                            widget.isBallColorSwapped))),
-                                Text(
-                                  '$highRun',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: _contColor(widget.isP2,
-                                          widget.isBallColorSwapped)),
+                              Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                      right: BorderSide(
+                                    color: const Color.fromARGB(255, 85, 85, 85),
+                                    width: 2,
+                                  )),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      )),
+                              ),
+                              // HIGH RUN
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('H.R.',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: _contColor(widget.isP2,
+                                              widget.isBallColorSwapped))),
+                                  Text(
+                                    '$highRun',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: _contColor(widget.isP2,
+                                            widget.isBallColorSwapped)),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )),
                       Container(
                         width: 143,
                         decoration: BoxDecoration(
