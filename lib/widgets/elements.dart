@@ -26,6 +26,19 @@ class ScorecardState extends ConsumerState<Scorecard> {
         : const Color.fromARGB(255, 249, 246, 238);
   }
 
+  Color _scorecardShadow(bool isActive, bool isP2, bool isBallColorSwapped){
+    if (isActive) {
+      if ((isP2 & !isBallColorSwapped) || (!isP2 && isBallColorSwapped)) {
+        return Colors.amber;
+      } else {
+        return Colors.white;
+      }
+    } else {
+      return const Color.fromARGB(134, 0, 0, 0)
+                      .withValues(alpha: 0.90);
+    }
+  }
+
   void _endTurn() {
     final gameStateNotifier = ref.read(gameStateProvider.notifier);
     final gameState = ref.read(gameStateProvider);
@@ -112,8 +125,7 @@ class ScorecardState extends ConsumerState<Scorecard> {
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
-                  color: const Color.fromARGB(134, 0, 0, 0)
-                      .withValues(alpha: 0.90),
+                  color: _scorecardShadow(isActive, widget.isP2, widget.isBallColorSwapped),
                   spreadRadius: 2,
                   blurRadius: 5,
                 ),
@@ -461,13 +473,12 @@ class InningCounter extends ConsumerWidget {
           height: 80,
           width: 80,
           decoration: BoxDecoration(
-            color: const Color.fromARGB(134, 0, 0, 0).withValues(alpha: 0.90),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             '$inningCount',
             style: TextStyle(
-                fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+                fontSize: 50, fontWeight: FontWeight.bold, color: Colors.white),
             textAlign: TextAlign.center,
           ),
         ),
@@ -499,8 +510,6 @@ class TimerBarState extends ConsumerState<TimerBar> {
           decoration: BoxDecoration(color: Colors.black, boxShadow: [
             BoxShadow(
               color: Colors.black,
-              spreadRadius: 2,
-              blurRadius: 5,
             )
           ]),
           child: Row(

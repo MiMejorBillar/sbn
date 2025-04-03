@@ -408,10 +408,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                 ]))
           ]),
     ]);
-  })); // pw.SizedBox(height: 10),
-  // pw.Text('PS : Partial Score'),
-  // pw.Text('TS: Total Score'),
-
+  })); 
   final currentDataTimeFile =
       DateFormat('MM-dd-yyyy_HH:mm').format(DateTime.now());
   final directory = await getApplicationCacheDirectory();
