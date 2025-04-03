@@ -23,6 +23,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        textTheme: ThemeData.light().textTheme.apply(
+          fontFamily: 'Lato',
+        ),
+        primaryTextTheme: ThemeData.light().primaryTextTheme.apply(
+          fontFamily: 'Lato'
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            textStyle: TextStyle(fontFamily: 'Lato'),
+          ),
+        )
+      ),
       navigatorObservers: [routeObserver],
       home: HomeScreen(),
     );
