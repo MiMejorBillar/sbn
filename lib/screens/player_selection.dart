@@ -66,6 +66,9 @@ class _PlayersSelectionDialogState
                         players.firstWhere((p) => p.name == value).handicap;
                     selectedIconP1 = 
                         players.firstWhere((p) => p.name == value).icon;
+                      if (selectedP2 == value) {
+                        selectedP2 = null;
+                      }
                   });
                 },
               ),
@@ -74,6 +77,7 @@ class _PlayersSelectionDialogState
                 decoration: const InputDecoration(labelText: 'Player 2'),
                 value: selectedP2,
                 items: players
+                    .where((player) => player.name != selectedP1)
                     .map((player) => DropdownMenuItem(
                           value: player.name,
                           child: Text(

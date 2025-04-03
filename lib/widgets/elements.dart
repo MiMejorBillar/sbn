@@ -187,7 +187,7 @@ class ScorecardState extends ConsumerState<Scorecard> {
                               : Text(
                                   '$playerName',
                                   style: TextStyle(
-                                      fontSize: 22,
+                                      fontSize: 28,
                                       fontWeight: FontWeight.bold,
                                       color: _contColor(widget.isP2,
                                           widget.isBallColorSwapped)),
@@ -220,11 +220,11 @@ class ScorecardState extends ConsumerState<Scorecard> {
                         children: [
                           Center(
                             child: FittedBox(
-                              fit: BoxFit.scaleDown,
+                              fit: BoxFit.fill,
                               child: Text(
                                 '$totalScore',
                                 style: const TextStyle(
-                                  fontSize: 100,
+                                  fontSize: 200,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black
                                 ),
@@ -287,13 +287,13 @@ class ScorecardState extends ConsumerState<Scorecard> {
                                 children: [
                                   Text('Avg.',
                                       style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: 20,
                                           color: _contColor(widget.isP2,
                                               widget.isBallColorSwapped))),
                                   Text(
                                     average.toStringAsFixed(3),
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                         color: _contColor(widget.isP2,
                                             widget.isBallColorSwapped)),
@@ -316,13 +316,13 @@ class ScorecardState extends ConsumerState<Scorecard> {
                                 children: [
                                   Text('H.R.',
                                       style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: 20,
                                           color: _contColor(widget.isP2,
                                               widget.isBallColorSwapped))),
                                   Text(
                                     '$highRun',
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                         color: _contColor(widget.isP2,
                                             widget.isBallColorSwapped)),
@@ -383,7 +383,7 @@ class ScorecardState extends ConsumerState<Scorecard> {
                                               style: TextStyle(
                                                   color: _contColor(widget.isP2,
                                                       widget.isBallColorSwapped),
-                                                  fontSize: 30,
+                                                  fontSize: 40,
                                                   fontWeight: FontWeight.bold),
                                             ),
                                           ),
@@ -491,6 +491,8 @@ class TimerBarState extends ConsumerState<TimerBar> {
           decoration: BoxDecoration(color: Colors.black, boxShadow: [
             BoxShadow(
               color: Colors.black,
+              spreadRadius: 2,
+              blurRadius: 7
             )
           ]),
           child: Row(
@@ -508,7 +510,8 @@ class TimerBarState extends ConsumerState<TimerBar> {
                             border: Border.all(
                                 color: const Color.fromARGB(255, 0, 0, 0),
                                 width: 1),
-                            color: color),
+                            color: color,
+                        ),
                       ),
                     );
                   }),
