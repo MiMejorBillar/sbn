@@ -61,7 +61,8 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
-          title: Text('Mi Billar', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 30)),
+          title: Text('Mi Billar', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 30),),
+          centerTitle: true,
         ),
         body: Container(
           decoration: BoxDecoration(

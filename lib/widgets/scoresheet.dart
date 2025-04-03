@@ -18,6 +18,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
   final summaryCellStyle = pw.BoxDecoration(color: PdfColors.white);
   final summaryHeaderStyle = pw.BoxDecoration(color: PdfColors.blueGrey200);
   final double summaryCellWidth = 55.0;
+  final double summaryCellHeight = 30.0;
 
   pw.Widget buildInningTable(List<int> history, int startIndex, int endIndex) {
     return pw.Table(border: pw.TableBorder.all(), columnWidths: {
@@ -145,6 +146,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                   pw.SizedBox(height: 10),
                   pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.start,
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [...buildWrappedHistory(gameState.p1History)]),
                   pw.SizedBox(height: 10),
                 ])),
@@ -168,6 +170,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                   pw.SizedBox(height: 10),
                   pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.start,
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [...buildWrappedHistory(gameState.p2History)]),
                   pw.SizedBox(height: 10),
                 ])), // P2 COLUMN
@@ -188,7 +191,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                       pw.Table(border: pw.TableBorder.all(), children: [
                         pw.TableRow(children: [
                           pw.Container(
-                            height: 40,
+                            height: summaryCellHeight,
                             width: summaryCellWidth,
                             alignment: pw.Alignment.center,
                             decoration: summaryHeaderStyle,
@@ -199,7 +202,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                         ]),
                         pw.TableRow(children: [
                           pw.Container(
-                            height: 40,
+                            height: summaryCellHeight,
                             width: summaryCellWidth,
                             alignment: pw.Alignment.center,
                             decoration: summaryCellStyle,
@@ -214,7 +217,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                       pw.Table(border: pw.TableBorder.all(), children: [
                         pw.TableRow(children: [
                           pw.Container(
-                            height: 40,
+                            height: summaryCellHeight,
                             width: summaryCellWidth,
                             alignment: pw.Alignment.center,
                             decoration: summaryHeaderStyle,
@@ -225,7 +228,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                         ]),
                         pw.TableRow(children: [
                           pw.Container(
-                            height: 40,
+                            height: summaryCellHeight,
                             width: summaryCellWidth,
                             alignment: pw.Alignment.center,
                             decoration: summaryCellStyle,
@@ -240,7 +243,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                       pw.Table(border: pw.TableBorder.all(), children: [
                         pw.TableRow(children: [
                           pw.Container(
-                            height: 40,
+                            height: summaryCellHeight,
                             width: summaryCellWidth,
                             alignment: pw.Alignment.center,
                             decoration: summaryHeaderStyle,
@@ -251,7 +254,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                         ]),
                         pw.TableRow(children: [
                           pw.Container(
-                            height: 40,
+                            height: summaryCellHeight,
                             width: summaryCellWidth,
                             alignment: pw.Alignment.center,
                             decoration: summaryCellStyle,
@@ -267,7 +270,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                       pw.Table(border: pw.TableBorder.all(), children: [
                         pw.TableRow(children: [
                           pw.Container(
-                            height: 40,
+                            height: summaryCellHeight,
                             width: summaryCellWidth,
                             alignment: pw.Alignment.center,
                             decoration: summaryHeaderStyle,
@@ -278,7 +281,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                         ]),
                         pw.TableRow(children: [
                           pw.Container(
-                            height: 40,
+                            height: summaryCellHeight,
                             width: summaryCellWidth,
                             alignment: pw.Alignment.center,
                             decoration: summaryCellStyle,
@@ -303,7 +306,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                           pw.Table(border: pw.TableBorder.all(), children: [
                             pw.TableRow(children: [
                               pw.Container(
-                                height: 40,
+                                height: summaryCellHeight,
                                 width: summaryCellWidth,
                                 alignment: pw.Alignment.center,
                                 decoration: summaryHeaderStyle,
@@ -314,7 +317,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                             ]),
                             pw.TableRow(children: [
                               pw.Container(
-                                height: 40,
+                                height: summaryCellHeight,
                                 width: summaryCellWidth,
                                 alignment: pw.Alignment.center,
                                 decoration: summaryCellStyle,
@@ -329,7 +332,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                           pw.Table(border: pw.TableBorder.all(), children: [
                             pw.TableRow(children: [
                               pw.Container(
-                                height: 40,
+                                height: summaryCellHeight,
                                 width: summaryCellWidth,
                                 alignment: pw.Alignment.center,
                                 decoration: summaryHeaderStyle,
@@ -340,7 +343,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                             ]),
                             pw.TableRow(children: [
                               pw.Container(
-                                height: 40,
+                                height: summaryCellHeight,
                                 width: summaryCellWidth,
                                 alignment: pw.Alignment.center,
                                 decoration: summaryCellStyle,
@@ -355,7 +358,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                           pw.Table(border: pw.TableBorder.all(), children: [
                             pw.TableRow(children: [
                               pw.Container(
-                                height: 40,
+                                height: summaryCellHeight,
                                 width: summaryCellWidth,
                                 alignment: pw.Alignment.center,
                                 decoration: summaryHeaderStyle,
@@ -366,7 +369,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                             ]),
                             pw.TableRow(children: [
                               pw.Container(
-                                height: 40,
+                                height: summaryCellHeight,
                                 width: summaryCellWidth,
                                 alignment: pw.Alignment.center,
                                 decoration: summaryCellStyle,
@@ -382,7 +385,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                           pw.Table(border: pw.TableBorder.all(), children: [
                             pw.TableRow(children: [
                               pw.Container(
-                                height: 40,
+                                height: summaryCellHeight,
                                 width: summaryCellWidth,
                                 alignment: pw.Alignment.center,
                                 decoration: summaryHeaderStyle,
@@ -393,7 +396,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
                             ]),
                             pw.TableRow(children: [
                               pw.Container(
-                                height: 40,
+                                height: summaryCellHeight,
                                 width: summaryCellWidth,
                                 alignment: pw.Alignment.center,
                                 decoration: summaryCellStyle,
