@@ -127,7 +127,21 @@ class _LoginScreenState extends State<LoginScreen> {
         _errorMessage = null;
       });
       try {
-        await _authService.signUp(_emailController.text, _passwordController.text);
+        final response = await _authService.signUp(
+          _emailController.text,
+          _passwordController.text,
+        );
+        if (response.user == null) {
+          throw Exception('Sign-up failed: No user returned');
+        }
+        await Supabase.instance.client.from('users').insert({
+          'id' : response.user!.id,
+          'email': _emailController.text,
+          'first_name': 'User',
+          'last_name' : '',
+          'is_local' : false,
+          'created_at' : DateTime.now().toIso8601String(),
+        });
         Navigator.pushReplacementNamed(context, '/home');
       } catch (e){
         setState(() {

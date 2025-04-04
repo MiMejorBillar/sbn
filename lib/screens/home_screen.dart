@@ -5,6 +5,8 @@ import 'package:nsb/screens/screen_game.dart';
 import 'package:nsb/screens/players_list.dart';
 import 'package:nsb/main.dart';
 import 'package:nsb/data_service.dart';
+import 'package:nsb/auth_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with RouteAware {
   final DataService _dataService = DataService();
+  final AuthService _authService = AuthService();
   Map<String, dynamic>? _userProfile;
   List<Map<String,dynamic>>? _userScores;
   bool _isLoading = true;
@@ -32,6 +35,10 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
 
   Future<void> fetchUserData() async {
     try{
+      if (Supabase.instance.client.auth.currentSession == null) {
+        Navigator.pushReplacementNamed(context, '/login');
+        return;
+      }
       final profile = await _dataService.getUserProfile();
       final scores = await _dataService.getUserScores();
       setState(() {
@@ -43,6 +50,17 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
       setState(() {
         _errorMessage = 'Failed to load data. Please try again.';
         _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _handleSignOut() async {
+    try {
+      await _authService.logOut();
+      Navigator.pushReplacementNamed(context, '/login');
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to sign out. Please try again';
       });
     }
   }
@@ -157,6 +175,11 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                 },
                 style: buttonStyle,
                 child: Text('Match', style: buttonTextStyle,),
+              ),
+              ElevatedButton(
+                onPressed: _handleSignOut,
+                style: buttonStyle,
+                child: Text('Logout',style: buttonTextStyle,)
               )
             ],
           )),
