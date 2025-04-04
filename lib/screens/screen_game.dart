@@ -241,14 +241,15 @@ class _ScreenGameState extends ConsumerState<ScreenGame> {
                 }
               },
               child: Dialog(
+                backgroundColor: Colors.grey.shade900.withValues(alpha: 0.9),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Match Ended',
+                      'Match Ended!',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
                     ),
                     SizedBox(height: 16),
                     Text(

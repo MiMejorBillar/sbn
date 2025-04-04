@@ -41,3 +41,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// Color Pallete for the Project
+// Scorecard name : const Color.fromARGB(255, 85, 85, 85),

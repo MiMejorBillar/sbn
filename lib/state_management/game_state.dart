@@ -28,6 +28,8 @@ class GameState {
   final bool equalizingInnings;
   final int timerDuration;
   final String? matchResult;
+  final DateTime? matchStartTime;
+  final DateTime? matchEndTime;
 
   double get p1Average =>
       p1History.isEmpty ? 0.0 : p1TotalScore / p1History.length;
@@ -61,6 +63,8 @@ class GameState {
     this.equalizingInnings = true,
     this.timerDuration = 40,
     this.matchResult,
+    this.matchStartTime,
+    this.matchEndTime,
   });
 
   GameState copyWith({
@@ -90,6 +94,8 @@ class GameState {
     bool? equalizingInnings,
     int? timerDuration,
     String? matchResult,
+    DateTime? matchStartTime,
+    DateTime? matchEndTime,
   }) {
     return GameState(
       p1Name: p1Name ?? this.p1Name,
@@ -118,6 +124,8 @@ class GameState {
       equalizingInnings: equalizingInnings ?? this.equalizingInnings,
       timerDuration: timerDuration ?? this.timerDuration,
       matchResult: matchResult ?? this.matchResult,
+      matchStartTime: matchStartTime ?? this. matchStartTime,
+      matchEndTime: matchEndTime ?? this.matchEndTime,
     );
   }
 }
@@ -273,9 +281,12 @@ class GameStateNotifier extends StateNotifier<GameState> {
 
   void _endMatch(String result) {
     ref.read(timerStateProvider.notifier).stopTimer();
-    state = state.copyWith(matchResult: result);
+    state = state.copyWith(
+      matchResult: result,
+      matchEndTime: DateTime.now(),
+      );
     potentialWinner = null;
-    print('Timer stopped');
+    print('Timer stopped and matchended at print ${state.matchEndTime}');
     
   }
 
@@ -296,6 +307,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p2Handicap: p2Handicap ?? state.p2Handicap,
       equalizingInnings: equalizingInnings ?? state.equalizingInnings,
       timerDuration: timerDuration ?? state.timerDuration,
+      matchStartTime: null,
+      matchEndTime: null,
     );
     ref.read(timerStateProvider.notifier).quickReset();
 
@@ -330,8 +343,11 @@ class GameStateNotifier extends StateNotifier<GameState> {
       p2Extensions: p2Extensions,
       p1BallColor: p1BallColor,
       p2BallColor: p2BallColor,
+      matchStartTime: DateTime.now(),
+      matchEndTime: null,
     );
     ref.read(timerStateProvider.notifier).delayedReset();
+    print("Match started at ${state.matchStartTime}");
 
   }
 }
