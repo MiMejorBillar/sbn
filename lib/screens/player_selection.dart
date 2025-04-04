@@ -21,9 +21,21 @@ class _PlayersSelectionDialogState
   bool equalizingInnings = true;
   int selectedDuration = 40;
   int selectedExtension = 3;
+  String selectedHandicapType = 'fixed';
+  final TextEditingController _p1HandicapController = TextEditingController();
+  final TextEditingController _p2HandicapController = TextEditingController();
+
 
   final List<int> durationOptions = [25, 30, 40];
   final List<int> extensionOptions = [2, 3, 5];
+  final List<String> handicapTypeOptions = ['fixed','free'];
+
+  @override
+  void dispose() {
+    _p1HandicapController.dispose();
+    _p2HandicapController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +81,9 @@ class _PlayersSelectionDialogState
                       if (selectedP2 == value) {
                         selectedP2 = null;
                       }
+                      if(selectedHandicapType == 'fixed') {
+                        _p1HandicapController.clear();
+                      }
                   });
                 },
               ),
@@ -90,9 +105,90 @@ class _PlayersSelectionDialogState
                     selectedHandicapP2 =
                         players.firstWhere((p) => p.name == value).handicap;
                     selectedIconP2 = players.firstWhere((p) => p.name == value).icon;
+                      if(selectedHandicapType == 'fixed') {
+                        _p1HandicapController.clear();
+                      }                    
                   });
                 },
               ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(labelText: 'Handicap Type'),
+                value: selectedHandicapType,
+                items: handicapTypeOptions
+                    .map((type) => DropdownMenuItem(
+                      value: type,
+                      child: Text(type == 'fixed' ? 'Fixed' : 'Free Agreement'),
+                    ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedHandicapType = value!;
+                    if (selectedHandicapType == 'fixed') {
+                      _p1HandicapController.clear();
+                      _p2HandicapController.clear();
+                      if(selectedP1 != null){
+                        selectedHandicapP1 = players
+                            .firstWhere((p) => p.name == selectedP1)
+                            .handicap;
+                      }
+                      if(selectedP2 != null) {
+                        selectedHandicapP2 = players
+                            .firstWhere((p) => p.name == selectedP2)
+                            .handicap;
+                      }
+                    }
+                  });
+                },
+              ),
+              const SizedBox(height: 16,),
+              if(selectedHandicapType == 'free') ...[
+                TextFormField(
+                  controller: _p1HandicapController,
+                  decoration: InputDecoration(
+                    labelText: 'Player 1 Handicap (${selectedP1 ?? "Selected Player 1"})',
+                  ),
+                  keyboardType: TextInputType.number,
+                  enabled: selectedP1 != null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty){
+                      return 'Please enter a handicap for Player 1';
+                    }
+                    if (int.tryParse(value) == null || int.parse(value) <= 0){
+                      return 'Please enter a valid positive number';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    if(value.isNotEmpty && int.tryParse(value) != null){
+                      selectedHandicapP1 = int.parse(value);
+                    }
+                  },
+                ),
+                TextFormField(
+                  controller: _p2HandicapController,
+                  decoration: InputDecoration(
+                    labelText: 'Player 2 Handicap (${selectedP2 ?? "Selected Player 2"})',
+                  ),
+                  keyboardType: TextInputType.number,
+                  enabled: selectedP2 != null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty){
+                      return 'Please enter a handicap for Player 2';
+                    }
+                    if (int.tryParse(value) == null || int.parse(value) <= 0){
+                      return 'Please enter a valid positive number';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    if(value.isNotEmpty && int.tryParse(value) != null){
+                      selectedHandicapP2 = int.parse(value);
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),                
+              ],
               DropdownButtonFormField<int>(
                 decoration: const InputDecoration(labelText: 'Timer Duration'),
                 value: selectedDuration,
@@ -162,7 +258,9 @@ class _PlayersSelectionDialogState
                             p1Extensions: selectedExtension,
                             p2Extensions: selectedExtension,
                             equalizingInnings: equalizingInnings,
-                            timerDuration: selectedDuration);
+                            timerDuration: selectedDuration,
+                            handicapType: selectedHandicapType
+                        );
                             print('startNewGame is called');
                             print(
                             'startNewGame called with extensions: $selectedExtension');

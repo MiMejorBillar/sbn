@@ -17,14 +17,15 @@ class GameState {
   final int p2HighRun;
   final int p1PendingPoints;
   final int p2PendingPoints;
+  final String? handicapType;
   final int p1Handicap;
   final int p2Handicap;
   final int p1Extensions;
   final int p2Extensions;
   final int p1UsedExtensions;
   final int p2UsedExtensions;
-  final String p1BallColor;
-  final String p2BallColor;
+  final String? p1BallColor;
+  final String? p2BallColor;
   final bool equalizingInnings;
   final int timerDuration;
   final String? matchResult;
@@ -57,6 +58,7 @@ class GameState {
     this.p2HighRun = 0,
     this.p1PendingPoints = 0,
     this.p2PendingPoints = 0,
+    this.handicapType = 'fixed',
     this.p1Handicap = 40,
     this.p2Handicap = 40,
     this.p1Extensions = 2,
@@ -88,6 +90,7 @@ class GameState {
     int? p2HighRun,
     int? p1PendingPoints,
     int? p2PendingPoints,
+    String? handicapType,
     int? p1Handicap,
     int? p2Handicap,
     int? p1Extensions,
@@ -118,6 +121,7 @@ class GameState {
       p2HighRun: p2HighRun ?? this.p2HighRun,
       p1PendingPoints: p1PendingPoints ?? this.p1PendingPoints,
       p2PendingPoints: p2PendingPoints ?? this.p2PendingPoints,
+      handicapType: handicapType ?? this.handicapType,
       p1Handicap: p1Handicap ?? this.p1Handicap,
       p2Handicap: p2Handicap ?? this.p2Handicap,
       p1Extensions: p1Extensions ?? this.p1Extensions,
@@ -300,7 +304,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
     }
   }
 
-  void _endMatch(String result) {
+  //NEED TO ADD HANDICAP TYPE
+  void _endMatch(String result) { 
     ref.read(timerStateProvider.notifier).stopTimer();
     state = state.copyWith(
       matchResult: result,
@@ -346,6 +351,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
     required int timerDuration,
     required int p1Extensions,
     required int p2Extensions,
+    required String handicapType,
     String p1BallColor = 'white',
     String p2BallColor = 'yellow',
   }) {
@@ -362,6 +368,7 @@ class GameStateNotifier extends StateNotifier<GameState> {
       timerDuration: timerDuration,
       p1Extensions: p1Extensions,
       p2Extensions: p2Extensions,
+      handicapType: handicapType,
       p1BallColor: p1BallColor,
       p2BallColor: p2BallColor,
       matchStartTime: DateTime.now(),
