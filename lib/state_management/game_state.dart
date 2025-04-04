@@ -7,8 +7,8 @@ class GameState {
   final String? iconP1;
   final String? iconP2;
   final int currentPlayer;
-  final List<int> p1History;
-  final List<int> p2History;
+  final List<Turn> p1History;
+  final List<Turn> p2History;
   final int inningCount;
   final bool isFirstTurnTaken;
   final int p1TotalScore;
@@ -33,8 +33,13 @@ class GameState {
 
   double get p1Average =>
       p1History.isEmpty ? 0.0 : p1TotalScore / p1History.length;
+  Duration get p1TotalTime =>
+      p1History.fold(Duration.zero, (sum, turn) => sum + turn.duration);
+
   double get p2Average =>
       p2History.isEmpty ? 0.0 : p2TotalScore / p2History.length;
+  Duration get p2TotalTime =>
+      p2History.fold(Duration.zero, (sum, turn) => sum + turn.duration);      
 
   GameState({
     this.p1Name = 'Player 1',
@@ -73,8 +78,8 @@ class GameState {
     String? iconP1,
     String? iconP2,
     int? currentPlayer,
-    List<int>? p1History,
-    List<int>? p2History,
+    List<Turn>? p1History,
+    List<Turn>? p2History,
     int? inningCount,
     bool? isFirstTurnTaken,
     int? p1TotalScore,
@@ -130,8 +135,19 @@ class GameState {
   }
 }
 
+class Turn {
+  final int score;
+  final Duration duration;
+
+  Turn({
+    required this.score,
+    required this.duration,
+  });
+}
+
 class GameStateNotifier extends StateNotifier<GameState> {
   final Ref ref;
+  DateTime? _currentTurnStartTime;
   List<GameState> stateHistory = [];
   int? potentialWinner;
 
@@ -193,21 +209,25 @@ class GameStateNotifier extends StateNotifier<GameState> {
     stateHistory.add(state.copyWith());
 
     final points = player == 1 ? state.p1PendingPoints : state.p2PendingPoints;
+    final duration = DateTime.now().difference(_currentTurnStartTime!);
+    final newTurn = Turn(score: points, duration: duration);
 
-    List<int> newHistory;
+    List<Turn> newHistory;
     int newTotalScore;
     int newHighRun;
 
     if (player == 1) {
-      newHistory = [...state.p1History, points];
-      newTotalScore = newHistory.fold(0, (sum, p) => sum + p);
-      newHighRun =
-          newHistory.isEmpty ? 0 : newHistory.reduce((a, b) => a > b ? a : b);
+      newHistory = [...state.p1History, newTurn];
+      newTotalScore = newHistory.fold(0, (sum, turn) => sum + turn.score);
+      newHighRun = newHistory.isEmpty 
+          ? 0
+          : newHistory.map((t) => t.score).reduce((a, b) => a > b ? a : b);
     } else {
-      newHistory = [...state.p2History, points];
-      newTotalScore = newHistory.fold(0, (sum, p) => sum + p);
-      newHighRun =
-          newHistory.isEmpty ? 0 : newHistory.reduce((a, b) => a > b ? a : b);
+      newHistory = [...state.p2History, newTurn];
+      newTotalScore = newHistory.fold(0, (sum, turn) => sum + turn.score);
+      newHighRun = newHistory.isEmpty 
+          ? 0
+          : newHistory.map((t) => t.score).reduce((a, b) => a > b ? a : b);
     }
 
     state = state.copyWith(
@@ -232,7 +252,8 @@ class GameStateNotifier extends StateNotifier<GameState> {
     if (state.p1History.length == state.p2History.length) {
       state = state.copyWith(inningCount: state.inningCount + 1);
     }
-
+    
+    startTurn();
     return true;
   }
 
@@ -347,7 +368,14 @@ class GameStateNotifier extends StateNotifier<GameState> {
       matchEndTime: null,
     );
     ref.read(timerStateProvider.notifier).delayedReset();
+    startTurn();
     print("Match started at ${state.matchStartTime}");
 
   }
+
+  void startTurn() {
+    _currentTurnStartTime = DateTime.now();
+  }
+  
 }
+

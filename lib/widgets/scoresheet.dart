@@ -20,7 +20,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
   final double summaryCellWidth = 55.0;
   final double summaryCellHeight = 30.0;
 
-  pw.Widget buildInningTable(List<int> history, int startIndex, int endIndex) {
+  pw.Widget buildInningTable(List<Turn> history, int startIndex, int endIndex) {
     return pw.Table(border: pw.TableBorder.all(), columnWidths: {
       0: pw.FixedColumnWidth(25),
       1: pw.FixedColumnWidth(25),
@@ -67,9 +67,9 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
         endIndex - startIndex,
         (i) {
           final inningIndex = startIndex + i;
-          final partial = history[inningIndex];
+          final partial = history[inningIndex].score;
           final int total =
-              history.sublist(0, inningIndex + 1).fold(0, (a, b) => a + b);
+              history.sublist(0, inningIndex + 1).fold(0, (sum, turn) => sum + turn.score);
           return pw.TableRow(
             children: [
               pw.Container(
@@ -97,7 +97,7 @@ Future<String> generateScoresheetPdf(GameState gameState) async {
     ]);
   }
 
-  List<pw.Widget> buildWrappedHistory(List<int> history) {
+  List<pw.Widget> buildWrappedHistory(List<Turn> history) {
     if (history.isEmpty) {
       return [pw.Text('No innings recorded')];
     }
