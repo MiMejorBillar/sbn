@@ -2,28 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nsb/screens/home_screen.dart';
-import 'package:nsb/screens/signup_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:nsb/screens/login_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<AuthState>(
-      stream: Supabase.instance.client.auth.onAuthStateChange,
-      builder: (context, snapshot){
-        if (snapshot.connectionState == ConnectionState.waiting){
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasData && snapshot.data!.session != null){
-          return const HomeScreen();
-        }else {
-        return LoginScreen();
-        } 
-      },
-    );
+    return const HomeScreen();
   }
 }
 
@@ -67,9 +53,7 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [routeObserver],
       routes: {
         '/auth': (context) => const AuthWrapper(),
-        '/login': (context) => LoginScreen(),
         '/home': (context) => const HomeScreen(),
-        '/signup': (context) =>  SignUpScreen(),
       },
       home: const AuthWrapper(),
     );
