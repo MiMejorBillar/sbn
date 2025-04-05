@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nsb/screens/home_screen.dart';
+import 'package:nsb/screens/signup_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nsb/screens/login_screen.dart';
 
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
         '/auth': (context) => const AuthWrapper(),
         '/login': (context) => LoginScreen(),
         '/home': (context) => const HomeScreen(),
+        '/signup': (context) =>  SignUpScreen(),
       },
       home: const AuthWrapper(),
     );

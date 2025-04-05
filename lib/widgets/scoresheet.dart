@@ -3,7 +3,6 @@ import 'package:pdf/widgets.dart' as pw;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:nsb/state_management/game_state.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 
 Future<String> generateScoresheetPdf(GameState gameState) async {
